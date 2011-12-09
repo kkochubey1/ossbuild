@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-audiocheblimit.html" title="audiocheblimit">
 <link rel="next" href="gst-plugins-good-plugins-audioiirfilter.html" title="audioiirfilter">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-good-plugins-audiofirfilter.signals" class="shortcut">Signals</a>
 </td></tr>
 </table>
-<div class="refentry" title="audiofirfilter">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-audiofirfilter"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,12 +41,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-audiofirfilter.synopsis"></a><h2>Synopsis</h2>
-<a name="GstAudioFIRFilter"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter-struct" title="GstAudioFIRFilter">GstAudioFIRFilter</a>;
+<a name="GstAudioFIRFilter"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter-struct" title="struct GstAudioFIRFilter">GstAudioFIRFilter</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -58,20 +58,20 @@
                                  +----GstAudioFIRFilter
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter--kernel" title='The "kernel" property'>kernel</a>"                   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a>*          : Read / Write
   "<a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter--latency" title='The "latency" property'>latency</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Signals">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.signals"></a><h2>Signals</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter-rate-changed" title='The "rate-changed" signal'>rate-changed</a>"                                   : Run Last
+  "<a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter-rate-changed" title='The "rate-changed" signal'>rate-changed</a>"                                   : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.description"></a><h2>Description</h2>
 <p>
 audiofirfilter implements a generic audio <a class="ulink" href="http://en.wikipedia.org/wiki/Finite_impulse_response" target="_top">FIR filter</a>. Before usage the
@@ -91,8 +91,10 @@ To change the filter kernel whenever the sampling rate changes the
 "rate-changed" signal can be used. This should be done for most
 FIR filters as they're depending on the sampling rate.
 </p>
-<div class="refsect2" title="Example application">
-<a name="id559643"></a><h3>Example application</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp8686608"></a><h3>Example application</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -281,183 +283,258 @@ FIR filters as they're depending on the sampling rate.
 <span class="comment"> * by transforming the frequency response to the filter kernel.</span>
 <span class="comment"> */</span>
 
-<span class="preproc">#include &lt;string.h&gt;</span>
-<span class="preproc">#include &lt;math.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;string.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;math.h&gt;</span>
 
-<span class="preproc">#include &lt;gst/gst.h&gt;</span>
-<span class="preproc">#include &lt;gst/fft/gstfftf64.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;gst/gst.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;gst/fft/gstfftf64.h&gt;</span>
 
 <span class="gtkdoc kwb">static</span> gboolean
-<span class="function">on_message</span> <span class="symbol">(</span>GstBus <span class="symbol">*</span> bus<span class="symbol">,</span> GstMessage <span class="symbol">*</span> message<span class="symbol">,</span> gpointer user_data<span class="symbol">)</span>
-<span class="symbol">{</span>
-  GMainLoop <span class="symbol">*</span>loop <span class="symbol">= (</span>GMainLoop <span class="symbol">*)</span> user_data<span class="symbol">;</span>
+<span class="function">on_message</span> <span class="gtkdoc opt">(</span>GstBus <span class="gtkdoc opt">*</span> bus<span class="gtkdoc opt">,</span> GstMessage <span class="gtkdoc opt">*</span> message<span class="gtkdoc opt">,</span> gpointer user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GMainLoop <span class="gtkdoc opt">*</span>loop <span class="gtkdoc opt">= (</span>GMainLoop <span class="gtkdoc opt">*)</span> user_data<span class="gtkdoc opt">;</span>
 
-  <span class="keyword">switch</span> <span class="symbol">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GST-MESSAGE-TYPE:CAPS">GST_MESSAGE_TYPE</a></span> <span class="symbol">(</span>message<span class="symbol">)) {</span>
-    <span class="keyword">case</span> GST_MESSAGE_ERROR<span class="symbol">:</span>
-      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="symbol">(</span><span class="string">&quot;Got ERROR&quot;</span><span class="symbol">);</span>
-      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="symbol">(</span>loop<span class="symbol">);</span>
-      <span class="keyword">break</span><span class="symbol">;</span>
-    <span class="keyword">case</span> GST_MESSAGE_WARNING<span class="symbol">:</span>
-      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="symbol">(</span><span class="string">&quot;Got WARNING&quot;</span><span class="symbol">);</span>
-      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="symbol">(</span>loop<span class="symbol">);</span>
-      <span class="keyword">break</span><span class="symbol">;</span>
-    <span class="keyword">case</span> GST_MESSAGE_EOS<span class="symbol">:</span>
-      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="symbol">(</span>loop<span class="symbol">);</span>
-      <span class="keyword">break</span><span class="symbol">;</span>
-    <span class="keyword">default</span><span class="symbol">:</span>
-      <span class="keyword">break</span><span class="symbol">;</span>
-  <span class="symbol">}</span>
+  <span class="keyword">switch</span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GST-MESSAGE-TYPE:CAPS">GST_MESSAGE_TYPE</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">)) {</span>
+    <span class="keyword">case</span> GST_MESSAGE_ERROR<span class="gtkdoc opt">:</span>
+      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Got ERROR&quot;</span><span class="gtkdoc opt">);</span>
+      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="gtkdoc opt">(</span>loop<span class="gtkdoc opt">);</span>
+      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">case</span> GST_MESSAGE_WARNING<span class="gtkdoc opt">:</span>
+      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Got WARNING&quot;</span><span class="gtkdoc opt">);</span>
+      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="gtkdoc opt">(</span>loop<span class="gtkdoc opt">);</span>
+      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">case</span> GST_MESSAGE_EOS<span class="gtkdoc opt">:</span>
+      <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-quit">g_main_loop_quit</a></span> <span class="gtkdoc opt">(</span>loop<span class="gtkdoc opt">);</span>
+      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">default</span><span class="gtkdoc opt">:</span>
+      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
 
-  <span class="keyword">return</span> TRUE<span class="symbol">;</span>
-<span class="symbol">}</span>
+  <span class="keyword">return</span> TRUE<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span>
 
 <span class="gtkdoc kwb">static void</span>
-<span class="function">on_rate_changed</span> <span class="symbol">(</span>GstElement <span class="symbol">*</span> element<span class="symbol">,</span> gint rate<span class="symbol">,</span> gpointer user_data<span class="symbol">)</span>
-<span class="symbol">{</span>
-  GValueArray <span class="symbol">*</span>va<span class="symbol">;</span>
-  GValue v <span class="symbol">= {</span> <span class="number">0</span><span class="symbol">, };</span>
-  GstFFTF64 <span class="symbol">*</span>fft<span class="symbol">;</span>
-  GstFFTF64Complex frequency_response<span class="symbol">[</span><span class="number">17</span><span class="symbol">];</span>
-  gdouble tmp<span class="symbol">[</span><span class="number">32</span><span class="symbol">];</span>
-  gdouble filter_kernel<span class="symbol">[</span><span class="number">32</span><span class="symbol">];</span>
-  guint i<span class="symbol">;</span>
+<span class="function">on_rate_changed</span> <span class="gtkdoc opt">(</span>GstElement <span class="gtkdoc opt">*</span> element<span class="gtkdoc opt">,</span> gint rate<span class="gtkdoc opt">,</span> gpointer user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GValueArray <span class="gtkdoc opt">*</span>va<span class="gtkdoc opt">;</span>
+  GValue v <span class="gtkdoc opt">= {</span> <span class="number">0</span><span class="gtkdoc opt">, };</span>
+  GstFFTF64 <span class="gtkdoc opt">*</span>fft<span class="gtkdoc opt">;</span>
+  GstFFTF64Complex frequency_response<span class="gtkdoc opt">[</span><span class="number">17</span><span class="gtkdoc opt">];</span>
+  gdouble tmp<span class="gtkdoc opt">[</span><span class="number">32</span><span class="gtkdoc opt">];</span>
+  gdouble filter_kernel<span class="gtkdoc opt">[</span><span class="number">32</span><span class="gtkdoc opt">];</span>
+  guint i<span class="gtkdoc opt">;</span>
 
   <span class="comment">/* Create the frequency response: zero outside</span>
 <span class="comment">   * a small frequency band */</span>
-  <span class="keyword">for</span> <span class="symbol">(</span>i <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span> i <span class="symbol">&lt;</span> <span class="number">17</span><span class="symbol">;</span> i<span class="symbol">++) {</span>
-    <span class="keyword">if</span> <span class="symbol">(</span>i <span class="symbol">&lt;</span> <span class="number">5</span> <span class="symbol">||</span> i <span class="symbol">&gt;</span> <span class="number">11</span><span class="symbol">)</span>
-      frequency_response<span class="symbol">[</span>i<span class="symbol">].</span>r <span class="symbol">=</span> <span class="number">0.0</span><span class="symbol">;</span>
+  <span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">17</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++) {</span>
+    <span class="keyword">if</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">&lt;</span> <span class="number">5</span> <span class="gtkdoc opt">||</span> i <span class="gtkdoc opt">&gt;</span> <span class="number">11</span><span class="gtkdoc opt">)</span>
+      frequency_response<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">].</span>r <span class="gtkdoc opt">=</span> <span class="number">0.0</span><span class="gtkdoc opt">;</span>
     <span class="keyword">else</span>
-      frequency_response<span class="symbol">[</span>i<span class="symbol">].</span>r <span class="symbol">=</span> <span class="number">1.0</span><span class="symbol">;</span>
+      frequency_response<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">].</span>r <span class="gtkdoc opt">=</span> <span class="number">1.0</span><span class="gtkdoc opt">;</span>
 
-    frequency_response<span class="symbol">[</span>i<span class="symbol">].</span>i <span class="symbol">=</span> <span class="number">0.0</span><span class="symbol">;</span>
-  <span class="symbol">}</span>
+    frequency_response<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">].</span>i <span class="gtkdoc opt">=</span> <span class="number">0.0</span><span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
 
   <span class="comment">/* Calculate the inverse FT of the frequency response */</span>
-  fft <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-new">gst_fft_f64_new</a></span> <span class="symbol">(</span><span class="number">32</span><span class="symbol">,</span> TRUE<span class="symbol">);</span>
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-inverse-fft">gst_fft_f64_inverse_fft</a></span> <span class="symbol">(</span>fft<span class="symbol">,</span> frequency_response<span class="symbol">,</span> tmp<span class="symbol">);</span>
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-free">gst_fft_f64_free</a></span> <span class="symbol">(</span>fft<span class="symbol">);</span>
+  fft <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-new">gst_fft_f64_new</a></span> <span class="gtkdoc opt">(</span><span class="number">32</span><span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-inverse-fft">gst_fft_f64_inverse_fft</a></span> <span class="gtkdoc opt">(</span>fft<span class="gtkdoc opt">,</span> frequency_response<span class="gtkdoc opt">,</span> tmp<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstfftf64.html#gst-fft-f64-free">gst_fft_f64_free</a></span> <span class="gtkdoc opt">(</span>fft<span class="gtkdoc opt">);</span>
 
   <span class="comment">/* Shift the inverse FT of the frequency response by 16,</span>
 <span class="comment">   * i.e. the half of the kernel length to get the</span>
 <span class="comment">   * impulse response. See http://www.dspguide.com/ch17/1.htm</span>
 <span class="comment">   * for more information.</span>
 <span class="comment">   */</span>
-  <span class="keyword">for</span> <span class="symbol">(</span>i <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span> i <span class="symbol">&lt;</span> <span class="number">32</span><span class="symbol">;</span> i<span class="symbol">++)</span>
-    filter_kernel<span class="symbol">[</span>i<span class="symbol">] =</span> tmp<span class="symbol">[(</span>i <span class="symbol">+</span> <span class="number">16</span><span class="symbol">) %</span> <span class="number">32</span><span class="symbol">];</span>
+  <span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">32</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
+    filter_kernel<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">] =</span> tmp<span class="gtkdoc opt">[(</span>i <span class="gtkdoc opt">+</span> <span class="number">16</span><span class="gtkdoc opt">) %</span> <span class="number">32</span><span class="gtkdoc opt">];</span>
 
   <span class="comment">/* Apply the hamming window to the impulse response to get</span>
 <span class="comment">   * a better result than given from the rectangular window</span>
 <span class="comment">   */</span>
-  <span class="keyword">for</span> <span class="symbol">(</span>i <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span> i <span class="symbol">&lt;</span> <span class="number">32</span><span class="symbol">;</span> i<span class="symbol">++)</span>
-    filter_kernel<span class="symbol">[</span>i<span class="symbol">] *= (</span><span class="number">0.54</span> <span class="symbol">-</span> <span class="number">0.46</span> <span class="symbol">*</span> <span class="function">cos</span> <span class="symbol">(</span><span class="number">2</span> <span class="symbol">*</span> M_PI <span class="symbol">*</span> i <span class="symbol">/</span> <span class="number">32</span><span class="symbol">));</span>
+  <span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">32</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
+    filter_kernel<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">] *= (</span><span class="number">0.54</span> <span class="gtkdoc opt">-</span> <span class="number">0.46</span> <span class="gtkdoc opt">*</span> <span class="function">cos</span> <span class="gtkdoc opt">(</span><span class="number">2</span> <span class="gtkdoc opt">*</span> G_PI <span class="gtkdoc opt">*</span> i <span class="gtkdoc opt">/</span> <span class="number">32</span><span class="gtkdoc opt">));</span>
 
-  va <span class="symbol">=</span> <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-new">g_value_array_new</a></span> <span class="symbol">(</span><span class="number">1</span><span class="symbol">);</span>
+  va <span class="gtkdoc opt">=</span> <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-new">g_value_array_new</a></span> <span class="gtkdoc opt">(</span><span class="number">1</span><span class="gtkdoc opt">);</span>
 
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="symbol">(&amp;</span>v<span class="symbol">,</span> G_TYPE_DOUBLE<span class="symbol">);</span>
-  <span class="keyword">for</span> <span class="symbol">(</span>i <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span> i <span class="symbol">&lt;</span> <span class="number">32</span><span class="symbol">;</span> i<span class="symbol">++) {</span>
-    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#g-value-set-double">g_value_set_double</a></span> <span class="symbol">(&amp;</span>v<span class="symbol">,</span> filter_kernel<span class="symbol">[</span>i<span class="symbol">]);</span>
-    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-append">g_value_array_append</a></span> <span class="symbol">(</span>va<span class="symbol">, &amp;</span>v<span class="symbol">);</span>
-    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#g-value-reset">g_value_reset</a></span> <span class="symbol">(&amp;</span>v<span class="symbol">);</span>
-  <span class="symbol">}</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>element<span class="symbol">),</span> <span class="string">&quot;kernel&quot;</span><span class="symbol">,</span> va<span class="symbol">,</span> NULL<span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="gtkdoc opt">(&amp;</span>v<span class="gtkdoc opt">,</span> G_TYPE_DOUBLE<span class="gtkdoc opt">);</span>
+  <span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">32</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++) {</span>
+    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#g-value-set-double">g_value_set_double</a></span> <span class="gtkdoc opt">(&amp;</span>v<span class="gtkdoc opt">,</span> filter_kernel<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">]);</span>
+    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-append">g_value_array_append</a></span> <span class="gtkdoc opt">(</span>va<span class="gtkdoc opt">, &amp;</span>v<span class="gtkdoc opt">);</span>
+    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#g-value-reset">g_value_reset</a></span> <span class="gtkdoc opt">(&amp;</span>v<span class="gtkdoc opt">);</span>
+  <span class="gtkdoc opt">}</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>element<span class="gtkdoc opt">),</span> <span class="string">&quot;kernel&quot;</span><span class="gtkdoc opt">,</span> va<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
   <span class="comment">/* Latency is 1/2 of the kernel length for this method of</span>
 <span class="comment">   * calculating a filter kernel from the frequency response</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>element<span class="symbol">),</span> <span class="string">&quot;latency&quot;</span><span class="symbol">, (</span>gint64<span class="symbol">) (</span><span class="number">32</span> <span class="symbol">/</span> <span class="number">2</span><span class="symbol">),</span> NULL<span class="symbol">);</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-free">g_value_array_free</a></span> <span class="symbol">(</span>va<span class="symbol">);</span>
-<span class="symbol">}</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>element<span class="gtkdoc opt">),</span> <span class="string">&quot;latency&quot;</span><span class="gtkdoc opt">, (</span>gint64<span class="gtkdoc opt">) (</span><span class="number">32</span> <span class="gtkdoc opt">/</span> <span class="number">2</span><span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#g-value-array-free">g_value_array_free</a></span> <span class="gtkdoc opt">(</span>va<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span>
 
 gint
-<span class="function">main</span> <span class="symbol">(</span>gint argc<span class="symbol">,</span> gchar <span class="symbol">*</span> argv<span class="symbol">[])</span>
-<span class="symbol">{</span>
-  GstElement <span class="symbol">*</span>pipeline<span class="symbol">, *</span>src<span class="symbol">, *</span>filter<span class="symbol">, *</span>conv<span class="symbol">, *</span>sink<span class="symbol">;</span>
-  GstBus <span class="symbol">*</span>bus<span class="symbol">;</span>
-  GMainLoop <span class="symbol">*</span>loop<span class="symbol">;</span>
+<span class="function">main</span> <span class="gtkdoc opt">(</span>gint argc<span class="gtkdoc opt">,</span> gchar <span class="gtkdoc opt">*</span> argv<span class="gtkdoc opt">[])</span>
+<span class="gtkdoc opt">{</span>
+  GstElement <span class="gtkdoc opt">*</span>pipeline<span class="gtkdoc opt">, *</span>src<span class="gtkdoc opt">, *</span>filter<span class="gtkdoc opt">, *</span>conv<span class="gtkdoc opt">, *</span>sink<span class="gtkdoc opt">;</span>
+  GstBus <span class="gtkdoc opt">*</span>bus<span class="gtkdoc opt">;</span>
+  GMainLoop <span class="gtkdoc opt">*</span>loop<span class="gtkdoc opt">;</span>
 
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(</span>NULL<span class="symbol">,</span> NULL<span class="symbol">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-  pipeline <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;pipeline&quot;</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
+  pipeline <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;pipeline&quot;</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-  src <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;audiotestsrc&quot;</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>src<span class="symbol">),</span> <span class="string">&quot;wave&quot;</span><span class="symbol">,</span> <span class="number">5</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
+  src <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;audiotestsrc&quot;</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>src<span class="gtkdoc opt">),</span> <span class="string">&quot;wave&quot;</span><span class="gtkdoc opt">,</span> <span class="number">5</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-  filter <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;audiofirfilter&quot;</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>filter<span class="symbol">),</span> <span class="string">&quot;rate-changed&quot;</span><span class="symbol">,</span>
-      <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="symbol">(</span>on_rate_changed<span class="symbol">),</span> NULL<span class="symbol">);</span>
+  filter <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;audiofirfilter&quot;</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>filter<span class="gtkdoc opt">),</span> <span class="string">&quot;rate-changed&quot;</span><span class="gtkdoc opt">,</span>
+      <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="gtkdoc opt">(</span>on_rate_changed<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
 
-  conv <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;audioconvert&quot;</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
+  conv <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;audioconvert&quot;</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-  sink <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;autoaudiosink&quot;</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
-  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="symbol">(</span>sink <span class="symbol">!=</span> NULL<span class="symbol">, -</span><span class="number">1</span><span class="symbol">);</span>
+  sink <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;autoaudiosink&quot;</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span>sink <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">, -</span><span class="number">1</span><span class="gtkdoc opt">);</span>
 
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBin.html#gst-bin-add-many">gst_bin_add_many</a></span> <span class="symbol">(</span><span class="function">GST_BIN</span> <span class="symbol">(</span>pipeline<span class="symbol">),</span> src<span class="symbol">,</span> filter<span class="symbol">,</span> conv<span class="symbol">,</span> sink<span class="symbol">,</span> NULL<span class="symbol">);</span>
-  <span class="keyword">if</span> <span class="symbol">(!</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-link-many">gst_element_link_many</a></span> <span class="symbol">(</span>src<span class="symbol">,</span> filter<span class="symbol">,</span> conv<span class="symbol">,</span> sink<span class="symbol">,</span> NULL<span class="symbol">)) {</span>
-    <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="symbol">(</span><span class="string">&quot;Failed to link elements&quot;</span><span class="symbol">);</span>
-    <span class="keyword">return</span> <span class="symbol">-</span><span class="number">2</span><span class="symbol">;</span>
-  <span class="symbol">}</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBin.html#gst-bin-add-many">gst_bin_add_many</a></span> <span class="gtkdoc opt">(</span><span class="function">GST_BIN</span> <span class="gtkdoc opt">(</span>pipeline<span class="gtkdoc opt">),</span> src<span class="gtkdoc opt">,</span> filter<span class="gtkdoc opt">,</span> conv<span class="gtkdoc opt">,</span> sink<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-link-many">gst_element_link_many</a></span> <span class="gtkdoc opt">(</span>src<span class="gtkdoc opt">,</span> filter<span class="gtkdoc opt">,</span> conv<span class="gtkdoc opt">,</span> sink<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">)) {</span>
+    <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Failed to link elements&quot;</span><span class="gtkdoc opt">);</span>
+    <span class="keyword">return</span> <span class="gtkdoc opt">-</span><span class="number">2</span><span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
 
-  loop <span class="symbol">=</span> <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-new">g_main_loop_new</a></span> <span class="symbol">(</span>NULL<span class="symbol">,</span> FALSE<span class="symbol">);</span>
+  loop <span class="gtkdoc opt">=</span> <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-new">g_main_loop_new</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">,</span> FALSE<span class="gtkdoc opt">);</span>
 
-  bus <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPipeline.html#gst-pipeline-get-bus">gst_pipeline_get_bus</a></span> <span class="symbol">(</span><span class="function">GST_PIPELINE</span> <span class="symbol">(</span>pipeline<span class="symbol">));</span>
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBus.html#gst-bus-add-signal-watch">gst_bus_add_signal_watch</a></span> <span class="symbol">(</span>bus<span class="symbol">);</span>
-  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>bus<span class="symbol">),</span> <span class="string">&quot;message&quot;</span><span class="symbol">,</span> <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="symbol">(</span>on_message<span class="symbol">),</span> loop<span class="symbol">);</span>
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="symbol">(</span><span class="function">GST_OBJECT</span> <span class="symbol">(</span>bus<span class="symbol">));</span>
+  bus <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPipeline.html#gst-pipeline-get-bus">gst_pipeline_get_bus</a></span> <span class="gtkdoc opt">(</span><span class="function">GST_PIPELINE</span> <span class="gtkdoc opt">(</span>pipeline<span class="gtkdoc opt">));</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBus.html#gst-bus-add-signal-watch">gst_bus_add_signal_watch</a></span> <span class="gtkdoc opt">(</span>bus<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>bus<span class="gtkdoc opt">),</span> <span class="string">&quot;message&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="gtkdoc opt">(</span>on_message<span class="gtkdoc opt">),</span> loop<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="gtkdoc opt">(</span><span class="function">GST_OBJECT</span> <span class="gtkdoc opt">(</span>bus<span class="gtkdoc opt">));</span>
 
-  <span class="keyword">if</span> <span class="symbol">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-set-state">gst_element_set_state</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span>
-          GST_STATE_PLAYING<span class="symbol">) ==</span> GST_STATE_CHANGE_FAILURE<span class="symbol">) {</span>
-    <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="symbol">(</span><span class="string">&quot;Failed to go into PLAYING state&quot;</span><span class="symbol">);</span>
-    <span class="keyword">return</span> <span class="symbol">-</span><span class="number">3</span><span class="symbol">;</span>
-  <span class="symbol">}</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-set-state">gst_element_set_state</a></span> <span class="gtkdoc opt">(</span>pipeline<span class="gtkdoc opt">,</span>
+          GST_STATE_PLAYING<span class="gtkdoc opt">) ==</span> GST_STATE_CHANGE_FAILURE<span class="gtkdoc opt">) {</span>
+    <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Message-Logging.html#g-error">g_error</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Failed to go into PLAYING state&quot;</span><span class="gtkdoc opt">);</span>
+    <span class="keyword">return</span> <span class="gtkdoc opt">-</span><span class="number">3</span><span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
 
-  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-run">g_main_loop_run</a></span> <span class="symbol">(</span>loop<span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-run">g_main_loop_run</a></span> <span class="gtkdoc opt">(</span>loop<span class="gtkdoc opt">);</span>
 
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-set-state">gst_element_set_state</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span> GST_STATE_NULL<span class="symbol">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-set-state">gst_element_set_state</a></span> <span class="gtkdoc opt">(</span>pipeline<span class="gtkdoc opt">,</span> GST_STATE_NULL<span class="gtkdoc opt">);</span>
 
-  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-unref">g_main_loop_unref</a></span> <span class="symbol">(</span>loop<span class="symbol">);</span>
-  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="symbol">(</span>pipeline<span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-loop-unref">g_main_loop_unref</a></span> <span class="gtkdoc opt">(</span>loop<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="gtkdoc opt">(</span>pipeline<span class="gtkdoc opt">);</span>
 
-  <span class="keyword">return</span> <span class="number">0</span><span class="symbol">;</span>
-<span class="symbol">}</span></pre></td>
+  <span class="keyword">return</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
 </div>
 
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp9669600"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-audiofx.html#plugin-audiofx">audiofx</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Sebastian Dröge &lt;sebastian.droege@collabora.co.uk&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Effect/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp9383200"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstAudioFIRFilter">
-<a name="GstAudioFIRFilter-struct"></a><h3>GstAudioFIRFilter</h3>
-<pre class="programlisting">typedef struct _GstAudioFIRFilter GstAudioFIRFilter;</pre>
+<div class="refsect2">
+<a name="GstAudioFIRFilter-struct"></a><h3>struct GstAudioFIRFilter</h3>
+<pre class="programlisting">struct GstAudioFIRFilter;</pre>
 <p>
 Opaque data structure.
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "kernel" property'>
+<div class="refsect2">
 <a name="GstAudioFIRFilter--kernel"></a><h3>The <code class="literal">"kernel"</code> property</h3>
 <pre class="programlisting">  "kernel"                   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a>*          : Read / Write</pre>
 <p>Filter kernel for the FIR filter.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "latency" property'>
+<div class="refsect2">
 <a name="GstAudioFIRFilter--latency"></a><h3>The <code class="literal">"latency"</code> property</h3>
 <pre class="programlisting">  "latency"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Filter latency in samples.</p>
 <p>Default value: 0</p>
 </div>
 </div>
-<div class="refsect1" title="Signal Details">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiofirfilter.signal-details"></a><h2>Signal Details</h2>
-<div class="refsect2" title='The "rate-changed" signal'>
+<div class="refsect2">
 <a name="GstAudioFIRFilter-rate-changed"></a><h3>The <code class="literal">"rate-changed"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-good-plugins-audiofirfilter.html#GstAudioFIRFilter"><span class="type">GstAudioFIRFilter</span></a> *filter,
                                                         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>               rate,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>           user_data)      : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>           user_data)      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a></pre>
 <p>
 Will be emitted when the sampling rate changes. The callbacks
 will be called from the streaming thread and processing will
@@ -468,13 +545,11 @@ stop until the event is handled.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>filter</code></em> :</span></p></td>
-<td>the filter on which the signal is emitted
-</td>
+<td>the filter on which the signal is emitted</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>the new sampling rate
-</td>
+<td>the new sampling rate</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -487,6 +562,6 @@ stop until the event is handled.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

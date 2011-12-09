@@ -1,4 +1,25 @@
 <SECTION>
+<FILE>element-3gppmux</FILE>
+<TITLE>3gppmux</TITLE>
+Gst3GPPMux
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>element-aacparse</FILE>
+<TITLE>aacparse</TITLE>
+GstAacParse
+<SUBSECTION Standard>
+GstAacParseClass
+GST_AAC_PARSE
+GST_AAC_PARSE_CLASS
+GST_IS_AAC_PARSE
+GST_IS_AAC_PARSE_CLASS
+GST_TYPE_AAC_PARSE
+gst_aac_parse_get_type
+</SECTION>
+
+<SECTION>
 <FILE>element-aasink</FILE>
 <TITLE>aasink</TITLE>
 GstAASink
@@ -10,6 +31,20 @@ GST_TYPE_AASINK
 GST_AASINK_CLASS
 GST_IS_AASINK_CLASS
 gst_aasink_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-ac3parse</FILE>
+<TITLE>ac3parse</TITLE>
+GstAc3Parse
+<SUBSECTION Standard>
+GstAc3ParseClass
+GST_AC3_PARSE
+GST_AC3_PARSE_CLASS
+GST_IS_AC3_PARSE
+GST_IS_AC3_PARSE_CLASS
+GST_TYPE_AC3_PARSE
+gst_ac3_parse_get_type
 </SECTION>
 
 <SECTION>
@@ -66,6 +101,20 @@ GST_TYPE_ALPHA_COLOR
 gst_alpha_color_get_type
 GST_ALPHA_COLOR_CLASS
 GST_IS_ALPHA_COLOR_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>element-amrparse</FILE>
+<TITLE>amrparse</TITLE>
+GstAmrParse
+<SUBSECTION Standard>
+GstAmrParseClass
+GST_AMR_PARSE
+GST_AMR_PARSE_CLASS
+GST_IS_AMR_PARSE
+GST_IS_AMR_PARSE_CLASS
+GST_TYPE_AMR_PARSE
+gst_amr_parse_get_type
 </SECTION>
 
 <SECTION>
@@ -466,6 +515,18 @@ gst_cairo_render_get_type
 </SECTION>
 
 <SECTION>
+<FILE>element-cairooverlay</FILE>
+<TITLE>cairooverlay</TITLE>
+GstCairoOverlay
+<SUBSECTION Standard>
+GstCairoOverlayClass
+GST_TYPE_CAIRO_OVERLAY
+GST_CAIRO_OVERLAY
+GST_CAIRO_OVERLAY_CLASS
+gst_cairo_overlay_get_type
+</SECTION>
+
+<SECTION>
 <FILE>element-capssetter</FILE>
 <TITLE>capssetter</TITLE>
 GstCapsSetter
@@ -524,6 +585,21 @@ GST_TYPE_CUTTER
 GstCutterClass
 gst_cutter_get_type
 </SECTION>
+
+<SECTION>
+<FILE>element-dcaparse</FILE>
+<TITLE>dcaparse</TITLE>
+GstDcaParse
+<SUBSECTION Standard>
+GstDcaParseClass
+GST_DCA_PARSE
+GST_DCA_PARSE_CLASS
+GST_IS_DCA_PARSE
+GST_IS_DCA_PARSE_CLASS
+GST_TYPE_DCA_PARSE
+gst_dca_parse_get_type
+</SECTION>
+
 
 <SECTION>
 <FILE>element-deinterlace</FILE>
@@ -762,6 +838,20 @@ GST_FLAC_ENC_CLASS
 GST_IS_FLAC_ENC
 GST_IS_FLAC_ENC_CLASS
 gst_flac_enc_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-flacparse</FILE>
+<TITLE>flacparse</TITLE>
+GstFlacParse
+<SUBSECTION Standard>
+GstFlacParseClass
+GST_FLAC_PARSE
+GST_FLAC_PARSE_CLASS
+GST_IS_FLAC_PARSE
+GST_IS_FLAC_PARSE_CLASS
+GST_TYPE_FLAC_PARSE
+gst_flac_parse_get_type
 </SECTION>
 
 <SECTION>
@@ -1114,6 +1204,43 @@ gst_interleave_get_type
 </SECTION>
 
 <SECTION>
+<FILE>element-ismlmux</FILE>
+<TITLE>ismlmux</TITLE>
+GstISMLMux
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>element-jackaudiosrc</FILE>
+<TITLE>jackaudiosrc</TITLE>
+GstJackAudioSrc
+<SUBSECTION Standard>
+GstJackAudioSrcClass
+GST_JACK_AUDIO_SRC
+GST_JACK_AUDIO_SRC_CLASS
+GST_JACK_AUDIO_SRC_GET_CLASS
+GST_IS_JACK_AUDIO_SRC
+GST_IS_JACK_AUDIO_SRC_CLASS
+GST_TYPE_JACK_AUDIO_SRC
+gst_jack_audio_src_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-jackaudiosink</FILE>
+<TITLE>jackaudiosink</TITLE>
+GstJackAudioSink
+<SUBSECTION Standard>
+GstJackAudioSinkClass
+GST_JACK_AUDIO_SINK
+GST_JACK_AUDIO_SINK_CLASS
+GST_JACK_AUDIO_SINK_GET_CLASS
+GST_IS_JACK_AUDIO_SINK
+GST_IS_JACK_AUDIO_SINK_CLASS
+GST_TYPE_JACK_AUDIO_SINK
+gst_jack_audio_sink_get_type
+</SECTION>
+
+<SECTION>
 <FILE>element-jpegdec</FILE>
 <TITLE>jpegdec</TITLE>
 GstJpegDec
@@ -1188,6 +1315,13 @@ gst_matroska_demux_plugin_init
 </SECTION>
 
 <SECTION>
+<FILE>element-mj2mux</FILE>
+<TITLE>mj2mux</TITLE>
+GstMJ2Mux
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
 <FILE>element-monoscope</FILE>
 <TITLE>monoscope</TITLE>
 GstMonoscope
@@ -1199,6 +1333,27 @@ GST_TYPE_MONOSCOPE
 GST_MONOSCOPE_CLASS
 GST_IS_MONOSCOPE_CLASS
 gst_monoscope_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-mpegaudioparse</FILE>
+<TITLE>mpegaudioparse</TITLE>
+GstMpegAudioParse
+<SUBSECTION Standard>
+GstMpegAudioParseClass
+GST_MPEG_AUDIO_PARSE
+GST_MPEG_AUDIO_PARSE_CLASS
+GST_IS_MPEG_AUDIO_PARSE
+GST_IS_MPEG_AUDIO_PARSE_CLASS
+GST_TYPE_MPEG_AUDIO_PARSE
+gst_mpeg_audio_parse_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-mp4mux</FILE>
+<TITLE>mp4mux</TITLE>
+GstMP4Mux
+<SUBSECTION Standard>
 </SECTION>
 
 <SECTION>
@@ -1558,6 +1713,30 @@ GST_QTDEMUX_CLASS
 GST_QTDEMUX_MAX_STREAMS
 GST_TYPE_QTDEMUX
 gst_qtdemux_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-qtmoovrecover</FILE>
+<TITLE>qtmoovrecover</TITLE>
+GstQTMoovRecover
+GstQTMoovRecoverClass
+gst_qt_moov_recover_get_type
+gst_qt_moov_recover_register
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>element-qtmux</FILE>
+<TITLE>qtmux</TITLE>
+GstQTMux
+<SUBSECTION Standard>
+GstQTMuxClass
+GST_QT_MUX
+GST_QT_MUX_CLASS
+GST_IS_QT_MUX
+GST_IS_QT_MUX_CLASS
+GST_TYPE_QT_MUX
+gst_qt_mux_get_type
 </SECTION>
 
 <SECTION>
@@ -2004,6 +2183,20 @@ GST_TYPE_V4L2SINK
 GST_V4L2SINK_CLASS
 GST_IS_V4L2SINK_CLASS
 gst_v4l2sink_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-v4l2radio</FILE>
+<TITLE>v4l2radio</TITLE>
+GstV4l2Radio
+<SUBSECTION Standard>
+GstV4l2RadioClass
+GST_V4L2RADIO
+GST_IS_V4L2RADIO
+GST_TYPE_V4L2RADIO
+GST_V4L2RADIO_CLASS
+GST_IS_V4L2RADIO_CLASS
+gst_v4l2radio_get_type
 </SECTION>
 
 <SECTION>

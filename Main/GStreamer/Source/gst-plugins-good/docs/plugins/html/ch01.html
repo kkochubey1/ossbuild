@@ -7,8 +7,8 @@
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="prev" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
-<link rel="next" href="gst-plugins-good-plugins-aasink.html" title="aasink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="next" href="gst-plugins-good-plugins-3gppmux.html" title="3gppmux">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -17,14 +17,23 @@
 <td> </td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Good Plugins 0.10 Plugins Reference Manual</th>
-<td><a accesskey="n" href="gst-plugins-good-plugins-aasink.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+<td><a accesskey="n" href="gst-plugins-good-plugins-3gppmux.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr></table>
-<div class="chapter" title="gst-plugins-good Elements">
+<div class="chapter">
 <div class="titlepage"><div><div><h2 class="title">
-<a name="id514688"></a>gst-plugins-good Elements</h2></div></div></div>
+<a name="idp155200"></a>gst-plugins-good Elements</h2></div></div></div>
 <div class="toc"><dl>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-3gppmux.html">3gppmux</a></span><span class="refpurpose"> — Muxer for 3GPP (.3gp) files</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-aacparse.html">aacparse</a></span><span class="refpurpose"> — AAC parser</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-aasink.html">aasink</a></span><span class="refpurpose"> — An ASCII art videosink</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-ac3parse.html">ac3parse</a></span><span class="refpurpose"> — AC3 parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-agingtv.html">agingtv</a></span><span class="refpurpose"> — AgingTV adds age to video input using scratches and dust</span>
@@ -40,6 +49,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-alawenc.html">alawenc</a></span><span class="refpurpose"> — Convert 16bit PCM to 8bit A law</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-amrparse.html">amrparse</a></span><span class="refpurpose"> — AMR parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-apedemux.html">apedemux</a></span><span class="refpurpose"> — Read and output APE tags while demuxing the contents</span>
@@ -123,6 +135,9 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-cairorender.html">cairorender</a></span><span class="refpurpose"> — Encodes streams using Cairo</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-cairooverlay.html">cairooverlay</a></span><span class="refpurpose"> — Render overlay on a video stream using Cairo</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-capssetter.html">capssetter</a></span><span class="refpurpose"> — Set/merge caps on stream</span>
 </dt>
 <dt>
@@ -133,6 +148,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-cutter.html">cutter</a></span><span class="refpurpose"> — Audio Cutter to split audio into non-silent bits</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-dcaparse.html">dcaparse</a></span><span class="refpurpose"> — DCA (DTS Coherent Acoustics) parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-deinterlace.html">deinterlace</a></span><span class="refpurpose"> — Deinterlace Methods ported from DScaler/TvTime</span>
@@ -175,6 +193,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-flacenc.html">flacenc</a></span><span class="refpurpose"> — Encodes audio with the FLAC lossless audio encoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-flacparse.html">flacparse</a></span><span class="refpurpose"> — Parses audio with the FLAC lossless audio codec</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-flactag.html">flactag</a></span><span class="refpurpose"> — Rewrite tags in a FLAC file</span>
@@ -252,6 +273,15 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-interleave.html">interleave</a></span><span class="refpurpose"> — Folds many mono channels into one interleaved audio stream</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-ismlmux.html">ismlmux</a></span><span class="refpurpose"> — Muxer for ISML smooth streaming (.isml) files</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-jackaudiosrc.html">jackaudiosrc</a></span><span class="refpurpose"> — Captures audio from a JACK server</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-jackaudiosink.html">jackaudiosink</a></span><span class="refpurpose"> — Output audio to a JACK server</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-jpegdec.html">jpegdec</a></span><span class="refpurpose"> — Decode images from JPEG format</span>
 </dt>
 <dt>
@@ -267,7 +297,16 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-matroskademux.html">matroskademux</a></span><span class="refpurpose"> — Demuxes Matroska/WebM streams into video/audio/subtitles</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-mj2mux.html">mj2mux</a></span><span class="refpurpose"> — Muxer for Motion JPEG-2000 (.mj2) files</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-monoscope.html">monoscope</a></span><span class="refpurpose"> — Displays a highly stabilised waveform of audio input</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-mpegaudioparse.html">mpegaudioparse</a></span><span class="refpurpose"> — MPEG audio parser</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-mp4mux.html">mp4mux</a></span><span class="refpurpose"> — Muxer for ISO MPEG-4 (.mp4) files</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-mulawdec.html">mulawdec</a></span><span class="refpurpose"> — Convert 8bit mu law to 16bit PCM</span>
@@ -345,6 +384,12 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-qtdemux.html">qtdemux</a></span><span class="refpurpose"> — Demultiplex a QuickTime file into audio and video streams</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-qtmux.html">qtmux</a></span><span class="refpurpose"> — Muxer for quicktime(.mov) files</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-qtmoovrecover.html">qtmoovrecover</a></span><span class="refpurpose"> — Utility element for recovering unfinished quicktime files</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-radioactv.html">radioactv</a></span><span class="refpurpose"> — motion-enlightment effect</span>
 </dt>
 <dt>
@@ -420,7 +465,10 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2src.html">v4l2src</a></span><span class="refpurpose"> — Reads frames from a Video4Linux2 device</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2sink.html">v4l2sink</a></span><span class="refpurpose"> — Displays frames on a video4linux2 device</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2sink.html">v4l2sink</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2radio.html">v4l2radio</a></span><span class="refpurpose"> — Controls a Video4Linux2 radio device</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-vertigotv.html">vertigotv</a></span><span class="refpurpose"> — A loopback alpha blending effector with rotating and scaling</span>
@@ -477,6 +525,6 @@
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

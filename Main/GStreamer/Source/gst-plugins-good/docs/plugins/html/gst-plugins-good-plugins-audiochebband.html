@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-audioamplify.html" title="audioamplify">
 <link rel="next" href="gst-plugins-good-plugins-audiocheblimit.html" title="audiocheblimit">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-good-plugins-audiochebband.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="audiochebband">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-audiochebband"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,12 +39,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-audiochebband.synopsis"></a><h2>Synopsis</h2>
-<a name="GstAudioChebBand"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-audiochebband.html#GstAudioChebBand-struct" title="GstAudioChebBand">GstAudioChebBand</a>;
+<a name="GstAudioChebBand"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-good-plugins-audiochebband.html#GstAudioChebBand-struct" title="struct GstAudioChebBand">GstAudioChebBand</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiochebband.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -56,7 +56,7 @@
                                  +----GstAudioChebBand
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiochebband.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-good-plugins-audiochebband.html#GstAudioChebBand--lower-frequency" title='The "lower-frequency" property'>lower-frequency</a>"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
@@ -67,7 +67,7 @@
   "<a class="link" href="gst-plugins-good-plugins-audiochebband.html#GstAudioChebBand--upper-frequency" title='The "upper-frequency" property'>upper-frequency</a>"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiochebband.description"></a><h2>Description</h2>
 <p>
 Attenuates all frequencies outside (bandpass) or inside (bandreject) of a frequency
@@ -92,15 +92,17 @@ As a special case, a Chebyshev type 1 filter with no ripple is a Butterworth fil
 </p>
 <p>
 </p>
-<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Note</h3>
 Be warned that a too large number of poles can produce noise. The most poles are possible with
 a cutoff frequency at a quarter of the sampling rate.
 </div>
 <p>
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id570658"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp7007872"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -108,28 +110,103 @@ a cutoff frequency at a quarter of the sampling rate.
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch audiotestsrc freq<span class="symbol">=</span><span class="number">1500</span> <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audiochebband mode<span class="symbol">=</span>band<span class="symbol">-</span>pass lower<span class="symbol">-</span>frequency<span class="symbol">=</span><span class="number">1000</span> upper<span class="symbol">-</span>frequenc<span class="symbol">=</span><span class="number">6000</span> poles<span class="symbol">=</span><span class="number">4</span> <span class="symbol">!</span> audioconvert <span class="symbol">!</span> alsasink
-gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</span><span class="string">&quot;melo1.ogg&quot;</span> <span class="symbol">!</span> oggdemux <span class="symbol">!</span> vorbisdec <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audiochebband mode<span class="symbol">=</span>band<span class="symbol">-</span>reject lower<span class="symbol">-</span>frequency<span class="symbol">=</span><span class="number">1000</span> upper<span class="symbol">-</span>frequency<span class="symbol">=</span><span class="number">4000</span> ripple<span class="symbol">=</span><span class="number">0.2</span> <span class="symbol">!</span> audioconvert <span class="symbol">!</span> alsasink
-gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</span>white<span class="symbol">-</span>noise <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audiochebband mode<span class="symbol">=</span>band<span class="symbol">-</span>pass lower<span class="symbol">-</span>frequency<span class="symbol">=</span><span class="number">1000</span> upper<span class="symbol">-</span>frequency<span class="symbol">=</span><span class="number">4000</span> type<span class="symbol">=</span><span class="number">2</span> <span class="symbol">!</span> audioconvert <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch audiotestsrc freq<span class="gtkdoc opt">=</span><span class="number">1500</span> <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audiochebband mode<span class="gtkdoc opt">=</span>band<span class="gtkdoc opt">-</span>pass lower<span class="gtkdoc opt">-</span>frequency<span class="gtkdoc opt">=</span><span class="number">1000</span> upper<span class="gtkdoc opt">-</span>frequenc<span class="gtkdoc opt">=</span><span class="number">6000</span> poles<span class="gtkdoc opt">=</span><span class="number">4</span> <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> alsasink
+gst<span class="gtkdoc opt">-</span>launch filesrc location<span class="gtkdoc opt">=</span><span class="string">&quot;melo1.ogg&quot;</span> <span class="gtkdoc opt">!</span> oggdemux <span class="gtkdoc opt">!</span> vorbisdec <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audiochebband mode<span class="gtkdoc opt">=</span>band<span class="gtkdoc opt">-</span>reject lower<span class="gtkdoc opt">-</span>frequency<span class="gtkdoc opt">=</span><span class="number">1000</span> upper<span class="gtkdoc opt">-</span>frequency<span class="gtkdoc opt">=</span><span class="number">4000</span> ripple<span class="gtkdoc opt">=</span><span class="number">0.2</span> <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> alsasink
+gst<span class="gtkdoc opt">-</span>launch audiotestsrc wave<span class="gtkdoc opt">=</span>white<span class="gtkdoc opt">-</span>noise <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audiochebband mode<span class="gtkdoc opt">=</span>band<span class="gtkdoc opt">-</span>pass lower<span class="gtkdoc opt">-</span>frequency<span class="gtkdoc opt">=</span><span class="number">1000</span> upper<span class="gtkdoc opt">-</span>frequency<span class="gtkdoc opt">=</span><span class="number">4000</span> type<span class="gtkdoc opt">=</span><span class="number">2</span> <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
 
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp9684816"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-audiofx.html#plugin-audiofx">audiofx</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Sebastian Dröge &lt;sebastian.droege@collabora.co.uk&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Effect/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp8352416"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiochebband.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstAudioChebBand">
-<a name="GstAudioChebBand-struct"></a><h3>GstAudioChebBand</h3>
-<pre class="programlisting">typedef struct _GstAudioChebBand GstAudioChebBand;</pre>
+<div class="refsect2">
+<a name="GstAudioChebBand-struct"></a><h3>struct GstAudioChebBand</h3>
+<pre class="programlisting">struct GstAudioChebBand;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-audiochebband.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "lower-frequency" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--lower-frequency"></a><h3>The <code class="literal">"lower-frequency"</code> property</h3>
 <pre class="programlisting">  "lower-frequency"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
 <p>Start frequency of the band (Hz).</p>
@@ -137,14 +214,14 @@ gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "mode" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--mode"></a><h3>The <code class="literal">"mode"</code> property</h3>
 <pre class="programlisting">  "mode"                     <span class="type">GstAudioChebBandMode</span>  : Read / Write</pre>
 <p>Low pass or high pass mode.</p>
 <p>Default value: Band pass (default)</p>
 </div>
 <hr>
-<div class="refsect2" title='The "poles" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--poles"></a><h3>The <code class="literal">"poles"</code> property</h3>
 <pre class="programlisting">  "poles"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Number of poles to use, will be rounded up to the next multiply of four.</p>
@@ -152,7 +229,7 @@ gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</
 <p>Default value: 4</p>
 </div>
 <hr>
-<div class="refsect2" title='The "ripple" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--ripple"></a><h3>The <code class="literal">"ripple"</code> property</h3>
 <pre class="programlisting">  "ripple"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
 <p>Amount of ripple (dB).</p>
@@ -160,7 +237,7 @@ gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</
 <p>Default value: 0.25</p>
 </div>
 <hr>
-<div class="refsect2" title='The "type" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--type"></a><h3>The <code class="literal">"type"</code> property</h3>
 <pre class="programlisting">  "type"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Type of the chebychev filter.</p>
@@ -168,7 +245,7 @@ gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</
 <p>Default value: 1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "upper-frequency" property'>
+<div class="refsect2">
 <a name="GstAudioChebBand--upper-frequency"></a><h3>The <code class="literal">"upper-frequency"</code> property</h3>
 <pre class="programlisting">  "upper-frequency"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
 <p>Stop frequency of the band (Hz).</p>
@@ -179,6 +256,6 @@ gst<span class="symbol">-</span>launch audiotestsrc wave<span class="symbol">=</
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

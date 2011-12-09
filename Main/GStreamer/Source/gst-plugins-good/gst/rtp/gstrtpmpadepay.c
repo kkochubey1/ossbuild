@@ -69,7 +69,7 @@ gst_rtp_mpa_depay_base_init (gpointer klass)
       gst_static_pad_template_get (&gst_rtp_mpa_depay_sink_template));
 
   gst_element_class_set_details_simple (element_class,
-      "RTP MPEG audio depayloader", "Codec/Depayloader/Network",
+      "RTP MPEG audio depayloader", "Codec/Depayloader/Network/RTP",
       "Extracts MPEG audio from RTP packets (RFC 2038)",
       "Wim Taymans <wim.taymans@gmail.com>");
 }
@@ -127,8 +127,6 @@ gst_rtp_mpa_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
 
   {
     gint payload_len;
-    guint8 *payload;
-    guint16 frag_offset;
     gboolean marker;
 
     payload_len = gst_rtp_buffer_get_payload_len (buf);
@@ -136,7 +134,6 @@ gst_rtp_mpa_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
     if (payload_len <= 4)
       goto empty_packet;
 
-    payload = gst_rtp_buffer_get_payload (buf);
     /* strip off header
      *
      *  0                   1                   2                   3
@@ -145,7 +142,7 @@ gst_rtp_mpa_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
      * |             MBZ               |          Frag_offset          |
      * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      */
-    frag_offset = (payload[2] << 8) | payload[3];
+    /* frag_offset = (payload[2] << 8) | payload[3]; */
 
     /* subbuffer skipping the 4 header bytes */
     outbuf = gst_rtp_buffer_get_payload_subbuffer (buf, 4, -1);
@@ -179,5 +176,5 @@ gboolean
 gst_rtp_mpa_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpmpadepay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_MPA_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_MPA_DEPAY);
 }

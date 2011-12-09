@@ -46,6 +46,7 @@
 #endif
 
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <gst/riff/riff-media.h>
@@ -89,7 +90,7 @@ static GstStaticPadTemplate src_templ = GST_STATIC_PAD_TEMPLATE ("src",
   "width = (int) [ 16, 4096 ], " \
   "height = (int) [ 16, 4096 ] "
 
-/* FIXME: 
+/* FIXME:
  * * require codec data, etc as needed
  */
 
@@ -101,7 +102,7 @@ static GstStaticPadTemplate videosink_templ =
         "mpegversion = (int) { 1, 2, 4 }, "
         "systemstream = (boolean) false, "
         COMMON_VIDEO_CAPS "; "
-        "video/x-h264, "
+        "video/x-h264, stream-format=avc, alignment=au, "
         COMMON_VIDEO_CAPS "; "
         "video/x-divx, "
         COMMON_VIDEO_CAPS "; "
@@ -152,6 +153,10 @@ static GstStaticPadTemplate audiosink_templ =
         COMMON_AUDIO_CAPS "; "
         "audio/x-ac3, "
         COMMON_AUDIO_CAPS "; "
+        "audio/x-eac3, "
+        COMMON_AUDIO_CAPS "; "
+        "audio/x-dts, "
+        COMMON_AUDIO_CAPS "; "
         "audio/x-vorbis, "
         COMMON_AUDIO_CAPS "; "
         "audio/x-flac, "
@@ -192,14 +197,18 @@ static GstStaticPadTemplate audiosink_templ =
         "raversion = (int) { 1, 2, 8 }, " COMMON_AUDIO_CAPS "; "
         "audio/x-wma, " "wmaversion = (int) [ 1, 3 ], "
         "block_align = (int) [ 0, 65535 ], bitrate = (int) [ 0, 524288 ], "
-        COMMON_AUDIO_CAPS)
+        COMMON_AUDIO_CAPS ";"
+        "audio/x-alaw, "
+        "channels = (int) {1, 2}, " "rate = (int) [ 8000, 192000 ]; "
+        "audio/x-mulaw, "
+        "channels = (int) {1, 2}, " "rate = (int) [ 8000, 192000 ]")
     );
 
 static GstStaticPadTemplate subtitlesink_templ =
 GST_STATIC_PAD_TEMPLATE ("subtitle_%d",
     GST_PAD_SINK,
     GST_PAD_REQUEST,
-    GST_STATIC_CAPS_ANY);
+    GST_STATIC_CAPS ("subtitle/x-kate"));
 
 static GArray *used_uids;
 G_LOCK_DEFINE_STATIC (used_uids);
@@ -485,7 +494,7 @@ gst_matroska_pad_reset (GstMatroskaPad * collect_pad, gboolean full)
         break;
       default:
         g_assert_not_reached ();
-        break;
+        return;
     }
 
     context->type = type;
@@ -567,7 +576,7 @@ gst_matroska_mux_reset (GstElement * element)
  * @pad: Pad which received the event.
  * @event: Received event.
  *
- * handle events - copied from oggmux without understanding 
+ * handle events - copied from oggmux without understanding
  *
  * Returns: #TRUE on success.
  */
@@ -639,22 +648,23 @@ gst_matroska_mux_handle_sink_event (GstPad * pad, GstEvent * event)
       gst_tag_setter_merge_tags (GST_TAG_SETTER (mux), list,
           gst_tag_setter_get_tag_merge_mode (GST_TAG_SETTER (mux)));
 
-      /* handled this, don't want collectpads to forward it downstream */
-      ret = FALSE;
       gst_event_unref (event);
+      /* handled this, don't want collectpads to forward it downstream */
+      event = NULL;
       break;
     }
     case GST_EVENT_NEWSEGMENT:
       /* We don't support NEWSEGMENT events */
       ret = FALSE;
       gst_event_unref (event);
+      event = NULL;
       break;
     default:
       break;
   }
 
   /* now GstCollectPads can take care of the rest, e.g. EOS */
-  if (ret)
+  if (event)
     ret = mux->collect_event (pad, event);
 
   gst_object_unref (mux);
@@ -1577,6 +1587,10 @@ gst_matroska_mux_audio_pad_setcaps (GstPad * pad, GstCaps * caps)
     }
   } else if (!strcmp (mimetype, "audio/x-ac3")) {
     context->codec_id = g_strdup (GST_MATROSKA_CODEC_ID_AUDIO_AC3);
+  } else if (!strcmp (mimetype, "audio/x-eac3")) {
+    context->codec_id = g_strdup (GST_MATROSKA_CODEC_ID_AUDIO_EAC3);
+  } else if (!strcmp (mimetype, "audio/x-dts")) {
+    context->codec_id = g_strdup (GST_MATROSKA_CODEC_ID_AUDIO_DTS);
   } else if (!strcmp (mimetype, "audio/x-tta")) {
     gint width;
 
@@ -1622,41 +1636,61 @@ gst_matroska_mux_audio_pad_setcaps (GstPad * pad, GstCaps * caps)
       context->codec_priv_size = priv_data_size;
     }
 
-  } else if (!strcmp (mimetype, "audio/x-wma")) {
+  } else if (!strcmp (mimetype, "audio/x-wma")
+      || !strcmp (mimetype, "audio/x-alaw")
+      || !strcmp (mimetype, "audio/x-mulaw")) {
     guint8 *codec_priv;
     guint codec_priv_size;
-    guint16 format;
+    guint16 format = 0;
     gint block_align;
     gint bitrate;
-    gint wmaversion;
-    gint depth;
 
-    if (!gst_structure_get_int (structure, "wmaversion", &wmaversion)
-        || !gst_structure_get_int (structure, "block_align", &block_align)
-        || !gst_structure_get_int (structure, "bitrate", &bitrate)
-        || samplerate == 0 || channels == 0) {
-      GST_WARNING_OBJECT (mux, "Missing wmaversion/block_align/bitrate/"
-          "channels/rate on WMA caps");
+    if (samplerate == 0 || channels == 0) {
+      GST_WARNING_OBJECT (mux, "Missing channels/samplerate on caps");
       goto refuse_caps;
     }
 
-    switch (wmaversion) {
-      case 1:
-        format = GST_RIFF_WAVE_FORMAT_WMAV1;
-        break;
-      case 2:
-        format = GST_RIFF_WAVE_FORMAT_WMAV2;
-        break;
-      case 3:
-        format = GST_RIFF_WAVE_FORMAT_WMAV3;
-        break;
-      default:
-        GST_WARNING_OBJECT (mux, "Unexpected WMA version: %d", wmaversion);
-        goto refuse_caps;
-    }
+    if (!strcmp (mimetype, "audio/x-wma")) {
+      gint wmaversion;
+      gint depth;
 
-    if (gst_structure_get_int (structure, "depth", &depth))
-      audiocontext->bitdepth = depth;
+      if (!gst_structure_get_int (structure, "wmaversion", &wmaversion)
+          || !gst_structure_get_int (structure, "block_align", &block_align)
+          || !gst_structure_get_int (structure, "bitrate", &bitrate)) {
+        GST_WARNING_OBJECT (mux, "Missing wmaversion/block_align/bitrate"
+            " on WMA caps");
+        goto refuse_caps;
+      }
+
+      switch (wmaversion) {
+        case 1:
+          format = GST_RIFF_WAVE_FORMAT_WMAV1;
+          break;
+        case 2:
+          format = GST_RIFF_WAVE_FORMAT_WMAV2;
+          break;
+        case 3:
+          format = GST_RIFF_WAVE_FORMAT_WMAV3;
+          break;
+        default:
+          GST_WARNING_OBJECT (mux, "Unexpected WMA version: %d", wmaversion);
+          goto refuse_caps;
+      }
+
+      if (gst_structure_get_int (structure, "depth", &depth))
+        audiocontext->bitdepth = depth;
+    } else if (!strcmp (mimetype, "audio/x-alaw")
+        || !strcmp (mimetype, "audio/x-mulaw")) {
+      audiocontext->bitdepth = 8;
+      if (!strcmp (mimetype, "audio/x-alaw"))
+        format = GST_RIFF_WAVE_FORMAT_ALAW;
+      else
+        format = GST_RIFF_WAVE_FORMAT_MULAW;
+
+      block_align = channels;
+      bitrate = block_align * samplerate;
+    }
+    g_assert (format != 0);
 
     codec_priv_size = WAVEFORMATEX_SIZE;
     if (buf)
@@ -1782,32 +1816,55 @@ gst_matroska_mux_subtitle_pad_setcaps (GstPad * pad, GstCaps * caps)
  */
 static GstPad *
 gst_matroska_mux_request_new_pad (GstElement * element,
-    GstPadTemplate * templ, const gchar * pad_name)
+    GstPadTemplate * templ, const gchar * req_name)
 {
   GstElementClass *klass = GST_ELEMENT_GET_CLASS (element);
   GstMatroskaMux *mux = GST_MATROSKA_MUX (element);
   GstMatroskaPad *collect_pad;
   GstPad *newpad = NULL;
   gchar *name = NULL;
+  const gchar *pad_name = NULL;
   GstPadSetCapsFunction setcapsfunc = NULL;
   GstMatroskaTrackContext *context = NULL;
+  gint pad_id;
 
   if (templ == gst_element_class_get_pad_template (klass, "audio_%d")) {
-    name = g_strdup_printf ("audio_%d", mux->num_a_streams++);
+    /* don't mix named and unnamed pads, if the pad already exists we fail when
+     * trying to add it */
+    if (req_name != NULL && sscanf (req_name, "audio_%d", &pad_id) == 1) {
+      pad_name = req_name;
+    } else {
+      name = g_strdup_printf ("audio_%d", mux->num_a_streams++);
+      pad_name = name;
+    }
     setcapsfunc = GST_DEBUG_FUNCPTR (gst_matroska_mux_audio_pad_setcaps);
     context = (GstMatroskaTrackContext *)
         g_new0 (GstMatroskaTrackAudioContext, 1);
     context->type = GST_MATROSKA_TRACK_TYPE_AUDIO;
     context->name = g_strdup ("Audio");
   } else if (templ == gst_element_class_get_pad_template (klass, "video_%d")) {
-    name = g_strdup_printf ("video_%d", mux->num_v_streams++);
+    /* don't mix named and unnamed pads, if the pad already exists we fail when
+     * trying to add it */
+    if (req_name != NULL && sscanf (req_name, "video_%d", &pad_id) == 1) {
+      pad_name = req_name;
+    } else {
+      name = g_strdup_printf ("video_%d", mux->num_v_streams++);
+      pad_name = name;
+    }
     setcapsfunc = GST_DEBUG_FUNCPTR (gst_matroska_mux_video_pad_setcaps);
     context = (GstMatroskaTrackContext *)
         g_new0 (GstMatroskaTrackVideoContext, 1);
     context->type = GST_MATROSKA_TRACK_TYPE_VIDEO;
     context->name = g_strdup ("Video");
   } else if (templ == gst_element_class_get_pad_template (klass, "subtitle_%d")) {
-    name = g_strdup_printf ("subtitle_%d", mux->num_t_streams++);
+    /* don't mix named and unnamed pads, if the pad already exists we fail when
+     * trying to add it */
+    if (req_name != NULL && sscanf (req_name, "subtitle_%d", &pad_id) == 1) {
+      pad_name = req_name;
+    } else {
+      name = g_strdup_printf ("subtitle_%d", mux->num_t_streams++);
+      pad_name = name;
+    }
     setcapsfunc = GST_DEBUG_FUNCPTR (gst_matroska_mux_subtitle_pad_setcaps);
     context = (GstMatroskaTrackContext *)
         g_new0 (GstMatroskaTrackSubtitleContext, 1);
@@ -1818,7 +1875,7 @@ gst_matroska_mux_request_new_pad (GstElement * element,
     return NULL;
   }
 
-  newpad = gst_pad_new_from_template (templ, name);
+  newpad = gst_pad_new_from_template (templ, pad_name);
   g_free (name);
   collect_pad = (GstMatroskaPad *)
       gst_collect_pads_add_pad_full (mux->collect, newpad,
@@ -1842,10 +1899,22 @@ gst_matroska_mux_request_new_pad (GstElement * element,
 
   gst_pad_set_setcaps_function (newpad, setcapsfunc);
   gst_pad_set_active (newpad, TRUE);
-  gst_element_add_pad (element, newpad);
+  if (!gst_element_add_pad (element, newpad))
+    goto pad_add_failed;
+
   mux->num_streams++;
 
+  GST_DEBUG_OBJECT (newpad, "Added new request pad");
+
   return newpad;
+
+  /* ERROR cases */
+pad_add_failed:
+  {
+    GST_WARNING_OBJECT (mux, "Adding the new pad '%s' failed", pad_name);
+    gst_object_unref (newpad);
+    return NULL;
+  }
 }
 
 /**
@@ -2017,9 +2086,9 @@ gst_matroska_mux_start (GstMatroskaMux * mux)
   GTimeVal time = { 0, 0 };
 
   if (!strcmp (mux->doctype, GST_MATROSKA_DOCTYPE_WEBM)) {
-    ebml->caps = gst_caps_from_string ("video/webm");
+    ebml->caps = gst_caps_new_simple ("video/webm", NULL);
   } else {
-    ebml->caps = gst_caps_from_string ("video/x-matroska");
+    ebml->caps = gst_caps_new_simple ("video/x-matroska", NULL);
   }
   /* we start with a EBML header */
   doctype = mux->doctype;
@@ -2116,7 +2185,7 @@ gst_matroska_mux_start (GstMatroskaMux * mux)
   gst_ebml_write_master_finish (ebml, master);
 
   /* lastly, flush the cache */
-  gst_ebml_write_flush_cache (ebml, FALSE);
+  gst_ebml_write_flush_cache (ebml, FALSE, 0);
 }
 
 static void
@@ -2124,7 +2193,7 @@ gst_matroska_mux_write_simple_tag (const GstTagList * list, const gchar * tag,
     gpointer data)
 {
   /* TODO: more sensible tag mappings */
-  struct
+  static const struct
   {
     const gchar *matroska_tagname;
     const gchar *gstreamer_tagname;
@@ -2132,7 +2201,7 @@ gst_matroska_mux_write_simple_tag (const GstTagList * list, const gchar * tag,
   tag_conv[] = {
     {
     GST_MATROSKA_TAG_ID_TITLE, GST_TAG_TITLE}, {
-    GST_MATROSKA_TAG_ID_AUTHOR, GST_TAG_ARTIST}, {
+    GST_MATROSKA_TAG_ID_ARTIST, GST_TAG_ARTIST}, {
     GST_MATROSKA_TAG_ID_ALBUM, GST_TAG_ALBUM}, {
     GST_MATROSKA_TAG_ID_COMMENTS, GST_TAG_COMMENT}, {
     GST_MATROSKA_TAG_ID_BITSPS, GST_TAG_BITRATE}, {
@@ -2225,7 +2294,7 @@ gst_matroska_mux_finish (GstMatroskaMux * mux)
     }
 
     gst_ebml_write_master_finish (ebml, master);
-    gst_ebml_write_flush_cache (ebml, FALSE);
+    gst_ebml_write_flush_cache (ebml, FALSE, GST_CLOCK_TIME_NONE);
   }
 
   /* tags */
@@ -2342,7 +2411,7 @@ gst_matroska_mux_finish (GstMatroskaMux * mux)
  * @mux: #GstMatroskaMux
  * @popped: True if at least one buffer was popped from #GstCollectPads
  *
- * Find a pad with the oldest data 
+ * Find a pad with the oldest data
  * (data from this pad should be written first).
  *
  * Returns: Selected pad.
@@ -2364,8 +2433,29 @@ gst_matroska_mux_best_pad (GstMatroskaMux * mux, gboolean * popped)
       collect_pad->buffer = gst_collect_pads_pop (mux->collect,
           (GstCollectData *) collect_pad);
 
-      if (collect_pad->buffer != NULL)
+      if (collect_pad->buffer != NULL) {
+        GstClockTime time;
+
         *popped = TRUE;
+        /* convert to running time */
+        time = GST_BUFFER_TIMESTAMP (collect_pad->buffer);
+        /* invalid should pass */
+        if (G_LIKELY (GST_CLOCK_TIME_IS_VALID (time))) {
+          time = gst_segment_to_running_time (&collect_pad->collect.segment,
+              GST_FORMAT_TIME, time);
+          if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (time))) {
+            GST_DEBUG_OBJECT (mux, "clipping buffer on pad %s outside segment",
+                GST_PAD_NAME (collect_pad->collect.pad));
+            gst_buffer_unref (collect_pad->buffer);
+            collect_pad->buffer = NULL;
+            return NULL;
+          } else {
+            collect_pad->buffer =
+                gst_buffer_make_metadata_writable (collect_pad->buffer);
+            GST_BUFFER_TIMESTAMP (collect_pad->buffer) = time;
+          }
+        }
+      }
     }
 
     /* if we have a buffer check if it is better then the current best one */
@@ -2389,7 +2479,7 @@ gst_matroska_mux_best_pad (GstMatroskaMux * mux, gboolean * popped)
  * @flags: Buffer flags.
  *
  * Create a buffer containing buffer header.
- * 
+ *
  * Returns: New buffer.
  */
 static GstBuffer *
@@ -2492,21 +2582,22 @@ gst_matroska_mux_stop_streamheader (GstMatroskaMux * mux)
 
   streamheader_buffer = gst_ebml_stop_streamheader (ebml);
   if (!strcmp (mux->doctype, GST_MATROSKA_DOCTYPE_WEBM)) {
-    caps = gst_caps_from_string ("video/webm");
+    caps = gst_caps_new_simple ("video/webm", NULL);
   } else {
-    caps = gst_caps_from_string ("video/x-matroska");
+    caps = gst_caps_new_simple ("video/x-matroska", NULL);
   }
   s = gst_caps_get_structure (caps, 0);
   g_value_init (&streamheader, GST_TYPE_ARRAY);
   g_value_init (&bufval, GST_TYPE_BUFFER);
+  GST_BUFFER_FLAG_SET (streamheader_buffer, GST_BUFFER_FLAG_IN_CAPS);
   gst_value_set_buffer (&bufval, streamheader_buffer);
   gst_value_array_append_value (&streamheader, &bufval);
   g_value_unset (&bufval);
   gst_structure_set_value (s, "streamheader", &streamheader);
   g_value_unset (&streamheader);
-  gst_caps_unref (ebml->caps);
+  gst_caps_replace (&ebml->caps, caps);
   gst_buffer_unref (streamheader_buffer);
-  ebml->caps = caps;
+  gst_caps_unref (caps);
 }
 
 /**
@@ -2591,7 +2682,7 @@ gst_matroska_mux_write_data (GstMatroskaMux * mux, GstMatroskaPad * collect_pad)
       GST_LOG_OBJECT (mux, "cluster timestamp %" G_GUINT64_FORMAT,
           gst_util_uint64_scale (GST_BUFFER_TIMESTAMP (buf), 1,
               mux->time_scale));
-      gst_ebml_write_flush_cache (ebml, TRUE);
+      gst_ebml_write_flush_cache (ebml, TRUE, GST_BUFFER_TIMESTAMP (buf));
       mux->cluster_time = GST_BUFFER_TIMESTAMP (buf);
       gst_ebml_write_uint (ebml, GST_MATROSKA_ID_PREVSIZE,
           mux->prev_cluster_size);
@@ -2604,7 +2695,7 @@ gst_matroska_mux_write_data (GstMatroskaMux * mux, GstMatroskaPad * collect_pad)
     mux->cluster = gst_ebml_write_master_start (ebml, GST_MATROSKA_ID_CLUSTER);
     gst_ebml_write_uint (ebml, GST_MATROSKA_ID_CLUSTERTIMECODE,
         gst_util_uint64_scale (GST_BUFFER_TIMESTAMP (buf), 1, mux->time_scale));
-    gst_ebml_write_flush_cache (ebml, TRUE);
+    gst_ebml_write_flush_cache (ebml, TRUE, GST_BUFFER_TIMESTAMP (buf));
     mux->cluster_time = GST_BUFFER_TIMESTAMP (buf);
   }
 
@@ -2620,9 +2711,10 @@ gst_matroska_mux_write_data (GstMatroskaMux * mux, GstMatroskaPad * collect_pad)
    * the block in the cluster which contains the timestamp, should also work
    * for files with multiple audio tracks.
    */
-  if (is_video_keyframe ||
-      ((collect_pad->track->type == GST_MATROSKA_TRACK_TYPE_AUDIO) &&
-          (mux->num_streams == 1))) {
+  if (!mux->streamable &&
+      (is_video_keyframe ||
+          ((collect_pad->track->type == GST_MATROSKA_TRACK_TYPE_AUDIO) &&
+              (mux->num_streams == 1)))) {
     gint last_idx = -1;
 
     if (mux->min_index_interval != 0) {
@@ -2682,7 +2774,7 @@ gst_matroska_mux_write_data (GstMatroskaMux * mux, GstMatroskaPad * collect_pad)
     gst_ebml_write_buffer_header (ebml, GST_MATROSKA_ID_SIMPLEBLOCK,
         GST_BUFFER_SIZE (buf) + GST_BUFFER_SIZE (hdr));
     gst_ebml_write_buffer (ebml, hdr);
-    gst_ebml_write_flush_cache (ebml, FALSE);
+    gst_ebml_write_flush_cache (ebml, FALSE, GST_BUFFER_TIMESTAMP (buf));
     gst_ebml_write_buffer (ebml, buf);
 
     return gst_ebml_last_write_result (ebml);
@@ -2702,8 +2794,9 @@ gst_matroska_mux_write_data (GstMatroskaMux * mux, GstMatroskaPad * collect_pad)
         GST_BUFFER_SIZE (buf) + GST_BUFFER_SIZE (hdr));
     gst_ebml_write_buffer (ebml, hdr);
     gst_ebml_write_master_finish_full (ebml, blockgroup, GST_BUFFER_SIZE (buf));
-    gst_ebml_write_flush_cache (ebml, FALSE);
+    gst_ebml_write_flush_cache (ebml, FALSE, GST_BUFFER_TIMESTAMP (buf));
     gst_ebml_write_buffer (ebml, buf);
+
     return gst_ebml_last_write_result (ebml);
   }
 }
@@ -2725,7 +2818,7 @@ gst_matroska_mux_collected (GstCollectPads * pads, gpointer user_data)
   GstEbmlWrite *ebml = mux->ebml_write;
   GstMatroskaPad *best;
   gboolean popped;
-  GstFlowReturn ret;
+  GstFlowReturn ret = GST_FLOW_OK;
 
   GST_DEBUG_OBJECT (mux, "Collected pads");
 
@@ -2749,6 +2842,9 @@ gst_matroska_mux_collected (GstCollectPads * pads, gpointer user_data)
 
     /* if there is no best pad, we have reached EOS */
     if (best == NULL) {
+      /* buffer popped, but none returned means it was clipped */
+      if (popped)
+        break;
       GST_DEBUG_OBJECT (mux, "No best pad finishing...");
       if (!mux->streamable) {
         gst_matroska_mux_finish (mux);

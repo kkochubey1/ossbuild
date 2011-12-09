@@ -70,7 +70,7 @@ gst_rtp_g722_pay_base_init (gpointer klass)
       gst_static_pad_template_get (&gst_rtp_g722_pay_sink_template));
 
   gst_element_class_set_details_simple (element_class, "RTP audio payloader",
-      "Codec/Payloader/Network",
+      "Codec/Payloader/Network/RTP",
       "Payload-encode Raw audio into RTP packets (RFC 3551)",
       "Wim Taymans <wim.taymans@gmail.com>");
 }
@@ -190,10 +190,6 @@ gst_rtp_g722_pay_getcaps (GstBaseRTPPayload * rtppayload, GstPad * pad)
 
   if (otherpadcaps) {
     if (!gst_caps_is_empty (otherpadcaps)) {
-      GstStructure *structure;
-
-      structure = gst_caps_get_structure (otherpadcaps, 0);
-
       gst_caps_set_simple (caps, "channels", G_TYPE_INT, 1, NULL);
       gst_caps_set_simple (caps, "rate", G_TYPE_INT, 16000, NULL);
     }
@@ -206,5 +202,5 @@ gboolean
 gst_rtp_g722_pay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpg722pay",
-      GST_RANK_NONE, GST_TYPE_RTP_G722_PAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_G722_PAY);
 }

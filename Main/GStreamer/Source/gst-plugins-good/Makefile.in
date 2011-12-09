@@ -76,6 +76,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
+	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -177,6 +178,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BZ2_LIBS = @BZ2_LIBS@
 CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_GOBJECT_CFLAGS = @CAIRO_GOBJECT_CFLAGS@
+CAIRO_GOBJECT_LIBS = @CAIRO_GOBJECT_LIBS@
 CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCAS = @CCAS@
@@ -274,6 +277,8 @@ GST_TOOLS_DIR = @GST_TOOLS_DIR@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+GTK_X11_CFLAGS = @GTK_X11_CFLAGS@
+GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
@@ -296,6 +301,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+JACK_0_120_1_CFLAGS = @JACK_0_120_1_CFLAGS@
+JACK_0_120_1_LIBS = @JACK_0_120_1_LIBS@
+JACK_1_9_7_CFLAGS = @JACK_1_9_7_CFLAGS@
+JACK_1_9_7_LIBS = @JACK_1_9_7_LIBS@
+JACK_CFLAGS = @JACK_CFLAGS@
+JACK_LIBS = @JACK_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -324,6 +335,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -422,6 +434,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -456,7 +469,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -529,9 +541,15 @@ AUTOMAKE_OPTIONS = dist-bzip2
 CRUFT_FILES = \
 	$(top_builddir)/common/shave \
 	$(top_builddir)/common/shave-libtool \
+	$(top_builddir)/gst/qtdemux/.libs/*.{so,dll,DLL,dylib} \
+	$(top_builddir)/gst/quicktime/.libs/*.{so,dll,DLL,dylib} \
 	$(top_builddir)/gst/videofilter/.libs/*videoflip.{so,dll,DLL,dylib} \
 	$(top_builddir)/gst/videofilter/.libs/*videobalance.{so,dll,DLL,dylib} \
 	$(top_builddir)/gst/videofilter/.libs/*gamma.{so,dll,DLL,dylib}
+
+CRUFT_DIRS = \
+	$(top_srcdir)/gst/qtdemux \
+	$(top_srcdir)/gst/quicktime
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -1164,8 +1182,9 @@ lcov:
 @GST_GCOV_ENABLED_TRUE@lcov-report:
 @GST_GCOV_ENABLED_TRUE@	mkdir lcov
 @GST_GCOV_ENABLED_TRUE@	lcov --compat-libtool --directory . --capture --output-file lcov/lcov.info
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d: -f1 > lcov/remove
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep "tests/check/" | cut -d: -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d\| -f1 > lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "tests/check/" | cut -d\| -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "docs/plugins/" | cut -d\| -f1 >> lcov/remove
 @GST_GCOV_ENABLED_TRUE@	lcov -r lcov/lcov.info `cat lcov/remove` > lcov/lcov.cleaned.info
 @GST_GCOV_ENABLED_TRUE@	rm lcov/remove
 @GST_GCOV_ENABLED_TRUE@	mv lcov/lcov.cleaned.info lcov/lcov.info

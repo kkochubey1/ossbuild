@@ -72,7 +72,7 @@ gst_rtp_mpv_depay_base_init (gpointer klass)
       gst_static_pad_template_get (&gst_rtp_mpv_depay_sink_template));
 
   gst_element_class_set_details_simple (element_class,
-      "RTP MPEG video depayloader", "Codec/Depayloader/Network",
+      "RTP MPEG video depayloader", "Codec/Depayloader/Network/RTP",
       "Extracts MPEG video from RTP packets (RFC 2250)",
       "Wim Taymans <wim.taymans@gmail.com>");
 }
@@ -176,9 +176,11 @@ gst_rtp_mpv_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
 
     outbuf = gst_rtp_buffer_get_payload_subbuffer (buf, payload_header, -1);
 
-    GST_DEBUG_OBJECT (rtpmpvdepay,
-        "gst_rtp_mpv_depay_chain: pushing buffer of size %d",
-        GST_BUFFER_SIZE (outbuf));
+    if (outbuf) {
+      GST_DEBUG_OBJECT (rtpmpvdepay,
+          "gst_rtp_mpv_depay_chain: pushing buffer of size %d",
+          GST_BUFFER_SIZE (outbuf));
+    }
 
     return outbuf;
   }
@@ -198,5 +200,5 @@ gboolean
 gst_rtp_mpv_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpmpvdepay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_MPV_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_MPV_DEPAY);
 }

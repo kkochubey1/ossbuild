@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -105,10 +105,26 @@
       <Project>{b9551c49-79e6-493b-8d1f-653faec7adcd}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\audioparsers.vcproj">
+      <Name>gstaudioparsers</Name>
+      <Project>{f67dde81-bb23-4fc9-9d7d-c312fe857f15}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\imagefreeze.vcproj">
       <Name>gstimagefreeze</Name>
       <Project>{c64101b3-2e61-4033-a16c-d4a8676b9a54}</Project>
       <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\isomp4.vcproj">
+      <Name>gstisomp4</Name>
+      <Project>{2f33f9ed-c725-451a-bc3f-304d56ab8e6a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
@@ -193,13 +209,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstgamma.vcproj">
-      <Name>gstgamma</Name>
-      <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a34}</Project>
-      <Private>True</Private>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgsticydemux.vcproj">
       <Name>gsticydemux</Name>
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a16}</Project>
@@ -252,11 +261,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstqtdemux.vcproj">
-      <Name>gstqtdemux</Name>
-      <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a25}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstreplaygain.vcproj">
       <Name>gstreplaygain</Name>
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a26}</Project>
@@ -282,13 +286,6 @@
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a31}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstvideobalance.vcproj">
-      <Name>gstvideobalance</Name>
-      <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a39}</Project>
-      <Private>True</Private>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstvideobox.vcproj">
       <Name>gstvideobox</Name>
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a32}</Project>
@@ -298,13 +295,6 @@
       <Name>gstvideocrop</Name>
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a33}</Project>
       <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstvideoflip.vcproj">
-      <Name>gstvideoflip</Name>
-      <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a40}</Project>
-      <Private>True</Private>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstvideomixer.vcproj">
       <Name>gstvideomixer</Name>
@@ -346,6 +336,14 @@
       <Name>gstshapewipe</Name>
       <Project>{0bb26e1d-c0b4-469c-8097-91ab95b909f4}</Project>
       <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\videofilter.vcproj">
+      <Name>gstvideofilter</Name>
+      <Project>{8fe6f590-13c6-4458-8112-648775643ba4}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>

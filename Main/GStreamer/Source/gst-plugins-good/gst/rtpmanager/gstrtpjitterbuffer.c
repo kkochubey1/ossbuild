@@ -235,6 +235,7 @@ static GstPad *gst_rtp_jitter_buffer_request_new_pad (GstElement * element,
     GstPadTemplate * templ, const gchar * name);
 static void gst_rtp_jitter_buffer_release_pad (GstElement * element,
     GstPad * pad);
+static GstClock *gst_rtp_jitter_buffer_provide_clock (GstElement * element);
 
 /* pad overrides */
 static GstCaps *gst_rtp_jitter_buffer_getcaps (GstPad * pad);
@@ -439,6 +440,8 @@ gst_rtp_jitter_buffer_class_init (GstRtpJitterBufferClass * klass)
       GST_DEBUG_FUNCPTR (gst_rtp_jitter_buffer_request_new_pad);
   gstelement_class->release_pad =
       GST_DEBUG_FUNCPTR (gst_rtp_jitter_buffer_release_pad);
+  gstelement_class->provide_clock =
+      GST_DEBUG_FUNCPTR (gst_rtp_jitter_buffer_provide_clock);
 
   klass->clear_pt_map = GST_DEBUG_FUNCPTR (gst_rtp_jitter_buffer_clear_pt_map);
   klass->set_active = GST_DEBUG_FUNCPTR (gst_rtp_jitter_buffer_set_active);
@@ -649,6 +652,12 @@ wrong_pad:
     g_warning ("gstjitterbuffer: asked to release an unknown pad");
     return;
   }
+}
+
+static GstClock *
+gst_rtp_jitter_buffer_provide_clock (GstElement * element)
+{
+  return gst_system_clock_obtain ();
 }
 
 static void
@@ -999,6 +1008,10 @@ gst_rtp_jitter_buffer_src_event (GstPad * pad, GstEvent * event)
   GstRtpJitterBufferPrivate *priv;
 
   jitterbuffer = GST_RTP_JITTER_BUFFER (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (jitterbuffer == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
   priv = jitterbuffer->priv;
 
   GST_DEBUG_OBJECT (jitterbuffer, "received %s", GST_EVENT_TYPE_NAME (event));
@@ -1040,6 +1053,10 @@ gst_rtp_jitter_buffer_sink_event (GstPad * pad, GstEvent * event)
   GstRtpJitterBufferPrivate *priv;
 
   jitterbuffer = GST_RTP_JITTER_BUFFER (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (jitterbuffer == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
   priv = jitterbuffer->priv;
 
   GST_DEBUG_OBJECT (jitterbuffer, "received %s", GST_EVENT_TYPE_NAME (event));
@@ -1118,6 +1135,7 @@ newseg_wrong_format:
   {
     GST_DEBUG_OBJECT (jitterbuffer, "received non TIME newsegment");
     ret = FALSE;
+    gst_event_unref (event);
     goto done;
   }
 }
@@ -1126,10 +1144,8 @@ static gboolean
 gst_rtp_jitter_buffer_sink_rtcp_event (GstPad * pad, GstEvent * event)
 {
   GstRtpJitterBuffer *jitterbuffer;
-  GstRtpJitterBufferPrivate *priv;
 
   jitterbuffer = GST_RTP_JITTER_BUFFER (gst_pad_get_parent (pad));
-  priv = jitterbuffer->priv;
 
   GST_DEBUG_OBJECT (jitterbuffer, "received %s", GST_EVENT_TYPE_NAME (event));
 
@@ -1205,6 +1221,22 @@ parse_failed:
   {
     GST_DEBUG_OBJECT (jitterbuffer, "parse failed");
     return GST_FLOW_ERROR;
+  }
+}
+
+/* call with jbuf lock held */
+static void
+check_buffering_percent (GstRtpJitterBuffer * jitterbuffer, gint * percent)
+{
+  GstRtpJitterBufferPrivate *priv = jitterbuffer->priv;
+
+  /* too short a stream, or too close to EOS will never really fill buffer */
+  if (*percent != -1 && priv->npt_stop != -1 &&
+      priv->npt_stop - priv->npt_start <=
+      rtp_jitter_buffer_get_delay (priv->jbuf)) {
+    GST_DEBUG_OBJECT (jitterbuffer, "short stream; faking full buffer");
+    rtp_jitter_buffer_set_buffering (priv->jbuf, FALSE);
+    *percent = 100;
   }
 }
 
@@ -1381,6 +1413,8 @@ gst_rtp_jitter_buffer_chain (GstPad * pad, GstBuffer * buffer)
 
   GST_DEBUG_OBJECT (jitterbuffer, "Pushed packet #%d, now %d packets, tail: %d",
       seqnum, rtp_jitter_buffer_num_packets (priv->jbuf), tail);
+
+  check_buffering_percent (jitterbuffer, &percent);
 
 finished:
   JBUF_UNLOCK (priv);
@@ -1812,6 +1846,8 @@ push_buffer:
   /* when we get here we are ready to pop and push the buffer */
   outbuf = rtp_jitter_buffer_pop (priv->jbuf, &percent);
 
+  check_buffering_percent (jitterbuffer, &percent);
+
   if (G_UNLIKELY (discont || priv->discont)) {
     /* set DISCONT flag when we missed a packet. We pushed the buffer writable
      * into the jitterbuffer so we can modify now. */
@@ -1829,17 +1865,25 @@ push_buffer:
 
     elapsed = compute_elapsed (jitterbuffer, outbuf);
 
-    if (elapsed > priv->last_elapsed) {
+    if (elapsed > priv->last_elapsed || !priv->last_elapsed) {
       guint64 left;
 
       priv->last_elapsed = elapsed;
 
       left = priv->npt_stop - priv->npt_start;
+      GST_LOG_OBJECT (jitterbuffer, "left %" GST_TIME_FORMAT,
+          GST_TIME_ARGS (left));
 
       if (elapsed > 0)
         estimated = gst_util_uint64_scale (out_time, left, elapsed);
-      else
-        estimated = -1;
+      else {
+        /* if there is almost nothing left,
+         * we may never advance enough to end up in the above case */
+        if (left < GST_SECOND)
+          estimated = GST_SECOND;
+        else
+          estimated = -1;
+      }
 
       GST_LOG_OBJECT (jitterbuffer, "elapsed %" GST_TIME_FORMAT ", estimated %"
           GST_TIME_FORMAT, GST_TIME_ARGS (elapsed), GST_TIME_ARGS (estimated));
@@ -2038,6 +2082,8 @@ gst_rtp_jitter_buffer_query (GstPad * pad, GstQuery * query)
   gboolean res = FALSE;
 
   jitterbuffer = GST_RTP_JITTER_BUFFER (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (jitterbuffer == NULL))
+    return FALSE;
   priv = jitterbuffer->priv;
 
   switch (GST_QUERY_TYPE (query)) {
@@ -2074,6 +2120,35 @@ gst_rtp_jitter_buffer_query (GstPad * pad, GstQuery * query)
             GST_TIME_ARGS (min_latency), GST_TIME_ARGS (max_latency));
 
         gst_query_set_latency (query, TRUE, min_latency, max_latency);
+      }
+      break;
+    }
+    case GST_QUERY_POSITION:
+    {
+      GstClockTime start, last_out;
+      GstFormat fmt;
+
+      gst_query_parse_position (query, &fmt, NULL);
+      if (fmt != GST_FORMAT_TIME) {
+        res = gst_pad_query_default (pad, query);
+        break;
+      }
+
+      JBUF_LOCK (priv);
+      start = priv->npt_start;
+      last_out = priv->last_out_time;
+      JBUF_UNLOCK (priv);
+
+      GST_DEBUG_OBJECT (jitterbuffer, "npt start %" GST_TIME_FORMAT
+          ", last out %" GST_TIME_FORMAT, GST_TIME_ARGS (start),
+          GST_TIME_ARGS (last_out));
+
+      if (GST_CLOCK_TIME_IS_VALID (start) && GST_CLOCK_TIME_IS_VALID (last_out)) {
+        /* bring 0-based outgoing time to stream time */
+        gst_query_set_position (query, GST_FORMAT_TIME, start + last_out);
+        res = TRUE;
+      } else {
+        res = gst_pad_query_default (pad, query);
       }
       break;
     }

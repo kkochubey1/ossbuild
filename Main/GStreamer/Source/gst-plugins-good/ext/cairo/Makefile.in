@@ -15,6 +15,14 @@
 
 @SET_MAKE@
 
+# these are the variables your Makefile.am should set
+# the example is based on the colorbalance interface
+
+#glib_enum_headers=$(colorbalance_headers)
+#glib_enum_define=GST_COLOR_BALANCE
+#glib_gen_prefix=gst_color_balance
+#glib_gen_basename=colorbalance
+
 
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -35,9 +43,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+DIST_COMMON = $(am__noinst_HEADERS_DIST) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(top_srcdir)/common/gst-glib-gen.mak
 subdir = ext/cairo
-DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
@@ -58,6 +66,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
+	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -107,12 +116,20 @@ LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgstcairo_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am__libgstcairo_la_SOURCES_DIST = gstcairo.c gsttimeoverlay.c \
+	gsttextoverlay.c gstcairorender.c gstcairooverlay.c
+@USE_CAIRO_GOBJECT_TRUE@am__objects_1 =  \
+@USE_CAIRO_GOBJECT_TRUE@	libgstcairo_la-gstcairooverlay.lo
 am_libgstcairo_la_OBJECTS = libgstcairo_la-gstcairo.lo \
 	libgstcairo_la-gsttimeoverlay.lo \
 	libgstcairo_la-gsttextoverlay.lo \
-	libgstcairo_la-gstcairorender.lo
-libgstcairo_la_OBJECTS = $(am_libgstcairo_la_OBJECTS)
+	libgstcairo_la-gstcairorender.lo $(am__objects_1)
+@USE_CAIRO_GOBJECT_TRUE@am__objects_2 =  \
+@USE_CAIRO_GOBJECT_TRUE@	libgstcairo_la-gstcairo-marshal.lo
+nodist_libgstcairo_la_OBJECTS = $(am__objects_2)
+libgstcairo_la_OBJECTS = $(am_libgstcairo_la_OBJECTS) \
+	$(nodist_libgstcairo_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -146,8 +163,10 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libgstcairo_la_SOURCES)
-DIST_SOURCES = $(libgstcairo_la_SOURCES)
+SOURCES = $(libgstcairo_la_SOURCES) $(nodist_libgstcairo_la_SOURCES)
+DIST_SOURCES = $(am__libgstcairo_la_SOURCES_DIST)
+am__noinst_HEADERS_DIST = gsttimeoverlay.h gsttextoverlay.h \
+	gstcairorender.h gstcairooverlay.h
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -169,6 +188,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BZ2_LIBS = @BZ2_LIBS@
 CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_GOBJECT_CFLAGS = @CAIRO_GOBJECT_CFLAGS@
+CAIRO_GOBJECT_LIBS = @CAIRO_GOBJECT_LIBS@
 CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCAS = @CCAS@
@@ -266,6 +287,8 @@ GST_TOOLS_DIR = @GST_TOOLS_DIR@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+GTK_X11_CFLAGS = @GTK_X11_CFLAGS@
+GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
@@ -288,6 +311,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+JACK_0_120_1_CFLAGS = @JACK_0_120_1_CFLAGS@
+JACK_0_120_1_LIBS = @JACK_0_120_1_LIBS@
+JACK_1_9_7_CFLAGS = @JACK_1_9_7_CFLAGS@
+JACK_1_9_7_LIBS = @JACK_1_9_7_LIBS@
+JACK_CFLAGS = @JACK_CFLAGS@
+JACK_LIBS = @JACK_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -316,6 +345,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -414,6 +444,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -448,7 +479,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -470,29 +500,50 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstcairo.la
-noinst_HEADERS = gsttimeoverlay.h gsttextoverlay.h gstcairorender.h
+@USE_CAIRO_GOBJECT_TRUE@glib_enum_define = GST_CAIRO
+@USE_CAIRO_GOBJECT_TRUE@glib_gen_prefix = gst_cairo
+@USE_CAIRO_GOBJECT_TRUE@glib_gen_basename = gstcairo
+@USE_CAIRO_GOBJECT_TRUE@enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
+@USE_CAIRO_GOBJECT_TRUE@built_sources = gstcairo-marshal.c
+@USE_CAIRO_GOBJECT_TRUE@built_headers = gstcairo-marshal.h
+@USE_CAIRO_GOBJECT_TRUE@BUILT_SOURCES = $(built_sources) $(built_headers)
+@USE_CAIRO_GOBJECT_TRUE@gstcairo_gobject_dep_sources = gstcairooverlay.c
+@USE_CAIRO_GOBJECT_TRUE@gstcairo_gobject_dep_headers = gstcairooverlay.h
+@USE_CAIRO_GOBJECT_TRUE@CLEANFILES = $(BUILT_SOURCES)
+noinst_HEADERS = \
+	gsttimeoverlay.h \
+	gsttextoverlay.h \
+	gstcairorender.h \
+	$(gstcairo_gobject_dep_headers)
+
 libgstcairo_la_SOURCES = \
 	gstcairo.c \
 	gsttimeoverlay.c \
 	gsttextoverlay.c \
-	gstcairorender.c
+	gstcairorender.c \
+	$(gstcairo_gobject_dep_sources)
+
+nodist_libgstcairo_la_SOURCES = \
+    $(built_sources)
 
 libgstcairo_la_CFLAGS = \
-        $(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(GST_BASE_CFLAGS) \
-	$(GST_CFLAGS) $(CAIRO_CFLAGS)
+	$(GST_CFLAGS) $(CAIRO_CFLAGS) $(CAIRO_GOBJECT_CFLAGS)
 
 libgstcairo_la_LIBADD = \
-  $(GST_BASE_LIBS) \
-  $(GST_LIBS) $(CAIRO_LIBS) $(LIBM)
+	$(GST_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) \
+	$(GST_LIBS) $(CAIRO_LIBS) $(CAIRO_GOBJECT_LIBS) $(LIBM)
 
 libgstcairo_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstcairo_la_LIBTOOLFLAGS = --tag=disable-static
-all: all-am
+EXTRA_DIST = gstcairo-marshal.list
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/gst-glib-gen.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -562,7 +613,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gstcairo-marshal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gstcairo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gstcairooverlay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gstcairorender.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gsttextoverlay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcairo_la-gsttimeoverlay.Plo@am__quote@
@@ -622,6 +675,22 @@ libgstcairo_la-gstcairorender.lo: gstcairorender.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcairorender.c' object='libgstcairo_la-gstcairorender.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcairo_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcairo_la_CFLAGS) $(CFLAGS) -c -o libgstcairo_la-gstcairorender.lo `test -f 'gstcairorender.c' || echo '$(srcdir)/'`gstcairorender.c
+
+libgstcairo_la-gstcairooverlay.lo: gstcairooverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcairo_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcairo_la_CFLAGS) $(CFLAGS) -MT libgstcairo_la-gstcairooverlay.lo -MD -MP -MF $(DEPDIR)/libgstcairo_la-gstcairooverlay.Tpo -c -o libgstcairo_la-gstcairooverlay.lo `test -f 'gstcairooverlay.c' || echo '$(srcdir)/'`gstcairooverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcairo_la-gstcairooverlay.Tpo $(DEPDIR)/libgstcairo_la-gstcairooverlay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcairooverlay.c' object='libgstcairo_la-gstcairooverlay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcairo_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcairo_la_CFLAGS) $(CFLAGS) -c -o libgstcairo_la-gstcairooverlay.lo `test -f 'gstcairooverlay.c' || echo '$(srcdir)/'`gstcairooverlay.c
+
+libgstcairo_la-gstcairo-marshal.lo: gstcairo-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcairo_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcairo_la_CFLAGS) $(CFLAGS) -MT libgstcairo_la-gstcairo-marshal.lo -MD -MP -MF $(DEPDIR)/libgstcairo_la-gstcairo-marshal.Tpo -c -o libgstcairo_la-gstcairo-marshal.lo `test -f 'gstcairo-marshal.c' || echo '$(srcdir)/'`gstcairo-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcairo_la-gstcairo-marshal.Tpo $(DEPDIR)/libgstcairo_la-gstcairo-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcairo-marshal.c' object='libgstcairo_la-gstcairo-marshal.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcairo_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcairo_la_CFLAGS) $(CFLAGS) -c -o libgstcairo_la-gstcairo-marshal.lo `test -f 'gstcairo-marshal.c' || echo '$(srcdir)/'`gstcairo-marshal.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -712,13 +781,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -735,6 +806,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -743,6 +815,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-pluginLTLIBRARIES \
@@ -814,7 +887,7 @@ ps-am:
 
 uninstall-am: uninstall-pluginLTLIBRARIES
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libtool clean-pluginLTLIBRARIES ctags distclean \
@@ -830,6 +903,42 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
+
+# these are all the rules generating the relevant files
+@USE_CAIRO_GOBJECT_TRUE@$(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
+@USE_CAIRO_GOBJECT_TRUE@	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
+@USE_CAIRO_GOBJECT_TRUE@	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
+
+@USE_CAIRO_GOBJECT_TRUE@$(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
+@USE_CAIRO_GOBJECT_TRUE@	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+@USE_CAIRO_GOBJECT_TRUE@	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
+@USE_CAIRO_GOBJECT_TRUE@	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
+
+@USE_CAIRO_GOBJECT_TRUE@$(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
+@USE_CAIRO_GOBJECT_TRUE@	$(AM_V_GEN)glib-mkenums \
+@USE_CAIRO_GOBJECT_TRUE@	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
+@USE_CAIRO_GOBJECT_TRUE@	--fprod "\n/* enumerations from \"@filename@\" */\n" \
+@USE_CAIRO_GOBJECT_TRUE@	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
+@USE_CAIRO_GOBJECT_TRUE@	--ftail "G_END_DECLS\n\n#endif /* __$(glib_enum_define)_ENUM_TYPES_H__ */" \
+@USE_CAIRO_GOBJECT_TRUE@	$^ > $@
+
+@USE_CAIRO_GOBJECT_TRUE@$(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
+@USE_CAIRO_GOBJECT_TRUE@	@if test "x$(glib_enum_headers)" = "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
+@USE_CAIRO_GOBJECT_TRUE@	$(AM_V_GEN)glib-mkenums \
+@USE_CAIRO_GOBJECT_TRUE@	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
+@USE_CAIRO_GOBJECT_TRUE@	--fprod "\n/* enumerations from \"@filename@\" */" \
+@USE_CAIRO_GOBJECT_TRUE@	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
+@USE_CAIRO_GOBJECT_TRUE@	--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+@USE_CAIRO_GOBJECT_TRUE@	--vtail "      { 0, NULL, NULL }\n    };\n    GType g_define_type_id = g_@type@_register_static (\"@EnumName@\", values);\n    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);\n  }\n  return g_define_type_id__volatile;\n}\n" \
+@USE_CAIRO_GOBJECT_TRUE@	$^ > $@
+
+# a hack rule to make sure .Plo files exist because they get include'd
+# from Makefile's
+@USE_CAIRO_GOBJECT_TRUE@.deps/%-marshal.Plo:
+@USE_CAIRO_GOBJECT_TRUE@	@touch $@
+
+@USE_CAIRO_GOBJECT_TRUE@.deps/%-enumtypes.Plo:
+@USE_CAIRO_GOBJECT_TRUE@	@touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

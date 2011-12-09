@@ -100,7 +100,7 @@ gst_rtp_g726_depay_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_rtp_g726_depay_sink_template));
   gst_element_class_set_details_simple (element_class, "RTP G.726 depayloader",
-      "Codec/Depayloader/Network",
+      "Codec/Depayloader/Network/RTP",
       "Extracts G.726 audio from RTP packets",
       "Axis Communications <dev-gstreamer@axis.com>");
 }
@@ -222,6 +222,8 @@ gst_rtp_g726_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   if (depay->aal2 || depay->force_aal2) {
     /* AAL2, we can just copy the bytes */
     outbuf = gst_rtp_buffer_get_payload_buffer (buf);
+    if (!outbuf)
+      goto bad_len;
   } else {
     guint8 *in, *out, tmp;
     guint len;
@@ -239,6 +241,10 @@ gst_rtp_g726_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
       outbuf = gst_rtp_buffer_get_payload_buffer (copy);
       gst_buffer_unref (copy);
     }
+
+    if (!outbuf)
+      goto bad_len;
+
     out = GST_BUFFER_DATA (outbuf);
 
     /* we need to reshuffle the bytes, input is always of the form
@@ -335,6 +341,9 @@ gst_rtp_g726_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   }
 
   return outbuf;
+
+bad_len:
+  return NULL;
 }
 
 static void
@@ -377,5 +386,5 @@ gboolean
 gst_rtp_g726_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpg726depay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_G726_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_G726_DEPAY);
 }

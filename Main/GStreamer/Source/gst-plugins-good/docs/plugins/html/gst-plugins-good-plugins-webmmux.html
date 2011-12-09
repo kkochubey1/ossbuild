@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-wavparse.html" title="wavparse">
 <link rel="next" href="gst-plugins-good-plugins-ximagesrc.html" title="ximagesrc">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-good-plugins-webmmux.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
 </td></tr>
 </table>
-<div class="refentry" title="webmmux">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-webmmux"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,12 +39,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-webmmux.synopsis"></a><h2>Synopsis</h2>
-<a name="GstWebMMux"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-webmmux.html#GstWebMMux-struct" title="GstWebMMux">GstWebMMux</a>;
+<a name="GstWebMMux"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-good-plugins-webmmux.html#GstWebMMux-struct" title="struct GstWebMMux">GstWebMMux</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-webmmux.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -54,19 +54,21 @@
                      +----GstWebMMux
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-webmmux.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstWebMMux implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagSetter.html">GstTagSetter</a>.</p>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-webmmux.description"></a><h2>Description</h2>
 <p>
 webmmux muxes VP8 video and Vorbis audio streams into a WebM file.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id659827"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp22894208"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -75,10 +77,10 @@ webmmux muxes VP8 video and Vorbis audio streams into a WebM file.
 2
 3
 4</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch<span class="symbol">-</span><span class="number">0.10</span> webmmux name<span class="symbol">=</span>mux <span class="symbol">!</span> filesink location<span class="symbol">=</span>newfile<span class="symbol">.</span>webm         \
-  uridecodebin uri<span class="symbol">=</span>file<span class="symbol">:</span><span class="gtkdoc slc">///path/to/somefile.ogv name=demux                \</span>
-  demux<span class="symbol">. !</span> ffmpegcolorspace <span class="symbol">!</span> vp8enc <span class="symbol">!</span> queue <span class="symbol">!</span> mux<span class="symbol">.</span>video_0    \
-  demux<span class="symbol">. !</span> progressreport <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audiorate <span class="symbol">!</span> vorbisenc <span class="symbol">!</span> queue <span class="symbol">!</span> mux<span class="symbol">.</span>audio_0</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch<span class="gtkdoc opt">-</span><span class="number">0.10</span> webmmux name<span class="gtkdoc opt">=</span>mux <span class="gtkdoc opt">!</span> filesink location<span class="gtkdoc opt">=</span>newfile<span class="gtkdoc opt">.</span>webm         \
+  uridecodebin uri<span class="gtkdoc opt">=</span>file<span class="gtkdoc opt">:</span><span class="gtkdoc slc">///path/to/somefile.ogv name=demux                \</span>
+  demux<span class="gtkdoc opt">. !</span> ffmpegcolorspace <span class="gtkdoc opt">!</span> vp8enc <span class="gtkdoc opt">!</span> queue <span class="gtkdoc opt">!</span> mux<span class="gtkdoc opt">.</span>video_0    \
+  demux<span class="gtkdoc opt">. !</span> progressreport <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audiorate <span class="gtkdoc opt">!</span> vorbisenc <span class="gtkdoc opt">!</span> queue <span class="gtkdoc opt">!</span> mux<span class="gtkdoc opt">.</span>audio_0</pre></td>
       </tr>
     </tbody>
   </table>
@@ -91,21 +93,117 @@ webmmux muxes VP8 video and Vorbis audio streams into a WebM file.
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch<span class="symbol">-</span><span class="number">0.10</span> webmmux name<span class="symbol">=</span>mux <span class="symbol">!</span> filesink location<span class="symbol">=</span>test<span class="symbol">.</span>webm            \
-  videotestsrc num<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">250</span> <span class="symbol">!</span> video<span class="symbol">/</span>x<span class="symbol">-</span>raw<span class="symbol">-</span>yuv<span class="symbol">,</span>framerate<span class="symbol">=</span><span class="number">25</span><span class="symbol">/</span><span class="number">1</span> <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> vp8enc <span class="symbol">!</span> queue <span class="symbol">!</span> mux<span class="symbol">.</span>video_0 \
-  audiotestsrc samplesperbuffer<span class="symbol">=</span><span class="number">44100</span> num<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">10</span> <span class="symbol">!</span> audio<span class="symbol">/</span>x<span class="symbol">-</span>raw<span class="symbol">-</span><span class="gtkdoc kwb">float</span><span class="symbol">,</span>rate<span class="symbol">=</span><span class="number">44100</span> <span class="symbol">!</span> vorbisenc <span class="symbol">!</span> queue <span class="symbol">!</span> mux<span class="symbol">.</span>audio_0</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch<span class="gtkdoc opt">-</span><span class="number">0.10</span> webmmux name<span class="gtkdoc opt">=</span>mux <span class="gtkdoc opt">!</span> filesink location<span class="gtkdoc opt">=</span>test<span class="gtkdoc opt">.</span>webm            \
+  videotestsrc num<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">250</span> <span class="gtkdoc opt">!</span> video<span class="gtkdoc opt">/</span>x<span class="gtkdoc opt">-</span>raw<span class="gtkdoc opt">-</span>yuv<span class="gtkdoc opt">,</span>framerate<span class="gtkdoc opt">=</span><span class="number">25</span><span class="gtkdoc opt">/</span><span class="number">1</span> <span class="gtkdoc opt">!</span> ffmpegcolorspace <span class="gtkdoc opt">!</span> vp8enc <span class="gtkdoc opt">!</span> queue <span class="gtkdoc opt">!</span> mux<span class="gtkdoc opt">.</span>video_0 \
+  audiotestsrc samplesperbuffer<span class="gtkdoc opt">=</span><span class="number">44100</span> num<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">10</span> <span class="gtkdoc opt">!</span> audio<span class="gtkdoc opt">/</span>x<span class="gtkdoc opt">-</span>raw<span class="gtkdoc opt">-</span><span class="gtkdoc kwb">float</span><span class="gtkdoc opt">,</span>rate<span class="gtkdoc opt">=</span><span class="number">44100</span> <span class="gtkdoc opt">!</span> vorbisenc <span class="gtkdoc opt">!</span> queue <span class="gtkdoc opt">!</span> mux<span class="gtkdoc opt">.</span>audio_0</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  This pipeline muxes a test video and a sine wave into a WebM file.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp24680080"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-matroska.html#plugin-matroska">matroska</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>GStreamer maintainers &lt;gstreamer-devel@lists.sourceforge.net&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Codec/Muxer</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp24849488"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>audio_%d</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>request</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-vorbis, channels=(int)[ 1, 2147483647 ], rate=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>video_%d</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>request</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/x-vp8, width=(int)[ 16, 4096 ], height=(int)[ 16, 4096 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/webm</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-webmmux.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstWebMMux">
-<a name="GstWebMMux-struct"></a><h3>GstWebMMux</h3>
-<pre class="programlisting">typedef struct _GstWebMMux GstWebMMux;</pre>
+<div class="refsect2">
+<a name="GstWebMMux-struct"></a><h3>struct GstWebMMux</h3>
+<pre class="programlisting">struct GstWebMMux;</pre>
 <p>
 </p>
 </div>
@@ -113,6 +211,6 @@ webmmux muxes VP8 video and Vorbis audio streams into a WebM file.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

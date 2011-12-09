@@ -58,6 +58,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
+	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -111,11 +112,13 @@ libgstrtp_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 am_libgstrtp_la_OBJECTS = libgstrtp_la-fnv1hash.lo \
 	libgstrtp_la-gstrtp.lo libgstrtp_la-gstrtpchannels.lo \
 	libgstrtp_la-gstrtpdepay.lo libgstrtp_la-gstrtpac3depay.lo \
-	libgstrtp_la-gstrtpbvdepay.lo libgstrtp_la-gstrtpbvpay.lo \
-	libgstrtp_la-gstrtpceltdepay.lo libgstrtp_la-gstrtpceltpay.lo \
-	libgstrtp_la-gstrtpdvdepay.lo libgstrtp_la-gstrtpdvpay.lo \
-	libgstrtp_la-gstrtpilbcdepay.lo libgstrtp_la-gstrtpilbcpay.lo \
-	libgstrtp_la-gstrtpmpadepay.lo libgstrtp_la-gstrtpmpapay.lo \
+	libgstrtp_la-gstrtpac3pay.lo libgstrtp_la-gstrtpbvdepay.lo \
+	libgstrtp_la-gstrtpbvpay.lo libgstrtp_la-gstrtpceltdepay.lo \
+	libgstrtp_la-gstrtpceltpay.lo libgstrtp_la-gstrtpdvdepay.lo \
+	libgstrtp_la-gstrtpdvpay.lo libgstrtp_la-gstrtpgstdepay.lo \
+	libgstrtp_la-gstrtpgstpay.lo libgstrtp_la-gstrtpilbcdepay.lo \
+	libgstrtp_la-gstrtpilbcpay.lo libgstrtp_la-gstrtpmpadepay.lo \
+	libgstrtp_la-gstrtpmpapay.lo \
 	libgstrtp_la-gstrtpmparobustdepay.lo \
 	libgstrtp_la-gstrtpmpvdepay.lo libgstrtp_la-gstrtpmpvpay.lo \
 	libgstrtp_la-gstrtppcmadepay.lo \
@@ -205,6 +208,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BZ2_LIBS = @BZ2_LIBS@
 CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_GOBJECT_CFLAGS = @CAIRO_GOBJECT_CFLAGS@
+CAIRO_GOBJECT_LIBS = @CAIRO_GOBJECT_LIBS@
 CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCAS = @CCAS@
@@ -302,6 +307,8 @@ GST_TOOLS_DIR = @GST_TOOLS_DIR@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+GTK_X11_CFLAGS = @GTK_X11_CFLAGS@
+GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
@@ -324,6 +331,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+JACK_0_120_1_CFLAGS = @JACK_0_120_1_CFLAGS@
+JACK_0_120_1_LIBS = @JACK_0_120_1_LIBS@
+JACK_1_9_7_CFLAGS = @JACK_1_9_7_CFLAGS@
+JACK_1_9_7_LIBS = @JACK_1_9_7_LIBS@
+JACK_CFLAGS = @JACK_CFLAGS@
+JACK_LIBS = @JACK_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -352,6 +365,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -450,6 +464,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -484,7 +499,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -512,12 +526,15 @@ libgstrtp_la_SOURCES = \
 	gstrtpchannels.c \
 	gstrtpdepay.c \
 	gstrtpac3depay.c \
+	gstrtpac3pay.c \
 	gstrtpbvdepay.c \
 	gstrtpbvpay.c \
 	gstrtpceltdepay.c \
 	gstrtpceltpay.c \
 	gstrtpdvdepay.c \
 	gstrtpdvpay.c \
+	gstrtpgstdepay.c \
+	gstrtpgstpay.c \
 	gstrtpilbcdepay.c \
 	gstrtpilbcpay.c \
 	gstrtpmpadepay.c \
@@ -595,6 +612,7 @@ noinst_HEADERS = \
 		 gstrtpL16depay.h 	\
 		 gstrtpL16pay.h 	\
 		 gstrtpac3depay.h 	\
+		 gstrtpac3pay.h 	\
 		 gstrtpbvdepay.h 	\
 		 gstrtpbvpay.h 	        \
 		 gstrtpceltpay.h	\
@@ -603,6 +621,8 @@ noinst_HEADERS = \
 		 gstrtpdvpay.h 	        \
 		 gstrtpamrdepay.h 	\
 		 gstrtpamrpay.h 	\
+		 gstrtpgstdepay.h 	\
+		 gstrtpgstpay.h 	\
 		 gstrtpilbcdepay.h      \
 		 gstrtpilbcpay.h        \
 		 gstrtppcmadepay.h	\
@@ -739,6 +759,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpL16depay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpL16pay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpac3depay.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpac3pay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpamrdepay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpamrpay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpbvdepay.Plo@am__quote@
@@ -759,6 +780,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpg729pay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpgsmdepay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpgsmpay.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpgstdepay.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtpgstpay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtph263depay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtph263pay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtp_la-gstrtph263pdepay.Plo@am__quote@
@@ -867,6 +890,14 @@ libgstrtp_la-gstrtpac3depay.lo: gstrtpac3depay.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -c -o libgstrtp_la-gstrtpac3depay.lo `test -f 'gstrtpac3depay.c' || echo '$(srcdir)/'`gstrtpac3depay.c
 
+libgstrtp_la-gstrtpac3pay.lo: gstrtpac3pay.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -MT libgstrtp_la-gstrtpac3pay.lo -MD -MP -MF $(DEPDIR)/libgstrtp_la-gstrtpac3pay.Tpo -c -o libgstrtp_la-gstrtpac3pay.lo `test -f 'gstrtpac3pay.c' || echo '$(srcdir)/'`gstrtpac3pay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtp_la-gstrtpac3pay.Tpo $(DEPDIR)/libgstrtp_la-gstrtpac3pay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpac3pay.c' object='libgstrtp_la-gstrtpac3pay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -c -o libgstrtp_la-gstrtpac3pay.lo `test -f 'gstrtpac3pay.c' || echo '$(srcdir)/'`gstrtpac3pay.c
+
 libgstrtp_la-gstrtpbvdepay.lo: gstrtpbvdepay.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -MT libgstrtp_la-gstrtpbvdepay.lo -MD -MP -MF $(DEPDIR)/libgstrtp_la-gstrtpbvdepay.Tpo -c -o libgstrtp_la-gstrtpbvdepay.lo `test -f 'gstrtpbvdepay.c' || echo '$(srcdir)/'`gstrtpbvdepay.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtp_la-gstrtpbvdepay.Tpo $(DEPDIR)/libgstrtp_la-gstrtpbvdepay.Plo
@@ -914,6 +945,22 @@ libgstrtp_la-gstrtpdvpay.lo: gstrtpdvpay.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpdvpay.c' object='libgstrtp_la-gstrtpdvpay.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -c -o libgstrtp_la-gstrtpdvpay.lo `test -f 'gstrtpdvpay.c' || echo '$(srcdir)/'`gstrtpdvpay.c
+
+libgstrtp_la-gstrtpgstdepay.lo: gstrtpgstdepay.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -MT libgstrtp_la-gstrtpgstdepay.lo -MD -MP -MF $(DEPDIR)/libgstrtp_la-gstrtpgstdepay.Tpo -c -o libgstrtp_la-gstrtpgstdepay.lo `test -f 'gstrtpgstdepay.c' || echo '$(srcdir)/'`gstrtpgstdepay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtp_la-gstrtpgstdepay.Tpo $(DEPDIR)/libgstrtp_la-gstrtpgstdepay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpgstdepay.c' object='libgstrtp_la-gstrtpgstdepay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -c -o libgstrtp_la-gstrtpgstdepay.lo `test -f 'gstrtpgstdepay.c' || echo '$(srcdir)/'`gstrtpgstdepay.c
+
+libgstrtp_la-gstrtpgstpay.lo: gstrtpgstpay.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -MT libgstrtp_la-gstrtpgstpay.lo -MD -MP -MF $(DEPDIR)/libgstrtp_la-gstrtpgstpay.Tpo -c -o libgstrtp_la-gstrtpgstpay.lo `test -f 'gstrtpgstpay.c' || echo '$(srcdir)/'`gstrtpgstpay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtp_la-gstrtpgstpay.Tpo $(DEPDIR)/libgstrtp_la-gstrtpgstpay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpgstpay.c' object='libgstrtp_la-gstrtpgstpay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -c -o libgstrtp_la-gstrtpgstpay.lo `test -f 'gstrtpgstpay.c' || echo '$(srcdir)/'`gstrtpgstpay.c
 
 libgstrtp_la-gstrtpilbcdepay.lo: gstrtpilbcdepay.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtp_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtp_la_CFLAGS) $(CFLAGS) -MT libgstrtp_la-gstrtpilbcdepay.lo -MD -MP -MF $(DEPDIR)/libgstrtp_la-gstrtpilbcdepay.Tpo -c -o libgstrtp_la-gstrtpilbcdepay.lo `test -f 'gstrtpilbcdepay.c' || echo '$(srcdir)/'`gstrtpilbcdepay.c
@@ -1586,6 +1633,20 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer \
+	-:PROJECT libgstrtp -:SHARED libgstrtp \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstrtp_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstrtp_la_CFLAGS) \
+	 -:LDFLAGS $(libgstrtp_la_LDFLAGS) \
+	           $(libgstrtp_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

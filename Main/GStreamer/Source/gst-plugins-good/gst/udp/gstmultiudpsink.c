@@ -44,6 +44,8 @@
 GST_DEBUG_CATEGORY_STATIC (multiudpsink_debug);
 #define GST_CAT_DEFAULT (multiudpsink_debug)
 
+#define UDP_MAX_SIZE 65507
+
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -80,6 +82,7 @@ enum
 #define DEFAULT_LOOP               TRUE
 #define DEFAULT_QOS_DSCP           -1
 #define DEFAULT_SEND_DUPLICATES    TRUE
+#define DEFAULT_BUFFER_SIZE        0
 
 enum
 {
@@ -99,6 +102,7 @@ enum
   PROP_LOOP,
   PROP_QOS_DSCP,
   PROP_SEND_DUPLICATES,
+  PROP_BUFFER_SIZE,
   PROP_LAST
 };
 
@@ -369,6 +373,11 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
           "multiple times as well", DEFAULT_SEND_DUPLICATES,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_BUFFER_SIZE,
+      g_param_spec_int ("buffer-size", "Buffer Size",
+          "Size of the kernel send buffer in bytes, 0=default", 0, G_MAXINT,
+          DEFAULT_BUFFER_SIZE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   gstelement_class->change_state = gst_multiudpsink_change_state;
 
   gstbasesink_class->render = gst_multiudpsink_render;
@@ -545,6 +554,11 @@ gst_multiudpsink_render (GstBaseSink * bsink, GstBuffer * buffer)
   size = GST_BUFFER_SIZE (buffer);
   data = GST_BUFFER_DATA (buffer);
 
+  if (size > UDP_MAX_SIZE) {
+    GST_WARNING ("Attempting to send a UDP packet larger than maximum "
+        "size (%d > %d)", size, UDP_MAX_SIZE);
+  }
+
   sink->bytes_to_serve += size;
 
   /* grab lock while iterating and sending to clients, this should be
@@ -635,6 +649,11 @@ gst_multiudpsink_render_list (GstBaseSink * bsink, GstBufferList * list)
     msg.msg_iov = iov;
 
     while ((buf = gst_buffer_list_iterator_next (it))) {
+      if (GST_BUFFER_SIZE (buf) > UDP_MAX_SIZE) {
+        GST_WARNING ("Attempting to send a UDP packet larger than maximum "
+            "size (%d > %d)", GST_BUFFER_SIZE (buf), UDP_MAX_SIZE);
+      }
+
       msg.msg_iov[msg.msg_iovlen].iov_len = GST_BUFFER_SIZE (buf);
       msg.msg_iov[msg.msg_iovlen].iov_base = GST_BUFFER_DATA (buf);
       msg.msg_iovlen++;
@@ -861,6 +880,9 @@ gst_multiudpsink_set_property (GObject * object, guint prop_id,
     case PROP_SEND_DUPLICATES:
       udpsink->send_duplicates = g_value_get_boolean (value);
       break;
+    case PROP_BUFFER_SIZE:
+      udpsink->buffer_size = g_value_get_int (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -921,6 +943,9 @@ gst_multiudpsink_get_property (GObject * object, guint prop_id, GValue * value,
       break;
     case PROP_SEND_DUPLICATES:
       g_value_set_boolean (value, udpsink->send_duplicates);
+      break;
+    case PROP_BUFFER_SIZE:
+      g_value_set_int (value, udpsink->buffer_size);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

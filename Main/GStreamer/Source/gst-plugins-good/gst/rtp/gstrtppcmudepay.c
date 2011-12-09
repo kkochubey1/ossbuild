@@ -78,7 +78,7 @@ gst_rtp_pcmu_depay_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_rtp_pcmu_depay_sink_template));
   gst_element_class_set_details_simple (element_class, "RTP PCMU depayloader",
-      "Codec/Depayloader/Network",
+      "Codec/Depayloader/Network/RTP",
       "Extracts PCMU audio from RTP packets",
       "Edgard Lima <edgard.lima@indt.org.br>, Zeeshan Ali <zeenix@gmail.com>");
 }
@@ -143,12 +143,14 @@ gst_rtp_pcmu_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   len = gst_rtp_buffer_get_payload_len (buf);
   outbuf = gst_rtp_buffer_get_payload_buffer (buf);
 
-  GST_BUFFER_DURATION (outbuf) =
-      gst_util_uint64_scale_int (len, GST_SECOND, depayload->clock_rate);
+  if (outbuf) {
+    GST_BUFFER_DURATION (outbuf) =
+        gst_util_uint64_scale_int (len, GST_SECOND, depayload->clock_rate);
 
-  if (marker) {
-    /* mark start of talkspurt with DISCONT */
-    GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DISCONT);
+    if (marker) {
+      /* mark start of talkspurt with DISCONT */
+      GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DISCONT);
+    }
   }
 
   return outbuf;
@@ -158,5 +160,5 @@ gboolean
 gst_rtp_pcmu_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtppcmudepay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_PCMU_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_PCMU_DEPAY);
 }

@@ -135,6 +135,7 @@ static gboolean gst_soup_http_src_get_size (GstBaseSrc * bsrc, guint64 * size);
 static gboolean gst_soup_http_src_is_seekable (GstBaseSrc * bsrc);
 static gboolean gst_soup_http_src_do_seek (GstBaseSrc * bsrc,
     GstSegment * segment);
+static gboolean gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query);
 static gboolean gst_soup_http_src_unlock (GstBaseSrc * bsrc);
 static gboolean gst_soup_http_src_unlock_stop (GstBaseSrc * bsrc);
 static gboolean gst_soup_http_src_set_location (GstSoupHTTPSrc * src,
@@ -307,6 +308,7 @@ gst_soup_http_src_class_init (GstSoupHTTPSrcClass * klass)
   gstbasesrc_class->is_seekable =
       GST_DEBUG_FUNCPTR (gst_soup_http_src_is_seekable);
   gstbasesrc_class->do_seek = GST_DEBUG_FUNCPTR (gst_soup_http_src_do_seek);
+  gstbasesrc_class->query = GST_DEBUG_FUNCPTR (gst_soup_http_src_query);
 
   gstpushsrc_class->create = GST_DEBUG_FUNCPTR (gst_soup_http_src_create);
 }
@@ -320,6 +322,7 @@ gst_soup_http_src_reset (GstSoupHTTPSrc * src)
   src->seekable = FALSE;
   src->read_position = 0;
   src->request_position = 0;
+  src->content_size = 0;
 
   gst_caps_replace (&src->src_caps, NULL);
   g_free (src->iradio_name);
@@ -1175,7 +1178,11 @@ gst_soup_http_src_create (GstPushSrc * psrc, GstBuffer ** outbuf)
   src = GST_SOUP_HTTP_SRC (psrc);
 
   if (src->msg && (src->request_position != src->read_position)) {
-    if (src->session_io_status == GST_SOUP_HTTP_SRC_SESSION_IO_STATUS_IDLE) {
+    if (src->content_size != 0 && src->request_position >= src->content_size) {
+      GST_WARNING_OBJECT (src, "Seeking behind the end of file -- EOS");
+      return GST_FLOW_UNEXPECTED;
+    } else if (src->session_io_status ==
+        GST_SOUP_HTTP_SRC_SESSION_IO_STATUS_IDLE) {
       gst_soup_http_src_add_range_header (src, src->request_position);
     } else {
       GST_DEBUG_OBJECT (src, "Seek from position %" G_GUINT64_FORMAT
@@ -1365,15 +1372,50 @@ gst_soup_http_src_do_seek (GstBaseSrc * bsrc, GstSegment * segment)
 
   GST_DEBUG_OBJECT (src, "do_seek(%" G_GUINT64_FORMAT ")", segment->start);
 
-  if (src->read_position == segment->start)
+  if (src->read_position == segment->start) {
+    GST_DEBUG_OBJECT (src, "Seeking to current read position");
     return TRUE;
+  }
 
-  if (!src->seekable)
+  if (!src->seekable) {
+    GST_WARNING_OBJECT (src, "Not seekable");
     return FALSE;
+  }
+
+  if (segment->rate != 1.0 || segment->format != GST_FORMAT_BYTES) {
+    GST_WARNING_OBJECT (src, "Invalid seek segment");
+    return FALSE;
+  }
+
+  if (src->content_size != 0 && segment->start >= src->content_size) {
+    GST_WARNING_OBJECT (src, "Seeking behind end of file, will go to EOS soon");
+  }
 
   /* Wait for create() to handle the jump in offset. */
   src->request_position = segment->start;
   return TRUE;
+}
+
+static gboolean
+gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+{
+  GstSoupHTTPSrc *src = GST_SOUP_HTTP_SRC (bsrc);
+  gboolean ret;
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_URI:
+      gst_query_set_uri (query, src->location);
+      ret = TRUE;
+      break;
+    default:
+      ret = FALSE;
+      break;
+  }
+
+  if (!ret)
+    ret = GST_BASE_SRC_CLASS (parent_class)->query (bsrc, query);
+
+  return ret;
 }
 
 static gboolean

@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) videocrop-test$(EXEEXT) videobox-test$(EXEEXT) \
+	$(am__EXEEXT_4) equalizer-test$(EXEEXT) \
+	videocrop-test$(EXEEXT) videobox-test$(EXEEXT) \
 	videocrop2-test$(EXEEXT)
 subdir = tests/icles
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -59,6 +60,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
+	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -87,15 +89,22 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_GST_V4L2_TRUE@am__EXEEXT_3 = v4l2src-test$(EXEEXT)
 @USE_X_TRUE@am__EXEEXT_4 = ximagesrc-test$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
-am__gdkpixbufsink_test_SOURCES_DIST = gdkpixbufsink-test.c
-@HAVE_GTK_TRUE@am_gdkpixbufsink_test_OBJECTS = gdkpixbufsink_test-gdkpixbufsink-test.$(OBJEXT)
-gdkpixbufsink_test_OBJECTS = $(am_gdkpixbufsink_test_OBJECTS)
+am_equalizer_test_OBJECTS = equalizer_test-equalizer-test.$(OBJEXT)
+equalizer_test_OBJECTS = $(am_equalizer_test_OBJECTS)
 am__DEPENDENCIES_1 =
-@HAVE_GTK_TRUE@gdkpixbufsink_test_DEPENDENCIES =  \
-@HAVE_GTK_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+equalizer_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
+equalizer_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(equalizer_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
+am__gdkpixbufsink_test_SOURCES_DIST = gdkpixbufsink-test.c
+@HAVE_GTK_TRUE@am_gdkpixbufsink_test_OBJECTS = gdkpixbufsink_test-gdkpixbufsink-test.$(OBJEXT)
+gdkpixbufsink_test_OBJECTS = $(am_gdkpixbufsink_test_OBJECTS)
+@HAVE_GTK_TRUE@gdkpixbufsink_test_DEPENDENCIES =  \
+@HAVE_GTK_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 gdkpixbufsink_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(gdkpixbufsink_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -173,11 +182,12 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(gdkpixbufsink_test_SOURCES) $(test_oss4_SOURCES) \
-	$(v4l2src_test_SOURCES) $(videobox_test_SOURCES) \
-	$(videocrop_test_SOURCES) $(videocrop2_test_SOURCES) \
-	$(ximagesrc_test_SOURCES)
-DIST_SOURCES = $(am__gdkpixbufsink_test_SOURCES_DIST) \
+SOURCES = $(equalizer_test_SOURCES) $(gdkpixbufsink_test_SOURCES) \
+	$(test_oss4_SOURCES) $(v4l2src_test_SOURCES) \
+	$(videobox_test_SOURCES) $(videocrop_test_SOURCES) \
+	$(videocrop2_test_SOURCES) $(ximagesrc_test_SOURCES)
+DIST_SOURCES = $(equalizer_test_SOURCES) \
+	$(am__gdkpixbufsink_test_SOURCES_DIST) \
 	$(am__test_oss4_SOURCES_DIST) $(am__v4l2src_test_SOURCES_DIST) \
 	$(videobox_test_SOURCES) $(videocrop_test_SOURCES) \
 	$(videocrop2_test_SOURCES) $(am__ximagesrc_test_SOURCES_DIST)
@@ -201,6 +211,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BZ2_LIBS = @BZ2_LIBS@
 CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_GOBJECT_CFLAGS = @CAIRO_GOBJECT_CFLAGS@
+CAIRO_GOBJECT_LIBS = @CAIRO_GOBJECT_LIBS@
 CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCAS = @CCAS@
@@ -298,6 +310,8 @@ GST_TOOLS_DIR = @GST_TOOLS_DIR@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+GTK_X11_CFLAGS = @GTK_X11_CFLAGS@
+GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
@@ -320,6 +334,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+JACK_0_120_1_CFLAGS = @JACK_0_120_1_CFLAGS@
+JACK_0_120_1_LIBS = @JACK_0_120_1_LIBS@
+JACK_1_9_7_CFLAGS = @JACK_1_9_7_CFLAGS@
+JACK_1_9_7_LIBS = @JACK_1_9_7_LIBS@
+JACK_CFLAGS = @JACK_CFLAGS@
+JACK_LIBS = @JACK_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -348,6 +368,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -446,6 +467,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -480,7 +502,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -522,6 +543,9 @@ top_srcdir = @top_srcdir@
 @USE_X_TRUE@ximagesrc_test_SOURCES = ximagesrc-test.c
 @USE_X_TRUE@ximagesrc_test_CFLAGS = $(GST_CFLAGS)
 @USE_X_TRUE@ximagesrc_test_LDADD = $(GST_LIBS)
+equalizer_test_SOURCES = equalizer-test.c
+equalizer_test_CFLAGS = $(GST_CFLAGS)
+equalizer_test_LDADD = $(GST_LIBS)
 videocrop_test_SOURCES = videocrop-test.c
 videocrop_test_CFLAGS = $(GST_CFLAGS)
 videocrop_test_LDADD = $(GST_LIBS)
@@ -574,6 +598,9 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+equalizer-test$(EXEEXT): $(equalizer_test_OBJECTS) $(equalizer_test_DEPENDENCIES) 
+	@rm -f equalizer-test$(EXEEXT)
+	$(AM_V_CCLD)$(equalizer_test_LINK) $(equalizer_test_OBJECTS) $(equalizer_test_LDADD) $(LIBS)
 gdkpixbufsink-test$(EXEEXT): $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_DEPENDENCIES) 
 	@rm -f gdkpixbufsink-test$(EXEEXT)
 	$(AM_V_CCLD)$(gdkpixbufsink_test_LINK) $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_LDADD) $(LIBS)
@@ -602,6 +629,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/equalizer_test-equalizer-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_oss4-test-oss4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v4l2src_test-v4l2src-test.Po@am__quote@
@@ -633,6 +661,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+equalizer_test-equalizer-test.o: equalizer-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -MT equalizer_test-equalizer-test.o -MD -MP -MF $(DEPDIR)/equalizer_test-equalizer-test.Tpo -c -o equalizer_test-equalizer-test.o `test -f 'equalizer-test.c' || echo '$(srcdir)/'`equalizer-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/equalizer_test-equalizer-test.Tpo $(DEPDIR)/equalizer_test-equalizer-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='equalizer-test.c' object='equalizer_test-equalizer-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -c -o equalizer_test-equalizer-test.o `test -f 'equalizer-test.c' || echo '$(srcdir)/'`equalizer-test.c
+
+equalizer_test-equalizer-test.obj: equalizer-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -MT equalizer_test-equalizer-test.obj -MD -MP -MF $(DEPDIR)/equalizer_test-equalizer-test.Tpo -c -o equalizer_test-equalizer-test.obj `if test -f 'equalizer-test.c'; then $(CYGPATH_W) 'equalizer-test.c'; else $(CYGPATH_W) '$(srcdir)/equalizer-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/equalizer_test-equalizer-test.Tpo $(DEPDIR)/equalizer_test-equalizer-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='equalizer-test.c' object='equalizer_test-equalizer-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -c -o equalizer_test-equalizer-test.obj `if test -f 'equalizer-test.c'; then $(CYGPATH_W) 'equalizer-test.c'; else $(CYGPATH_W) '$(srcdir)/equalizer-test.c'; fi`
 
 gdkpixbufsink_test-gdkpixbufsink-test.o: gdkpixbufsink-test.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -MT gdkpixbufsink_test-gdkpixbufsink-test.o -MD -MP -MF $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo -c -o gdkpixbufsink_test-gdkpixbufsink-test.o `test -f 'gdkpixbufsink-test.c' || echo '$(srcdir)/'`gdkpixbufsink-test.c

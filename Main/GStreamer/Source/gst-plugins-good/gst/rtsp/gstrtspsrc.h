@@ -138,6 +138,9 @@ struct _GstRTSPStream {
   /* per stream connection */
   GstRTSPConnInfo  conninfo;
 
+  /* session */
+  GObject      *session;
+
   /* bandwidth */
   guint         as_bandwidth;
   guint         rs_bandwidth;
@@ -145,6 +148,7 @@ struct _GstRTSPStream {
 
   /* destination */
   gchar        *destination;
+  gboolean      is_multicast;
   guint         ttl;
 };
 
@@ -230,10 +234,13 @@ struct _GstRTSPSrc {
   /* supported methods */
   gint               methods;
 
+  gboolean           seekable;
+  GstClockTime       last_pos;
+
   /* session management */
-  GstElement      *session;
-  gulong           session_sig_id;
-  gulong           session_ptmap_id;
+  GstElement      *manager;
+  gulong           manager_sig_id;
+  gulong           manager_ptmap_id;
 
   GstRTSPConnInfo  conninfo;
 
