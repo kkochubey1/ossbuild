@@ -62,7 +62,7 @@
 #define GST_PACKAGE_NAME "GStreamer source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "Unknown package origin"
+#define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
 #define GST_PACKAGE_RELEASE_DATETIME "2011-06-15"
