@@ -1215,6 +1215,8 @@ gen_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async)
         chain->sink = try_element (playsink, elem, TRUE);
       }
     }
+    if (chain->sink)
+      playsink->video_sink = gst_object_ref (chain->sink);
   }
   if (chain->sink == NULL)
     goto no_sinks;
@@ -1360,6 +1362,8 @@ link_failed:
         (NULL), ("Failed to configure the video sink."));
     /* checking sink made it READY */
     gst_element_set_state (chain->sink, GST_STATE_NULL);
+    /* Remove chain from the bin to allow reuse later */
+    gst_bin_remove (bin, chain->sink);
     free_chain ((GstPlayChain *) chain);
     return NULL;
   }
@@ -1486,6 +1490,9 @@ gen_text_chain (GstPlaySink * playsink)
                 gst_play_sink_find_property_sinks (playsink, chain->sink,
                     "sync", G_TYPE_BOOLEAN)))
           g_object_set (elem, "sync", TRUE, NULL);
+
+        if (!textsinkpad)
+          gst_bin_remove (bin, chain->sink);
       } else {
         GST_WARNING_OBJECT (playsink,
             "can't find async property in custom text sink");
@@ -1671,6 +1678,8 @@ gen_audio_chain (GstPlaySink * playsink, gboolean raw)
         chain->sink = try_element (playsink, elem, TRUE);
       }
     }
+    if (chain->sink)
+      playsink->audio_sink = gst_object_ref (chain->sink);
   }
   if (chain->sink == NULL)
     goto no_sinks;
@@ -1681,7 +1690,7 @@ gen_audio_chain (GstPlaySink * playsink, gboolean raw)
   gst_bin_add (bin, chain->sink);
 
   /* we have to add a queue when we need to decouple for the video sink in
-   * visualisations */
+   * visualisations and for streamsynchronizer */
   GST_DEBUG_OBJECT (playsink, "adding audio queue");
   chain->queue = gst_element_factory_make ("queue", "aqueue");
   if (chain->queue == NULL) {
@@ -1885,6 +1894,8 @@ link_failed:
         (NULL), ("Failed to configure the audio sink."));
     /* checking sink made it READY */
     gst_element_set_state (chain->sink, GST_STATE_NULL);
+    /* Remove chain from the bin to allow reuse later */
+    gst_bin_remove (bin, chain->sink);
     free_chain ((GstPlayChain *) chain);
     return NULL;
   }
@@ -1961,6 +1972,8 @@ setup_audio_chain (GstPlaySink * playsink, gboolean raw)
        * re-generate the chain */
       if (chain->volume == NULL) {
         GST_DEBUG_OBJECT (playsink, "no existing volume element to re-use");
+        /* undo background state change done earlier */
+        gst_element_set_state (chain->sink, GST_STATE_NULL);
         return FALSE;
       }
 
@@ -2209,6 +2222,13 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
         }
 
         add_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
+
+        /* Remove the sink from the bin to keep its state
+         * and unparent it to allow reuse */
+        if (playsink->videochain->sink)
+          gst_bin_remove (GST_BIN_CAST (playsink->videochain->chain.bin),
+              playsink->videochain->sink);
+
         activate_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
         free_chain ((GstPlayChain *) playsink->videochain);
         playsink->videochain = NULL;
@@ -2217,6 +2237,8 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
 
     if (!playsink->videochain)
       playsink->videochain = gen_video_chain (playsink, raw, async);
+    if (!playsink->videochain)
+      goto no_chain;
 
     if (!playsink->video_sinkpad_stream_synchronizer) {
       GstIterator *it;
@@ -2237,23 +2259,22 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
       gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
           playsink->video_sinkpad_stream_synchronizer);
 
-    if (playsink->videochain && need_deinterlace) {
+    if (need_deinterlace) {
       if (!playsink->videodeinterlacechain)
         playsink->videodeinterlacechain =
             gen_video_deinterlace_chain (playsink);
+      if (!playsink->videodeinterlacechain)
+        goto no_chain;
 
       GST_DEBUG_OBJECT (playsink, "adding video deinterlace chain");
 
-      if (playsink->videodeinterlacechain) {
-        GST_DEBUG_OBJECT (playsink, "setting up deinterlacing chain");
+      GST_DEBUG_OBJECT (playsink, "setting up deinterlacing chain");
 
-        add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
-        activate_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
+      add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
+      activate_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
 
-        gst_pad_link_full (playsink->video_srcpad_stream_synchronizer,
-            playsink->videodeinterlacechain->sinkpad,
-            GST_PAD_LINK_CHECK_NOTHING);
-      }
+      gst_pad_link_full (playsink->video_srcpad_stream_synchronizer,
+          playsink->videodeinterlacechain->sinkpad, GST_PAD_LINK_CHECK_NOTHING);
     } else {
       if (playsink->videodeinterlacechain) {
         add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), FALSE);
@@ -2262,21 +2283,19 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
       }
     }
 
-    if (playsink->videochain) {
-      GST_DEBUG_OBJECT (playsink, "adding video chain");
-      add_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
-      activate_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
-      /* if we are not part of vis or subtitles, set the ghostpad target */
-      if (!need_vis && !need_text && (!playsink->textchain
-              || !playsink->text_pad)) {
-        GST_DEBUG_OBJECT (playsink, "ghosting video sinkpad");
-        if (need_deinterlace)
-          gst_pad_link_full (playsink->videodeinterlacechain->srcpad,
-              playsink->videochain->sinkpad, GST_PAD_LINK_CHECK_NOTHING);
-        else
-          gst_pad_link_full (playsink->video_srcpad_stream_synchronizer,
-              playsink->videochain->sinkpad, GST_PAD_LINK_CHECK_NOTHING);
-      }
+    GST_DEBUG_OBJECT (playsink, "adding video chain");
+    add_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
+    activate_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
+    /* if we are not part of vis or subtitles, set the ghostpad target */
+    if (!need_vis && !need_text && (!playsink->textchain
+            || !playsink->text_pad)) {
+      GST_DEBUG_OBJECT (playsink, "ghosting video sinkpad");
+      if (need_deinterlace)
+        gst_pad_link_full (playsink->videodeinterlacechain->srcpad,
+            playsink->videochain->sinkpad, GST_PAD_LINK_CHECK_NOTHING);
+      else
+        gst_pad_link_full (playsink->video_srcpad_stream_synchronizer,
+            playsink->videochain->sinkpad, GST_PAD_LINK_CHECK_NOTHING);
     }
   } else {
     GST_DEBUG_OBJECT (playsink, "no video needed");
@@ -2354,6 +2373,13 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
         }
 
         add_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
+
+        /* Remove the sink from the bin to keep its state
+         * and unparent it to allow reuse */
+        if (playsink->audiochain->sink)
+          gst_bin_remove (GST_BIN_CAST (playsink->audiochain->chain.bin),
+              playsink->audiochain->sink);
+
         activate_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
         disconnect_chain (playsink->audiochain, playsink);
         playsink->audiochain->volume = NULL;
@@ -2579,6 +2605,15 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
   GST_PLAY_SINK_UNLOCK (playsink);
 
   return TRUE;
+
+  /* ERRORS */
+no_chain:
+  {
+    /* gen_ chain already posted error */
+    GST_DEBUG_OBJECT (playsink, "failed to setup chain");
+    GST_PLAY_SINK_UNLOCK (playsink);
+    return FALSE;
+  }
 }
 
 /**
@@ -3261,6 +3296,42 @@ gst_play_sink_change_state (GstElement * element, GstStateChange transition)
         add_chain (GST_PLAY_CHAIN (playsink->textchain), FALSE);
       }
       do_async_done (playsink);
+      /* when going to READY, keep elements around as long as possible,
+       * so they may be re-used faster next time/url around.
+       * when really going to NULL, clean up everything completely. */
+      if (transition == GST_STATE_CHANGE_READY_TO_NULL) {
+
+        /* Unparent the sinks to allow reuse */
+        if (playsink->videochain && playsink->videochain->sink)
+          gst_bin_remove (GST_BIN_CAST (playsink->videochain->chain.bin),
+              playsink->videochain->sink);
+        if (playsink->audiochain && playsink->audiochain->sink)
+          gst_bin_remove (GST_BIN_CAST (playsink->audiochain->chain.bin),
+              playsink->audiochain->sink);
+        if (playsink->textchain && playsink->textchain->sink)
+          gst_bin_remove (GST_BIN_CAST (playsink->textchain->chain.bin),
+              playsink->textchain->sink);
+
+        if (playsink->audio_sink != NULL)
+          gst_element_set_state (playsink->audio_sink, GST_STATE_NULL);
+        if (playsink->video_sink != NULL)
+          gst_element_set_state (playsink->video_sink, GST_STATE_NULL);
+        if (playsink->visualisation != NULL)
+          gst_element_set_state (playsink->visualisation, GST_STATE_NULL);
+        if (playsink->text_sink != NULL)
+          gst_element_set_state (playsink->text_sink, GST_STATE_NULL);
+
+        free_chain ((GstPlayChain *) playsink->videodeinterlacechain);
+        playsink->videodeinterlacechain = NULL;
+        free_chain ((GstPlayChain *) playsink->videochain);
+        playsink->videochain = NULL;
+        free_chain ((GstPlayChain *) playsink->audiochain);
+        playsink->audiochain = NULL;
+        free_chain ((GstPlayChain *) playsink->vischain);
+        playsink->vischain = NULL;
+        free_chain ((GstPlayChain *) playsink->textchain);
+        playsink->textchain = NULL;
+      }
       break;
     default:
       break;

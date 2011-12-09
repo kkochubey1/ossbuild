@@ -943,7 +943,11 @@ gst_adder_request_new_pad (GstElement * element, GstPadTemplate * templ,
   adder = GST_ADDER (element);
 
   /* increment pad counter */
+#if GLIB_CHECK_VERSION(2,29,5)
+  padcount = g_atomic_int_add (&adder->padcount, 1);
+#else
   padcount = g_atomic_int_exchange_and_add (&adder->padcount, 1);
+#endif
 
   name = g_strdup_printf ("sink%d", padcount);
   newpad = gst_pad_new_from_template (templ, name);
@@ -1208,10 +1212,12 @@ gst_adder_collected (GstCollectPads * pads, gpointer user_data)
   if (adder->segment_rate > 0.0) {
     GST_BUFFER_TIMESTAMP (outbuf) = adder->timestamp;
     GST_BUFFER_OFFSET (outbuf) = adder->offset;
+    GST_BUFFER_OFFSET_END (outbuf) = next_offset;
     GST_BUFFER_DURATION (outbuf) = next_timestamp - adder->timestamp;
   } else {
     GST_BUFFER_TIMESTAMP (outbuf) = next_timestamp;
     GST_BUFFER_OFFSET (outbuf) = next_offset;
+    GST_BUFFER_OFFSET_END (outbuf) = adder->offset;
     GST_BUFFER_DURATION (outbuf) = adder->timestamp - next_timestamp;
   }
 

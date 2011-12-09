@@ -1,3 +1,5 @@
+@echo off
+
 set MY_ORIGPATH=%PATH%
 set MY_CURR=%CD%
 set MY_DIR=%~dp0.

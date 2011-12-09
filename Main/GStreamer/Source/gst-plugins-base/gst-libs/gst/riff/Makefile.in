@@ -275,7 +275,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -312,6 +311,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -388,6 +388,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -421,7 +422,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -879,6 +879,7 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 @HAVE_INTROSPECTION_TRUE@GstRiff-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstriff-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstRiff \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
@@ -886,32 +887,48 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(builddir)/../tag \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(builddir)/../audio \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(builddir)/../interfaces \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--library=libgstriff-0.10.la \
-@HAVE_INTROSPECTION_TRUE@		--include=GstAudio-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--include=GstTag-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstriff-@GST_MAJORMINOR@.la \
+@HAVE_INTROSPECTION_TRUE@		--include=GstAudio-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=GstTag-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=Gst-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-tag-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-audio-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-interfaces-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-riff-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-tag-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-audio-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-interfaces-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-riff-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir)/../tag \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir)/../audio \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir)/../interfaces \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+Android.mk: Makefile.am
+	androgenizer -:PROJECT libgstriff -:SHARED libgstriff-@GST_MAJORMINOR@ \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstriff_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstriff_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgstriff_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgstriff_@GST_MAJORMINOR@_la_LIBADD) \
+	           -ldl \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/tag \
+	 -:HEADERS $(libgstriff_@GST_MAJORMINOR@include_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-app.html" title="App Library">
 <link rel="prev" href="gstreamer-app.html" title="App Library">
 <link rel="next" href="gst-plugins-base-libs-appsink.html" title="appsink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-appsrc.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="appsrc">
+<div class="refentry">
 <a name="gst-plugins-base-libs-appsrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -36,45 +36,45 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-appsrc.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/app/gstappsrc.h&gt;
 
-                    <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc">GstAppSrc</a>;
+struct              <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc">GstAppSrc</a>;
 enum                <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType">GstAppStreamType</a>;
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-caps" title="gst_app_src_set_caps ()">gst_app_src_set_caps</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-caps" title="gst_app_src_set_caps ()">gst_app_src_set_caps</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a>*            <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-caps" title="gst_app_src_get_caps ()">gst_app_src_get_caps</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-latency" title="gst_app_src_get_latency ()">gst_app_src_get_latency</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-caps" title="gst_app_src_get_caps ()">gst_app_src_get_caps</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-latency" title="gst_app_src_get_latency ()">gst_app_src_get_latency</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *min</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *max</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-latency" title="gst_app_src_set_latency ()">gst_app_src_set_latency</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-latency" title="gst_app_src_set_latency ()">gst_app_src_set_latency</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> min</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> max</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-size" title="gst_app_src_set_size ()">gst_app_src_set_size</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-size" title="gst_app_src_set_size ()">gst_app_src_set_size</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> size</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a>              <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-size" title="gst_app_src_get_size ()">gst_app_src_get_size</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-stream-type" title="gst_app_src_set_stream_type ()">gst_app_src_set_stream_type</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a>              <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-size" title="gst_app_src_get_size ()">gst_app_src_get_size</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-stream-type" title="gst_app_src_set_stream_type ()">gst_app_src_set_stream_type</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="type">GstAppStreamType</span></a> type</code></em>);
-<a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="returnvalue">GstAppStreamType</span></a>    <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-stream-type" title="gst_app_src_get_stream_type ()">gst_app_src_get_stream_type</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-max-bytes" title="gst_app_src_set_max_bytes ()">gst_app_src_set_max_bytes</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="returnvalue">GstAppStreamType</span></a>    <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-stream-type" title="gst_app_src_get_stream_type ()">gst_app_src_get_stream_type</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-max-bytes" title="gst_app_src_set_max_bytes ()">gst_app_src_set_max_bytes</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> max</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-max-bytes" title="gst_app_src_get_max_bytes ()">gst_app_src_get_max_bytes</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-emit-signals" title="gst_app_src_get_emit_signals ()">gst_app_src_get_emit_signals</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-emit-signals" title="gst_app_src_set_emit_signals ()">gst_app_src_set_emit_signals</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-max-bytes" title="gst_app_src_get_max_bytes ()">gst_app_src_get_max_bytes</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-get-emit-signals" title="gst_app_src_get_emit_signals ()">gst_app_src_get_emit_signals</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-emit-signals" title="gst_app_src_set_emit_signals ()">gst_app_src_set_emit_signals</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> emit</code></em>);
                     <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrcCallbacks" title="GstAppSrcCallbacks">GstAppSrcCallbacks</a>;
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-callbacks" title="gst_app_src_set_callbacks ()">gst_app_src_set_callbacks</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-callbacks" title="gst_app_src_set_callbacks ()">gst_app_src_set_callbacks</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrcCallbacks" title="GstAppSrcCallbacks"><span class="type">GstAppSrcCallbacks</span></a> *callbacks</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> notify</code></em>);
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-push-buffer" title="gst_app_src_push_buffer ()">gst_app_src_push_buffer</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-push-buffer" title="gst_app_src_push_buffer ()">gst_app_src_push_buffer</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>);
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-end-of-stream" title="gst_app_src_end_of_stream ()">gst_app_src_end_of_stream</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-end-of-stream" title="gst_app_src_end_of_stream ()">gst_app_src_end_of_stream</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-appsrc.description"></a><h2>Description</h2>
 <p>
 The appsrc element can be used by applications to insert data into a
@@ -154,19 +154,17 @@ happened or the state of the appsrc has gone through READY.
 Last reviewed on 2008-12-17 (0.10.10)
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-appsrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstAppSrc">
-<a name="GstAppSrc"></a><h3>GstAppSrc</h3>
-<pre class="programlisting">typedef struct {
+<div class="refsect2">
+<a name="GstAppSrc"></a><h3>struct GstAppSrc</h3>
+<pre class="programlisting">struct GstAppSrc {
   GstBaseSrc basesrc;
-} GstAppSrc;
+};
 </pre>
-<p>
-</p>
 </div>
 <hr>
-<div class="refsect2" title="enum GstAppStreamType">
+<div class="refsect2">
 <a name="GstAppStreamType"></a><h3>enum GstAppStreamType</h3>
 <pre class="programlisting">typedef enum
 {
@@ -203,9 +201,9 @@ such as in a local file.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_caps ()">
+<div class="refsect2">
 <a name="gst-app-src-set-caps"></a><h3>gst_app_src_set_caps ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_caps                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_caps                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
 <p>
 Set the capabilities on the appsrc element.  This function takes
@@ -218,22 +216,21 @@ buffers must match the caps or left NULL.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
-<td>caps to set
-</td>
+<td>caps to set</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_caps ()">
+<div class="refsect2">
 <a name="gst-app-src-get-caps"></a><h3>gst_app_src_get_caps ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a>*            gst_app_src_get_caps                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_app_src_get_caps                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Get the configured caps on <em class="parameter"><code>appsrc</code></em>.
 </p>
@@ -242,23 +239,21 @@ Get the configured caps on <em class="parameter"><code>appsrc</code></em>.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> produced by the source. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-unref"><code class="function">gst_caps_unref()</code></a> after usage.
-
-</td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> produced by the source. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-unref"><code class="function">gst_caps_unref()</code></a> after usage.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_latency ()">
+<div class="refsect2">
 <a name="gst-app-src-get-latency"></a><h3>gst_app_src_get_latency ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_get_latency             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_get_latency             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *min</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *max</code></em>);</pre>
 <p>
@@ -269,27 +264,25 @@ Retrieve the min and max latencies in <em class="parameter"><code>min</code></em
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>min</code></em> :</span></p></td>
-<td>the min latency
-</td>
+<td>the min latency</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>max</code></em> :</span></p></td>
-<td>the min latency
-</td>
+<td>the min latency</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_latency ()">
+<div class="refsect2">
 <a name="gst-app-src-set-latency"></a><h3>gst_app_src_set_latency ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_latency             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_latency             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> min</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> max</code></em>);</pre>
 <p>
@@ -301,27 +294,25 @@ default latency calculations for pseudo-live sources will be used.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>min</code></em> :</span></p></td>
-<td>the min latency
-</td>
+<td>the min latency</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>max</code></em> :</span></p></td>
-<td>the min latency
-</td>
+<td>the min latency</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_size ()">
+<div class="refsect2">
 <a name="gst-app-src-set-size"></a><h3>gst_app_src_set_size ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_size                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_size                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> size</code></em>);</pre>
 <p>
 Set the size of the stream in bytes. A value of -1 means that the size is
@@ -332,22 +323,21 @@ not known.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>the size to set
-</td>
+<td>the size to set</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_size ()">
+<div class="refsect2">
 <a name="gst-app-src-get-size"></a><h3>gst_app_src_get_size ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a>              gst_app_src_get_size                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a>              gst_app_src_get_size                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Get the size of the stream in bytes. A value of -1 means that the size is
 not known.
@@ -357,23 +347,21 @@ not known.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the size of the stream previously set with <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-size" title="gst_app_src_set_size ()"><code class="function">gst_app_src_set_size()</code></a>;
-
-</td>
+<td>the size of the stream previously set with <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-size" title="gst_app_src_set_size ()"><code class="function">gst_app_src_set_size()</code></a>;</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_stream_type ()">
+<div class="refsect2">
 <a name="gst-app-src-set-stream-type"></a><h3>gst_app_src_set_stream_type ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_stream_type         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_stream_type         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="type">GstAppStreamType</span></a> type</code></em>);</pre>
 <p>
 Set the stream type on <em class="parameter"><code>appsrc</code></em>. For seekable streams, the "seek" signal must
@@ -387,22 +375,21 @@ A stream_type stream
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td>the new state
-</td>
+<td>the new state</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_stream_type ()">
+<div class="refsect2">
 <a name="gst-app-src-get-stream-type"></a><h3>gst_app_src_get_stream_type ()</h3>
-<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="returnvalue">GstAppStreamType</span></a>    gst_app_src_get_stream_type         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppStreamType" title="enum GstAppStreamType"><span class="returnvalue">GstAppStreamType</span></a>    gst_app_src_get_stream_type         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Get the stream type. Control the stream type of <em class="parameter"><code>appsrc</code></em>
 with <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-stream-type" title="gst_app_src_set_stream_type ()"><code class="function">gst_app_src_set_stream_type()</code></a>.
@@ -412,23 +399,21 @@ with <a class="link" href="gst-plugins-base-libs-appsrc.html#gst-app-src-set-str
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the stream type.
-
-</td>
+<td>the stream type.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_max_bytes ()">
+<div class="refsect2">
 <a name="gst-app-src-set-max-bytes"></a><h3>gst_app_src_set_max_bytes ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_max_bytes           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_max_bytes           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> max</code></em>);</pre>
 <p>
 Set the maximum amount of bytes that can be queued in <em class="parameter"><code>appsrc</code></em>.
@@ -440,22 +425,21 @@ After the maximum amount of bytes are queued, <em class="parameter"><code>appsrc
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>max</code></em> :</span></p></td>
-<td>the maximum number of bytes to queue
-</td>
+<td>the maximum number of bytes to queue</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_max_bytes ()">
+<div class="refsect2">
 <a name="gst-app-src-get-max-bytes"></a><h3>gst_app_src_get_max_bytes ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             gst_app_src_get_max_bytes           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             gst_app_src_get_max_bytes           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Get the maximum amount of bytes that can be queued in <em class="parameter"><code>appsrc</code></em>.
 </p>
@@ -464,23 +448,21 @@ Get the maximum amount of bytes that can be queued in <em class="parameter"><cod
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The maximum amount of bytes that can be queued.
-
-</td>
+<td>The maximum amount of bytes that can be queued.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_get_emit_signals ()">
+<div class="refsect2">
 <a name="gst-app-src-get-emit-signals"></a><h3>gst_app_src_get_emit_signals ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_app_src_get_emit_signals        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_app_src_get_emit_signals        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Check if appsrc will emit the "new-preroll" and "new-buffer" signals.
 </p>
@@ -489,24 +471,23 @@ Check if appsrc will emit the "new-preroll" and "new-buffer" signals.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>appsrc</code></em> is emiting the "new-preroll" and "new-buffer"
-signals.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>appsrc</code></em> is emiting the "new-preroll" and "new-buffer"
+signals.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_emit_signals ()">
+<div class="refsect2">
 <a name="gst-app-src-set-emit-signals"></a><h3>gst_app_src_set_emit_signals ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_emit_signals        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_emit_signals        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> emit</code></em>);</pre>
 <p>
 Make appsrc emit the "new-preroll" and "new-buffer" signals. This option is
@@ -518,20 +499,19 @@ the application prefers to operate in pull mode.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>emit</code></em> :</span></p></td>
-<td>the new state
-</td>
+<td>the new state</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="GstAppSrcCallbacks">
+<div class="refsect2">
 <a name="GstAppSrcCallbacks"></a><h3>GstAppSrcCallbacks</h3>
 <pre class="programlisting">typedef struct {
   void      (*need_data)    (GstAppSrc *src, guint length, gpointer user_data);
@@ -549,32 +529,29 @@ A set of callbacks that can be installed on the appsrc with
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAppSrcCallbacks.need-data"></a>need_data</code></em> ()</span></p></td>
 <td>Called when the appsrc needs more data. A buffer or EOS should be
-   pushed to appsrc from this thread or another thread. <em class="parameter"><code>length</code></em> is just a hint
-   and when it is set to -1, any number of bytes can be pushed into <em class="parameter"><code>appsrc</code></em>.
-</td>
+pushed to appsrc from this thread or another thread. <em class="parameter"><code>length</code></em> is just a hint
+and when it is set to -1, any number of bytes can be pushed into <em class="parameter"><code>appsrc</code></em>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAppSrcCallbacks.enough-data"></a>enough_data</code></em> ()</span></p></td>
 <td>Called when appsrc has enough data. It is recommended that the
-   application stops calling push-buffer until the need_data callback is
-   emited again to avoid excessive buffer queueing.
-</td>
+application stops calling push-buffer until the need_data callback is
+emited again to avoid excessive buffer queueing.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAppSrcCallbacks.seek-data"></a>seek_data</code></em> ()</span></p></td>
 <td>Called when a seek should be performed to the offset.
-   The next push-buffer should produce buffers from the new <em class="parameter"><code>offset</code></em>.
-   This callback is only called for seekable stream types.
-</td>
+The next push-buffer should produce buffers from the new <em class="parameter"><code>offset</code></em>.
+This callback is only called for seekable stream types.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_set_callbacks ()">
+<div class="refsect2">
 <a name="gst-app-src-set-callbacks"></a><h3>gst_app_src_set_callbacks ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_callbacks           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_app_src_set_callbacks           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrcCallbacks" title="GstAppSrcCallbacks"><span class="type">GstAppSrcCallbacks</span></a> *callbacks</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> notify</code></em>);</pre>
@@ -593,32 +570,29 @@ reasons.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>callbacks</code></em> :</span></p></td>
-<td>the callbacks
-</td>
+<td>the callbacks</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
-<td>a user_data argument for the callbacks
-</td>
+<td>a user_data argument for the callbacks</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>notify</code></em> :</span></p></td>
-<td>a destroy notify function
-</td>
+<td>a destroy notify function</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_push_buffer ()">
+<div class="refsect2">
 <a name="gst-app-src-push-buffer"></a><h3>gst_app_src_push_buffer ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_app_src_push_buffer             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_app_src_push_buffer             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>);</pre>
 <p>
 Adds a buffer to the queue of buffers that the appsrc element will
@@ -633,30 +607,28 @@ space becomes available in the queue.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> to push
-</td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> to push</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> when the buffer was successfuly queued.
+<td>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> when the buffer was successfuly queued.
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-WRONG-STATE:CAPS"><span class="type">GST_FLOW_WRONG_STATE</span></a> when <em class="parameter"><code>appsrc</code></em> is not PAUSED or PLAYING.
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-UNEXPECTED:CAPS"><span class="type">GST_FLOW_UNEXPECTED</span></a> when EOS occured.
-
-</td>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-UNEXPECTED:CAPS"><span class="type">GST_FLOW_UNEXPECTED</span></a> when EOS occured.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_app_src_end_of_stream ()">
+<div class="refsect2">
 <a name="gst-app-src-end-of-stream"></a><h3>gst_app_src_end_of_stream ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_app_src_end_of_stream           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_app_src_end_of_stream           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc</code></em>);</pre>
 <p>
 Indicates to the appsrc element that the last buffer queued in the
 element is the last buffer of the stream.
@@ -666,28 +638,27 @@ element is the last buffer of the stream.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="GstAppSrc"><span class="type">GstAppSrc</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-appsrc.html#GstAppSrc" title="struct GstAppSrc"><span class="type">GstAppSrc</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> when the EOS was successfuly queued.
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-WRONG-STATE:CAPS"><span class="type">GST_FLOW_WRONG_STATE</span></a> when <em class="parameter"><code>appsrc</code></em> is not PAUSED or PLAYING.
-
-</td>
+<td>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> when the EOS was successfuly queued.
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GST-FLOW-WRONG-STATE:CAPS"><span class="type">GST_FLOW_WRONG_STATE</span></a> when <em class="parameter"><code>appsrc</code></em> is not PAUSED or PLAYING.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-appsrc.see-also"></a><h2>See Also</h2>
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html"><span class="type">GstBaseSrc</span></a>, appsink
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

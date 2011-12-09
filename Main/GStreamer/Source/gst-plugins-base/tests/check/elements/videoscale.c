@@ -68,6 +68,24 @@ on_sink_handoff (GstElement * element, GstBuffer * buffer, GstPad * pad,
   *n_buffers = *n_buffers + 1;
 }
 
+static gboolean
+caps_are_64bpp (const GstCaps * caps)
+{
+  GstVideoFormat fmt;
+  GstCaps *fmt_caps;
+
+  /* need fixed caps for _parse_caps */
+  fmt_caps = gst_caps_copy (caps);
+  gst_structure_remove_field (gst_caps_get_structure (fmt_caps, 0), "width");
+  gst_structure_remove_field (gst_caps_get_structure (fmt_caps, 0), "height");
+  gst_structure_remove_field (gst_caps_get_structure (fmt_caps, 0),
+      "framerate");
+
+  fail_unless (gst_video_format_parse_caps (fmt_caps, &fmt, NULL, NULL));
+  gst_caps_unref (fmt_caps);
+  return (fmt == GST_VIDEO_FORMAT_ARGB64 || fmt == GST_VIDEO_FORMAT_AYUV64);
+}
+
 static void
 run_test (const GstCaps * caps, gint src_width, gint src_height,
     gint dest_width, gint dest_height, gint method,
@@ -81,6 +99,10 @@ run_test (const GstCaps * caps, gint src_width, gint src_height,
   GstBus *bus;
   GstCaps *copy;
   guint n_buffers = 0;
+
+  /* skip formats that ffmpegcolorspace can't handle */
+  if (caps_are_64bpp (caps))
+    return;
 
   pipeline = gst_element_factory_make ("pipeline", "pipeline");
   fail_unless (pipeline != NULL);
@@ -198,6 +220,10 @@ GST_START_TEST (test_passthrough)
     GstCaps *caps = *p;
 
     for (method = 0; method < 3; method++) {
+      /* skip formats that ffmpegcolorspace can't handle */
+      if (caps_are_64bpp (caps))
+        continue;
+
       GST_DEBUG ("Running test for caps '%" GST_PTR_FORMAT "'"
           " from %dx%u to %dx%d with method %d", caps, src_width, src_height,
           dest_width, dest_height, method);
@@ -251,7 +277,6 @@ GST_START_TEST (name) \
     run_test (caps, src_width, src_height, \
         dest_width, dest_height, method, \
         NULL, NULL, NULL, NULL); \
-    \
     gst_caps_unref (caps); \
     p++; \
   } \
@@ -625,12 +650,8 @@ static void
 gst_test_reverse_negotiation_sink_class_init (GstTestReverseNegotiationSinkClass
     * klass)
 {
-  GObjectClass *gobject_class;
-  GstElementClass *gstelement_class;
   GstBaseSinkClass *gstbase_sink_class;
 
-  gobject_class = G_OBJECT_CLASS (klass);
-  gstelement_class = GST_ELEMENT_CLASS (klass);
   gstbase_sink_class = GST_BASE_SINK_CLASS (klass);
 
   gstbase_sink_class->buffer_alloc =
@@ -739,6 +760,56 @@ GST_START_TEST (test_reverse_negotiation)
 
 GST_END_TEST;
 
+GST_START_TEST (test_basetransform_negotiation)
+{
+  GstElement *pipeline, *src, *sink, *scale, *capsfilter1, *capsfilter2;
+  GstMessage *msg;
+  GstCaps *caps;
+
+  pipeline = gst_pipeline_new (NULL);
+  src = gst_element_factory_make ("videotestsrc", NULL);
+  capsfilter1 = gst_element_factory_make ("capsfilter", NULL);
+  scale = gst_element_factory_make ("videoscale", NULL);
+  capsfilter2 = gst_element_factory_make ("capsfilter", NULL);
+  sink = gst_element_factory_make ("fakesink", NULL);
+  fail_unless (pipeline && src && capsfilter1 && scale && capsfilter2 && sink);
+
+  g_object_set (src, "num-buffers", 3, NULL);
+
+  caps = gst_caps_new_simple ("video/x-raw-yuv", "format", GST_TYPE_FOURCC,
+      GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'), "width", G_TYPE_INT, 352,
+      "height", G_TYPE_INT, 288, "framerate", GST_TYPE_FRACTION, 30, 1,
+      "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1, NULL);
+  g_object_set (capsfilter1, "caps", caps, NULL);
+  gst_caps_unref (caps);
+
+  /* same caps, just different pixel-aspect-ratio */
+  caps = gst_caps_new_simple ("video/x-raw-yuv", "format", GST_TYPE_FOURCC,
+      GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'), "width", G_TYPE_INT, 352,
+      "height", G_TYPE_INT, 288, "framerate", GST_TYPE_FRACTION, 30, 1,
+      "pixel-aspect-ratio", GST_TYPE_FRACTION, 12, 11, NULL);
+  g_object_set (capsfilter2, "caps", caps, NULL);
+  gst_caps_unref (caps);
+
+  gst_bin_add_many (GST_BIN (pipeline), src, capsfilter1, scale, capsfilter2,
+      sink, NULL);
+  fail_unless (gst_element_link_many (src, capsfilter1, scale, capsfilter2,
+          sink, NULL));
+
+  fail_unless_equals_int (gst_element_set_state (pipeline, GST_STATE_PLAYING),
+      GST_STATE_CHANGE_ASYNC);
+
+  msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipeline), -1,
+      GST_MESSAGE_EOS | GST_MESSAGE_ERROR);
+  fail_unless_equals_int (GST_MESSAGE_TYPE (msg), GST_MESSAGE_EOS);
+  gst_message_unref (msg);
+
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+}
+
+GST_END_TEST;
+
 static Suite *
 videoscale_suite (void)
 {
@@ -786,7 +857,9 @@ videoscale_suite (void)
   tcase_add_test (tc_chain, test_upscale_1x240_640x480_method_2);
   tcase_add_test (tc_chain, test_negotiation);
   tcase_add_test (tc_chain, test_reverse_negotiation);
+  tcase_add_test (tc_chain, test_basetransform_negotiation);
 
+  GST_ERROR ("FIXME: test 64-bpp formats as well");
   return s;
 }
 

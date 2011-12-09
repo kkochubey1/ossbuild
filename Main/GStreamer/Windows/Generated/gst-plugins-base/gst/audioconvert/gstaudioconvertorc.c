@@ -4,9 +4,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef DISABLE_ORC
-#include <orc/orc.h>
-#endif
 #include <glib.h>
 
 #ifndef _ORC_INTEGER_TYPEDEFS_
@@ -32,6 +29,7 @@ typedef unsigned __int16 orc_uint16;
 typedef unsigned __int32 orc_uint32;
 typedef unsigned __int64 orc_uint64;
 #define ORC_UINT64_C(x) (x##Ui64)
+#define inline __inline
 #else
 #include <limits.h>
 typedef signed char orc_int8;
@@ -54,61 +52,73 @@ typedef union { orc_int16 i; orc_int8 x2[2]; } orc_union16;
 typedef union { orc_int32 i; float f; orc_int16 x2[2]; orc_int8 x4[4]; } orc_union32;
 typedef union { orc_int64 i; double f; orc_int32 x2[2]; float x2f[2]; orc_int16 x4[4]; } orc_union64;
 #endif
+#ifndef ORC_RESTRICT
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#define ORC_RESTRICT restrict
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define ORC_RESTRICT __restrict__
+#else
+#define ORC_RESTRICT
+#endif
+#endif
 
-void orc_audio_convert_unpack_u8 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s8 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u16 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s16 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u16_swap (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s16_swap (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u32 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s32 (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u32_swap (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s32_swap (gint32 * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_float_s32 (guint32 * d1, const gfloat * s1, int n);
-void orc_audio_convert_unpack_float_s32_swap (guint32 * d1, const gfloat * s1, int n);
-void orc_audio_convert_unpack_double_s32 (guint32 * d1, const gdouble * s1, int n);
-void orc_audio_convert_unpack_double_s32_swap (guint32 * d1, const gdouble * s1, int n);
-void orc_audio_convert_unpack_float_double (gdouble * d1, const gfloat * s1, int n);
-void orc_audio_convert_unpack_float_double_swap (gdouble * d1, const gfloat * s1, int n);
-void orc_audio_convert_unpack_double_double (gdouble * d1, const gdouble * s1, int n);
-void orc_audio_convert_unpack_double_double_swap (gdouble * d1, const gdouble * s1, int n);
-void orc_audio_convert_unpack_u8_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s8_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u16_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s16_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u32_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s32_double (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_u32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_unpack_s32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n);
-void orc_audio_convert_pack_u8 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s8 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_u16 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s16 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_u16_swap (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s16_swap (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_u32 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s32 (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_u32_swap (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s32_swap (guint8 * d1, const gint32 * s1, int p1, int n);
-void orc_audio_convert_pack_s32_float (gfloat * d1, const gint32 * s1, int n);
-void orc_audio_convert_pack_s32_float_swap (gfloat * d1, const gint32 * s1, int n);
-void orc_audio_convert_pack_s32_double (gdouble * d1, const gint32 * s1, int n);
-void orc_audio_convert_pack_s32_double_swap (gdouble * d1, const gint32 * s1, int n);
-void orc_audio_convert_pack_double_float (gfloat * d1, const gdouble * s1, int n);
-void orc_audio_convert_pack_double_float_swap (gfloat * d1, const gdouble * s1, int n);
-void orc_audio_convert_pack_double_u8 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_s8 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_u16 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_s16 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_u16_swap (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_s16_swap (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_u32 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_s32 (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_u32_swap (guint8 * d1, const gdouble * s1, int p1, int n);
-void orc_audio_convert_pack_double_s32_swap (guint8 * d1, const gdouble * s1, int p1, int n);
+#ifndef DISABLE_ORC
+#include <orc/orc.h>
+#endif
+void orc_audio_convert_unpack_u8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_float_s32 (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_float_s32_swap (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_double_s32 (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_double_s32_swap (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_float_double (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_float_double_swap (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_double_double (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_double_double_swap (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_unpack_u8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_u32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_unpack_s32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_u8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_u16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_u16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_u32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_u32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_s32_float (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_s32_float_swap (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_s32_double (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_s32_double_swap (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_double_float (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_double_float_swap (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_audio_convert_pack_double_u8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_s8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_u16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_s16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_u16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_s16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_u32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_s32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_u32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
+void orc_audio_convert_pack_double_s32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n);
 
 void gst_audio_convert_orc_init (void);
 
@@ -144,12 +154,14 @@ void gst_audio_convert_orc_init (void);
 #define ORC_ISNAN(x) ((((x)&0x7f800000) == 0x7f800000) && (((x)&0x007fffff) != 0))
 #define ORC_DENORMAL_DOUBLE(x) ((x) & ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == 0) ? ORC_UINT64_C(0xfff0000000000000) : ORC_UINT64_C(0xffffffffffffffff)))
 #define ORC_ISNAN_DOUBLE(x) ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == ORC_UINT64_C(0x7ff0000000000000)) && (((x)&ORC_UINT64_C(0x000fffffffffffff)) != 0))
+#ifndef ORC_RESTRICT
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #define ORC_RESTRICT restrict
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #define ORC_RESTRICT __restrict__
 #else
 #define ORC_RESTRICT
+#endif
 #endif
 /* end Orc C target preamble */
 
@@ -158,7 +170,7 @@ void gst_audio_convert_orc_init (void);
 /* orc_audio_convert_unpack_u8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u8 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -173,7 +185,7 @@ orc_audio_convert_unpack_u8 (gint32 * d1, const guint8 * s1, int p1, int n){
   ptr4 = (orc_int8 *)s1;
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -211,7 +223,7 @@ _backup_orc_audio_convert_unpack_u8 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_int8 *)ex->arrays[4];
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -230,22 +242,23 @@ _backup_orc_audio_convert_unpack_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u8;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u8;
 void
-orc_audio_convert_unpack_u8 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u8;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -254,7 +267,7 @@ orc_audio_convert_unpack_u8 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_s8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s8 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -314,22 +327,23 @@ _backup_orc_audio_convert_unpack_s8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s8;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s8;
 void
-orc_audio_convert_unpack_s8 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s8 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s8;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -338,7 +352,7 @@ orc_audio_convert_unpack_s8 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_u16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u16 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -352,7 +366,7 @@ orc_audio_convert_unpack_u16 (gint32 * d1, const guint8 * s1, int p1, int n){
   ptr4 = (orc_union16 *)s1;
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -387,7 +401,7 @@ _backup_orc_audio_convert_unpack_u16 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union16 *)ex->arrays[4];
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -404,22 +418,23 @@ _backup_orc_audio_convert_unpack_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u16;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u16;
 void
-orc_audio_convert_unpack_u16 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u16;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -428,7 +443,7 @@ orc_audio_convert_unpack_u16 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_s16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s16 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -482,22 +497,23 @@ _backup_orc_audio_convert_unpack_s16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s16;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s16;
 void
-orc_audio_convert_unpack_s16 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s16 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s16;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -506,7 +522,7 @@ orc_audio_convert_unpack_s16 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_u16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u16_swap (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -521,7 +537,7 @@ orc_audio_convert_unpack_u16_swap (gint32 * d1, const guint8 * s1, int p1, int n
   ptr4 = (orc_union16 *)s1;
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -559,7 +575,7 @@ _backup_orc_audio_convert_unpack_u16_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union16 *)ex->arrays[4];
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -578,22 +594,23 @@ _backup_orc_audio_convert_unpack_u16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u16_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u16_swap;
 void
-orc_audio_convert_unpack_u16_swap (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -602,7 +619,7 @@ orc_audio_convert_unpack_u16_swap (gint32 * d1, const guint8 * s1, int p1, int n
 /* orc_audio_convert_unpack_s16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s16_swap (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -662,22 +679,23 @@ _backup_orc_audio_convert_unpack_s16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s16_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s16_swap;
 void
-orc_audio_convert_unpack_s16_swap (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s16_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -686,7 +704,7 @@ orc_audio_convert_unpack_s16_swap (gint32 * d1, const guint8 * s1, int p1, int n
 /* orc_audio_convert_unpack_u32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u32 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -699,7 +717,7 @@ orc_audio_convert_unpack_u32 (gint32 * d1, const guint8 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -731,7 +749,7 @@ _backup_orc_audio_convert_unpack_u32 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -746,22 +764,23 @@ _backup_orc_audio_convert_unpack_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u32;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u32;
 void
-orc_audio_convert_unpack_u32 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u32;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -770,7 +789,7 @@ orc_audio_convert_unpack_u32 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_s32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s32 (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -818,22 +837,23 @@ _backup_orc_audio_convert_unpack_s32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s32;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s32;
 void
-orc_audio_convert_unpack_s32 (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s32 (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s32;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -842,7 +862,7 @@ orc_audio_convert_unpack_s32 (gint32 * d1, const guint8 * s1, int p1, int n)
 /* orc_audio_convert_unpack_u32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u32_swap (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -856,7 +876,7 @@ orc_audio_convert_unpack_u32_swap (gint32 * d1, const guint8 * s1, int p1, int n
   ptr4 = (orc_union32 *)s1;
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -891,7 +911,7 @@ _backup_orc_audio_convert_unpack_u32_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -908,22 +928,23 @@ _backup_orc_audio_convert_unpack_u32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u32_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u32_swap;
 void
-orc_audio_convert_unpack_u32_swap (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -932,7 +953,7 @@ orc_audio_convert_unpack_u32_swap (gint32 * d1, const guint8 * s1, int p1, int n
 /* orc_audio_convert_unpack_s32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s32_swap (gint32 * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -986,22 +1007,23 @@ _backup_orc_audio_convert_unpack_s32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s32_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s32_swap;
 void
-orc_audio_convert_unpack_s32_swap (gint32 * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s32_swap (gint32 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1010,7 +1032,7 @@ orc_audio_convert_unpack_s32_swap (gint32 * d1, const guint8 * s1, int p1, int n
 /* orc_audio_convert_unpack_float_s32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_float_s32 (guint32 * d1, const gfloat * s1, int n){
+orc_audio_convert_unpack_float_s32 (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -1025,9 +1047,9 @@ orc_audio_convert_unpack_float_s32 (guint32 * d1, const gfloat * s1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var33.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var33.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
     /* 3: loadpl */
-    var34.i = 0x3f000000; /* 1056964608 or 5.2221e-315f */
+    var34.i = (int)0x3f000000; /* 1056964608 or 5.2221e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -1084,9 +1106,9 @@ _backup_orc_audio_convert_unpack_float_s32 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var33.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var33.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
     /* 3: loadpl */
-    var34.i = 0x3f000000; /* 1056964608 or 5.2221e-315f */
+    var34.i = (int)0x3f000000; /* 1056964608 or 5.2221e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -1124,21 +1146,22 @@ _backup_orc_audio_convert_unpack_float_s32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_float_s32;
+static OrcCode *_orc_code_orc_audio_convert_unpack_float_s32;
 void
-orc_audio_convert_unpack_float_s32 (guint32 * d1, const gfloat * s1, int n)
+orc_audio_convert_unpack_float_s32 (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_float_s32;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_float_s32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1147,7 +1170,7 @@ orc_audio_convert_unpack_float_s32 (guint32 * d1, const gfloat * s1, int n)
 /* orc_audio_convert_unpack_float_s32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_float_s32_swap (guint32 * d1, const gfloat * s1, int n){
+orc_audio_convert_unpack_float_s32_swap (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -1163,9 +1186,9 @@ orc_audio_convert_unpack_float_s32_swap (guint32 * d1, const gfloat * s1, int n)
   ptr4 = (orc_union32 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
     /* 4: loadpl */
-    var35.i = 0x3f000000; /* 1056964608 or 5.2221e-315f */
+    var35.i = (int)0x3f000000; /* 1056964608 or 5.2221e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -1225,9 +1248,9 @@ _backup_orc_audio_convert_unpack_float_s32_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
     /* 4: loadpl */
-    var35.i = 0x3f000000; /* 1056964608 or 5.2221e-315f */
+    var35.i = (int)0x3f000000; /* 1056964608 or 5.2221e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -1267,21 +1290,22 @@ _backup_orc_audio_convert_unpack_float_s32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_float_s32_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_float_s32_swap;
 void
-orc_audio_convert_unpack_float_s32_swap (guint32 * d1, const gfloat * s1, int n)
+orc_audio_convert_unpack_float_s32_swap (guint32 * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_float_s32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_float_s32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1290,7 +1314,7 @@ orc_audio_convert_unpack_float_s32_swap (guint32 * d1, const gfloat * s1, int n)
 /* orc_audio_convert_unpack_double_s32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_double_s32 (guint32 * d1, const gdouble * s1, int n){
+orc_audio_convert_unpack_double_s32 (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1404,21 +1428,22 @@ _backup_orc_audio_convert_unpack_double_s32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_double_s32;
+static OrcCode *_orc_code_orc_audio_convert_unpack_double_s32;
 void
-orc_audio_convert_unpack_double_s32 (guint32 * d1, const gdouble * s1, int n)
+orc_audio_convert_unpack_double_s32 (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_double_s32;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_double_s32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1427,7 +1452,7 @@ orc_audio_convert_unpack_double_s32 (guint32 * d1, const gdouble * s1, int n)
 /* orc_audio_convert_unpack_double_s32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_double_s32_swap (guint32 * d1, const gdouble * s1, int n){
+orc_audio_convert_unpack_double_s32_swap (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1547,21 +1572,22 @@ _backup_orc_audio_convert_unpack_double_s32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_double_s32_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_double_s32_swap;
 void
-orc_audio_convert_unpack_double_s32_swap (guint32 * d1, const gdouble * s1, int n)
+orc_audio_convert_unpack_double_s32_swap (guint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_double_s32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_double_s32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1570,7 +1596,7 @@ orc_audio_convert_unpack_double_s32_swap (guint32 * d1, const gdouble * s1, int 
 /* orc_audio_convert_unpack_float_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_float_double (gdouble * d1, const gfloat * s1, int n){
+orc_audio_convert_unpack_float_double (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -1626,21 +1652,22 @@ _backup_orc_audio_convert_unpack_float_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_float_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_float_double;
 void
-orc_audio_convert_unpack_float_double (gdouble * d1, const gfloat * s1, int n)
+orc_audio_convert_unpack_float_double (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_float_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_float_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1649,7 +1676,7 @@ orc_audio_convert_unpack_float_double (gdouble * d1, const gfloat * s1, int n)
 /* orc_audio_convert_unpack_float_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_float_double_swap (gdouble * d1, const gfloat * s1, int n){
+orc_audio_convert_unpack_float_double_swap (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -1711,21 +1738,22 @@ _backup_orc_audio_convert_unpack_float_double_swap (OrcExecutor * ORC_RESTRICT e
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_float_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_float_double_swap;
 void
-orc_audio_convert_unpack_float_double_swap (gdouble * d1, const gfloat * s1, int n)
+orc_audio_convert_unpack_float_double_swap (gdouble * ORC_RESTRICT d1, const gfloat * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_float_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_float_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1734,7 +1762,7 @@ orc_audio_convert_unpack_float_double_swap (gdouble * d1, const gfloat * s1, int
 /* orc_audio_convert_unpack_double_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_double_double (gdouble * d1, const gdouble * s1, int n){
+orc_audio_convert_unpack_double_double (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1782,21 +1810,22 @@ _backup_orc_audio_convert_unpack_double_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_double_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_double_double;
 void
-orc_audio_convert_unpack_double_double (gdouble * d1, const gdouble * s1, int n)
+orc_audio_convert_unpack_double_double (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_double_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_double_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1805,7 +1834,7 @@ orc_audio_convert_unpack_double_double (gdouble * d1, const gdouble * s1, int n)
 /* orc_audio_convert_unpack_double_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_double_double_swap (gdouble * d1, const gdouble * s1, int n){
+orc_audio_convert_unpack_double_double_swap (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1853,21 +1882,22 @@ _backup_orc_audio_convert_unpack_double_double_swap (OrcExecutor * ORC_RESTRICT 
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_double_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_double_double_swap;
 void
-orc_audio_convert_unpack_double_double_swap (gdouble * d1, const gdouble * s1, int n)
+orc_audio_convert_unpack_double_double_swap (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_double_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_double_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1876,7 +1906,7 @@ orc_audio_convert_unpack_double_double_swap (gdouble * d1, const gdouble * s1, i
 /* orc_audio_convert_unpack_u8_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u8_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -1892,7 +1922,7 @@ orc_audio_convert_unpack_u8_double (gdouble * d1, const guint8 * s1, int p1, int
   ptr4 = (orc_int8 *)s1;
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -1933,7 +1963,7 @@ _backup_orc_audio_convert_unpack_u8_double (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_int8 *)ex->arrays[4];
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -1954,22 +1984,23 @@ _backup_orc_audio_convert_unpack_u8_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u8_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u8_double;
 void
-orc_audio_convert_unpack_u8_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u8_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u8_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1978,7 +2009,7 @@ orc_audio_convert_unpack_u8_double (gdouble * d1, const guint8 * s1, int p1, int
 /* orc_audio_convert_unpack_s8_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s8_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -2044,22 +2075,23 @@ _backup_orc_audio_convert_unpack_s8_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s8_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s8_double;
 void
-orc_audio_convert_unpack_s8_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s8_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s8_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s8_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2068,7 +2100,7 @@ orc_audio_convert_unpack_s8_double (gdouble * d1, const guint8 * s1, int p1, int
 /* orc_audio_convert_unpack_u16_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u16_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -2083,7 +2115,7 @@ orc_audio_convert_unpack_u16_double (gdouble * d1, const guint8 * s1, int p1, in
   ptr4 = (orc_union16 *)s1;
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -2121,7 +2153,7 @@ _backup_orc_audio_convert_unpack_u16_double (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union16 *)ex->arrays[4];
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -2140,22 +2172,23 @@ _backup_orc_audio_convert_unpack_u16_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u16_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u16_double;
 void
-orc_audio_convert_unpack_u16_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u16_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u16_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2164,7 +2197,7 @@ orc_audio_convert_unpack_u16_double (gdouble * d1, const guint8 * s1, int p1, in
 /* orc_audio_convert_unpack_s16_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s16_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -2224,22 +2257,23 @@ _backup_orc_audio_convert_unpack_s16_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s16_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s16_double;
 void
-orc_audio_convert_unpack_s16_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s16_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s16_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s16_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2248,7 +2282,7 @@ orc_audio_convert_unpack_s16_double (gdouble * d1, const guint8 * s1, int p1, in
 /* orc_audio_convert_unpack_u16_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -2264,7 +2298,7 @@ orc_audio_convert_unpack_u16_double_swap (gdouble * d1, const guint8 * s1, int p
   ptr4 = (orc_union16 *)s1;
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -2305,7 +2339,7 @@ _backup_orc_audio_convert_unpack_u16_double_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union16 *)ex->arrays[4];
 
     /* 4: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadw */
@@ -2326,22 +2360,23 @@ _backup_orc_audio_convert_unpack_u16_double_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u16_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u16_double_swap;
 void
-orc_audio_convert_unpack_u16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u16_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u16_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2350,7 +2385,7 @@ orc_audio_convert_unpack_u16_double_swap (gdouble * d1, const guint8 * s1, int p
 /* orc_audio_convert_unpack_s16_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union16 * ORC_RESTRICT ptr4;
@@ -2416,22 +2451,23 @@ _backup_orc_audio_convert_unpack_s16_double_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s16_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s16_double_swap;
 void
-orc_audio_convert_unpack_s16_double_swap (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s16_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s16_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s16_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2440,7 +2476,7 @@ orc_audio_convert_unpack_s16_double_swap (gdouble * d1, const guint8 * s1, int p
 /* orc_audio_convert_unpack_u32_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u32_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2454,7 +2490,7 @@ orc_audio_convert_unpack_u32_double (gdouble * d1, const guint8 * s1, int p1, in
   ptr4 = (orc_union32 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2489,7 +2525,7 @@ _backup_orc_audio_convert_unpack_u32_double (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2506,22 +2542,23 @@ _backup_orc_audio_convert_unpack_u32_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u32_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u32_double;
 void
-orc_audio_convert_unpack_u32_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u32_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u32_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2530,7 +2567,7 @@ orc_audio_convert_unpack_u32_double (gdouble * d1, const guint8 * s1, int p1, in
 /* orc_audio_convert_unpack_s32_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s32_double (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2584,22 +2621,23 @@ _backup_orc_audio_convert_unpack_s32_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s32_double;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s32_double;
 void
-orc_audio_convert_unpack_s32_double (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s32_double (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s32_double;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s32_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2608,7 +2646,7 @@ orc_audio_convert_unpack_s32_double (gdouble * d1, const guint8 * s1, int p1, in
 /* orc_audio_convert_unpack_u32_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_u32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_u32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2623,7 +2661,7 @@ orc_audio_convert_unpack_u32_double_swap (gdouble * d1, const guint8 * s1, int p
   ptr4 = (orc_union32 *)s1;
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2661,7 +2699,7 @@ _backup_orc_audio_convert_unpack_u32_double_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 3: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2680,22 +2718,23 @@ _backup_orc_audio_convert_unpack_u32_double_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_u32_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_u32_double_swap;
 void
-orc_audio_convert_unpack_u32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_u32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_u32_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_u32_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2704,7 +2743,7 @@ orc_audio_convert_unpack_u32_double_swap (gdouble * d1, const guint8 * s1, int p
 /* orc_audio_convert_unpack_s32_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_unpack_s32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n){
+orc_audio_convert_unpack_s32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2764,22 +2803,23 @@ _backup_orc_audio_convert_unpack_s32_double_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_unpack_s32_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_unpack_s32_double_swap;
 void
-orc_audio_convert_unpack_s32_double_swap (gdouble * d1, const guint8 * s1, int p1, int n)
+orc_audio_convert_unpack_s32_double_swap (gdouble * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_unpack_s32_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_unpack_s32_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2788,7 +2828,7 @@ orc_audio_convert_unpack_s32_double_swap (gdouble * d1, const guint8 * s1, int p
 /* orc_audio_convert_pack_u8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_u8 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_u8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2803,7 +2843,7 @@ orc_audio_convert_pack_u8 (guint8 * d1, const gint32 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2841,7 +2881,7 @@ _backup_orc_audio_convert_pack_u8 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -2860,22 +2900,23 @@ _backup_orc_audio_convert_pack_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_u8;
+static OrcCode *_orc_code_orc_audio_convert_pack_u8;
 void
-orc_audio_convert_pack_u8 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_u8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_u8;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_u8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2884,7 +2925,7 @@ orc_audio_convert_pack_u8 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s8 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_s8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2944,22 +2985,23 @@ _backup_orc_audio_convert_pack_s8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s8;
+static OrcCode *_orc_code_orc_audio_convert_pack_s8;
 void
-orc_audio_convert_pack_s8 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_s8 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s8;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2968,7 +3010,7 @@ orc_audio_convert_pack_s8 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_u16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_u16 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_u16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -2982,7 +3024,7 @@ orc_audio_convert_pack_u16 (guint8 * d1, const gint32 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3017,7 +3059,7 @@ _backup_orc_audio_convert_pack_u16 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3034,22 +3076,23 @@ _backup_orc_audio_convert_pack_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_u16;
+static OrcCode *_orc_code_orc_audio_convert_pack_u16;
 void
-orc_audio_convert_pack_u16 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_u16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_u16;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_u16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3058,7 +3101,7 @@ orc_audio_convert_pack_u16 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s16 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_s16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3112,22 +3155,23 @@ _backup_orc_audio_convert_pack_s16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s16;
+static OrcCode *_orc_code_orc_audio_convert_pack_s16;
 void
-orc_audio_convert_pack_s16 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_s16 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s16;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3136,7 +3180,7 @@ orc_audio_convert_pack_s16 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_u16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_u16_swap (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_u16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3151,7 +3195,7 @@ orc_audio_convert_pack_u16_swap (guint8 * d1, const gint32 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3189,7 +3233,7 @@ _backup_orc_audio_convert_pack_u16_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3208,22 +3252,23 @@ _backup_orc_audio_convert_pack_u16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_u16_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_u16_swap;
 void
-orc_audio_convert_pack_u16_swap (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_u16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_u16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_u16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3232,7 +3277,7 @@ orc_audio_convert_pack_u16_swap (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s16_swap (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_s16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3292,22 +3337,23 @@ _backup_orc_audio_convert_pack_s16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s16_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_s16_swap;
 void
-orc_audio_convert_pack_s16_swap (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_s16_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3316,7 +3362,7 @@ orc_audio_convert_pack_s16_swap (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_u32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_u32 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_u32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3329,7 +3375,7 @@ orc_audio_convert_pack_u32 (guint8 * d1, const gint32 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3361,7 +3407,7 @@ _backup_orc_audio_convert_pack_u32 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3376,22 +3422,23 @@ _backup_orc_audio_convert_pack_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_u32;
+static OrcCode *_orc_code_orc_audio_convert_pack_u32;
 void
-orc_audio_convert_pack_u32 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_u32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_u32;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_u32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3400,7 +3447,7 @@ orc_audio_convert_pack_u32 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32 (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_s32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3448,22 +3495,23 @@ _backup_orc_audio_convert_pack_s32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32;
 void
-orc_audio_convert_pack_s32 (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_s32 (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3472,7 +3520,7 @@ orc_audio_convert_pack_s32 (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_u32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_u32_swap (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_u32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3486,7 +3534,7 @@ orc_audio_convert_pack_u32_swap (guint8 * d1, const gint32 * s1, int p1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3521,7 +3569,7 @@ _backup_orc_audio_convert_pack_u32_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 1: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3538,22 +3586,23 @@ _backup_orc_audio_convert_pack_u32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_u32_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_u32_swap;
 void
-orc_audio_convert_pack_u32_swap (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_u32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_u32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_u32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3562,7 +3611,7 @@ orc_audio_convert_pack_u32_swap (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32_swap (guint8 * d1, const gint32 * s1, int p1, int n){
+orc_audio_convert_pack_s32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3616,22 +3665,23 @@ _backup_orc_audio_convert_pack_s32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32_swap;
 void
-orc_audio_convert_pack_s32_swap (guint8 * d1, const gint32 * s1, int p1, int n)
+orc_audio_convert_pack_s32_swap (guint8 * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3640,7 +3690,7 @@ orc_audio_convert_pack_s32_swap (guint8 * d1, const gint32 * s1, int p1, int n)
 /* orc_audio_convert_pack_s32_float */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32_float (gfloat * d1, const gint32 * s1, int n){
+orc_audio_convert_pack_s32_float (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3653,7 +3703,7 @@ orc_audio_convert_pack_s32_float (gfloat * d1, const gint32 * s1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3693,7 +3743,7 @@ _backup_orc_audio_convert_pack_s32_float (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3716,21 +3766,22 @@ _backup_orc_audio_convert_pack_s32_float (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32_float;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32_float;
 void
-orc_audio_convert_pack_s32_float (gfloat * d1, const gint32 * s1, int n)
+orc_audio_convert_pack_s32_float (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32_float;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32_float;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3739,7 +3790,7 @@ orc_audio_convert_pack_s32_float (gfloat * d1, const gint32 * s1, int n)
 /* orc_audio_convert_pack_s32_float_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32_float_swap (gfloat * d1, const gint32 * s1, int n){
+orc_audio_convert_pack_s32_float_swap (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3753,7 +3804,7 @@ orc_audio_convert_pack_s32_float_swap (gfloat * d1, const gint32 * s1, int n){
   ptr4 = (orc_union32 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3796,7 +3847,7 @@ _backup_orc_audio_convert_pack_s32_float_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union32 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x4f000000; /* 1325400064 or 6.54835e-315f */
+    var34.i = (int)0x4f000000; /* 1325400064 or 6.54835e-315f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadl */
@@ -3821,21 +3872,22 @@ _backup_orc_audio_convert_pack_s32_float_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32_float_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32_float_swap;
 void
-orc_audio_convert_pack_s32_float_swap (gfloat * d1, const gint32 * s1, int n)
+orc_audio_convert_pack_s32_float_swap (gfloat * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32_float_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32_float_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3844,7 +3896,7 @@ orc_audio_convert_pack_s32_float_swap (gfloat * d1, const gint32 * s1, int n)
 /* orc_audio_convert_pack_s32_double */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32_double (gdouble * d1, const gint32 * s1, int n){
+orc_audio_convert_pack_s32_double (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -3920,21 +3972,22 @@ _backup_orc_audio_convert_pack_s32_double (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32_double;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32_double;
 void
-orc_audio_convert_pack_s32_double (gdouble * d1, const gint32 * s1, int n)
+orc_audio_convert_pack_s32_double (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32_double;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32_double;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -3943,7 +3996,7 @@ orc_audio_convert_pack_s32_double (gdouble * d1, const gint32 * s1, int n)
 /* orc_audio_convert_pack_s32_double_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_s32_double_swap (gdouble * d1, const gint32 * s1, int n){
+orc_audio_convert_pack_s32_double_swap (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -4025,21 +4078,22 @@ _backup_orc_audio_convert_pack_s32_double_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_s32_double_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_s32_double_swap;
 void
-orc_audio_convert_pack_s32_double_swap (gdouble * d1, const gint32 * s1, int n)
+orc_audio_convert_pack_s32_double_swap (gdouble * ORC_RESTRICT d1, const gint32 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_s32_double_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_s32_double_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4048,7 +4102,7 @@ orc_audio_convert_pack_s32_double_swap (gdouble * d1, const gint32 * s1, int n)
 /* orc_audio_convert_pack_double_float */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_float (gfloat * d1, const gdouble * s1, int n){
+orc_audio_convert_pack_double_float (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4108,21 +4162,22 @@ _backup_orc_audio_convert_pack_double_float (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_float;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_float;
 void
-orc_audio_convert_pack_double_float (gfloat * d1, const gdouble * s1, int n)
+orc_audio_convert_pack_double_float (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_float;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_float;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4131,7 +4186,7 @@ orc_audio_convert_pack_double_float (gfloat * d1, const gdouble * s1, int n)
 /* orc_audio_convert_pack_double_float_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_float_swap (gfloat * d1, const gdouble * s1, int n){
+orc_audio_convert_pack_double_float_swap (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4197,21 +4252,22 @@ _backup_orc_audio_convert_pack_double_float_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_float_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_float_swap;
 void
-orc_audio_convert_pack_double_float_swap (gfloat * d1, const gdouble * s1, int n)
+orc_audio_convert_pack_double_float_swap (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_float_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_float_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4220,7 +4276,7 @@ orc_audio_convert_pack_double_float_swap (gfloat * d1, const gdouble * s1, int n
 /* orc_audio_convert_pack_double_u8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_u8 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_u8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4236,7 +4292,7 @@ orc_audio_convert_pack_double_u8 (guint8 * d1, const gdouble * s1, int p1, int n
   ptr4 = (orc_union64 *)s1;
 
     /* 2: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4282,7 +4338,7 @@ _backup_orc_audio_convert_pack_double_u8 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union64 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4308,22 +4364,23 @@ _backup_orc_audio_convert_pack_double_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_u8;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_u8;
 void
-orc_audio_convert_pack_double_u8 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_u8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_u8;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_u8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4332,7 +4389,7 @@ orc_audio_convert_pack_double_u8 (guint8 * d1, const gdouble * s1, int p1, int n
 /* orc_audio_convert_pack_double_s8 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_s8 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_s8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4408,22 +4465,23 @@ _backup_orc_audio_convert_pack_double_s8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_s8;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_s8;
 void
-orc_audio_convert_pack_double_s8 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_s8 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_s8;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_s8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4432,7 +4490,7 @@ orc_audio_convert_pack_double_s8 (guint8 * d1, const gdouble * s1, int p1, int n
 /* orc_audio_convert_pack_double_u16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_u16 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_u16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4447,7 +4505,7 @@ orc_audio_convert_pack_double_u16 (guint8 * d1, const gdouble * s1, int p1, int 
   ptr4 = (orc_union64 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4490,7 +4548,7 @@ _backup_orc_audio_convert_pack_double_u16 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union64 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4514,22 +4572,23 @@ _backup_orc_audio_convert_pack_double_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_u16;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_u16;
 void
-orc_audio_convert_pack_double_u16 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_u16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_u16;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_u16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4538,7 +4597,7 @@ orc_audio_convert_pack_double_u16 (guint8 * d1, const gdouble * s1, int p1, int 
 /* orc_audio_convert_pack_double_s16 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_s16 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_s16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4608,22 +4667,23 @@ _backup_orc_audio_convert_pack_double_s16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_s16;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_s16;
 void
-orc_audio_convert_pack_double_s16 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_s16 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_s16;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_s16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4632,7 +4692,7 @@ orc_audio_convert_pack_double_s16 (guint8 * d1, const gdouble * s1, int p1, int 
 /* orc_audio_convert_pack_double_u16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_u16_swap (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_u16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4648,7 +4708,7 @@ orc_audio_convert_pack_double_u16_swap (guint8 * d1, const gdouble * s1, int p1,
   ptr4 = (orc_union64 *)s1;
 
     /* 2: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4694,7 +4754,7 @@ _backup_orc_audio_convert_pack_double_u16_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union64 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var35.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var35.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4720,22 +4780,23 @@ _backup_orc_audio_convert_pack_double_u16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_u16_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_u16_swap;
 void
-orc_audio_convert_pack_double_u16_swap (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_u16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_u16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_u16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4744,7 +4805,7 @@ orc_audio_convert_pack_double_u16_swap (guint8 * d1, const gdouble * s1, int p1,
 /* orc_audio_convert_pack_double_s16_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_s16_swap (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_s16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4820,22 +4881,23 @@ _backup_orc_audio_convert_pack_double_s16_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_s16_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_s16_swap;
 void
-orc_audio_convert_pack_double_s16_swap (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_s16_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_s16_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_s16_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4844,7 +4906,7 @@ orc_audio_convert_pack_double_s16_swap (guint8 * d1, const gdouble * s1, int p1,
 /* orc_audio_convert_pack_double_u32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_u32 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_u32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -4858,7 +4920,7 @@ orc_audio_convert_pack_double_u32 (guint8 * d1, const gdouble * s1, int p1, int 
   ptr4 = (orc_union64 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4898,7 +4960,7 @@ _backup_orc_audio_convert_pack_double_u32 (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union64 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -4920,22 +4982,23 @@ _backup_orc_audio_convert_pack_double_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_u32;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_u32;
 void
-orc_audio_convert_pack_double_u32 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_u32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_u32;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_u32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -4944,7 +5007,7 @@ orc_audio_convert_pack_double_u32 (guint8 * d1, const gdouble * s1, int p1, int 
 /* orc_audio_convert_pack_double_s32 */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_s32 (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_s32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -5008,22 +5071,23 @@ _backup_orc_audio_convert_pack_double_s32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_s32;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_s32;
 void
-orc_audio_convert_pack_double_s32 (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_s32 (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_s32;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_s32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -5032,7 +5096,7 @@ orc_audio_convert_pack_double_s32 (guint8 * d1, const gdouble * s1, int p1, int 
 /* orc_audio_convert_pack_double_u32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_u32_swap (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_u32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -5047,7 +5111,7 @@ orc_audio_convert_pack_double_u32_swap (guint8 * d1, const gdouble * s1, int p1,
   ptr4 = (orc_union64 *)s1;
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -5090,7 +5154,7 @@ _backup_orc_audio_convert_pack_double_u32_swap (OrcExecutor * ORC_RESTRICT ex)
   ptr4 = (orc_union64 *)ex->arrays[4];
 
     /* 2: loadpl */
-    var34.i = 0x80000000; /* -2147483648 or 1.061e-314f */
+    var34.i = (int)0x80000000; /* -2147483648 or 1.061e-314f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadq */
@@ -5114,22 +5178,23 @@ _backup_orc_audio_convert_pack_double_u32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_u32_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_u32_swap;
 void
-orc_audio_convert_pack_double_u32_swap (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_u32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_u32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_u32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -5138,7 +5203,7 @@ orc_audio_convert_pack_double_u32_swap (guint8 * d1, const gdouble * s1, int p1,
 /* orc_audio_convert_pack_double_s32_swap */
 #ifdef DISABLE_ORC
 void
-orc_audio_convert_pack_double_s32_swap (guint8 * d1, const gdouble * s1, int p1, int n){
+orc_audio_convert_pack_double_s32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -5208,22 +5273,23 @@ _backup_orc_audio_convert_pack_double_s32_swap (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_audio_convert_pack_double_s32_swap;
+static OrcCode *_orc_code_orc_audio_convert_pack_double_s32_swap;
 void
-orc_audio_convert_pack_double_s32_swap (guint8 * d1, const gdouble * s1, int p1, int n)
+orc_audio_convert_pack_double_s32_swap (guint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_audio_convert_pack_double_s32_swap;
+  OrcCode *c = _orc_code_orc_audio_convert_pack_double_s32_swap;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -5236,8 +5302,7 @@ gst_audio_convert_orc_init (void)
   {
     /* orc_audio_convert_unpack_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u8);
@@ -5253,15 +5318,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_C1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u8 = p;
+    _orc_code_orc_audio_convert_unpack_u8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s8);
@@ -5275,15 +5340,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convuwl", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "shll", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s8 = p;
+    _orc_code_orc_audio_convert_unpack_s8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u16);
@@ -5297,15 +5362,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u16 = p;
+    _orc_code_orc_audio_convert_unpack_u16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s16);
@@ -5317,15 +5382,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convuwl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "shll", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s16 = p;
+    _orc_code_orc_audio_convert_unpack_s16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u16_swap);
@@ -5341,15 +5406,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_C1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u16_swap = p;
+    _orc_code_orc_audio_convert_unpack_u16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s16_swap);
@@ -5363,15 +5428,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convuwl", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "shll", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s16_swap = p;
+    _orc_code_orc_audio_convert_unpack_s16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u32);
@@ -5384,15 +5449,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u32 = p;
+    _orc_code_orc_audio_convert_unpack_u32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s32);
@@ -5402,15 +5467,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "shll", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s32 = p;
+    _orc_code_orc_audio_convert_unpack_s32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u32_swap);
@@ -5424,15 +5489,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u32_swap = p;
+    _orc_code_orc_audio_convert_unpack_u32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s32_swap);
@@ -5444,15 +5509,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "shll", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s32_swap = p;
+    _orc_code_orc_audio_convert_unpack_s32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_float_s32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_float_s32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_float_s32);
@@ -5467,15 +5532,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "addf", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_D1);
       orc_program_append_2 (p, "convfl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_float_s32 = p;
+    _orc_code_orc_audio_convert_unpack_float_s32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_float_s32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_float_s32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_float_s32_swap);
@@ -5490,15 +5555,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "addf", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_D1);
       orc_program_append_2 (p, "convfl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_float_s32_swap = p;
+    _orc_code_orc_audio_convert_unpack_float_s32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_double_s32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_double_s32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_double_s32);
@@ -5513,15 +5578,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "addd", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_D1);
       orc_program_append_2 (p, "convdl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_double_s32 = p;
+    _orc_code_orc_audio_convert_unpack_double_s32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_double_s32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_double_s32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_double_s32_swap);
@@ -5536,15 +5601,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "addd", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_D1);
       orc_program_append_2 (p, "convdl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_double_s32_swap = p;
+    _orc_code_orc_audio_convert_unpack_double_s32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_float_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_float_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_float_double);
@@ -5553,15 +5618,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "convfd", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_float_double = p;
+    _orc_code_orc_audio_convert_unpack_float_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_float_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_float_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_float_double_swap);
@@ -5572,15 +5637,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convfd", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_float_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_float_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_double_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_double_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_double_double);
@@ -5589,15 +5654,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "copyq", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_double_double = p;
+    _orc_code_orc_audio_convert_unpack_double_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_double_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_double_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_double_double_swap);
@@ -5606,15 +5671,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "swapq", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_double_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_double_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u8_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u8_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u8_double);
@@ -5631,15 +5696,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u8_double = p;
+    _orc_code_orc_audio_convert_unpack_u8_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s8_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s8_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s8_double);
@@ -5654,15 +5719,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s8_double = p;
+    _orc_code_orc_audio_convert_unpack_s8_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u16_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u16_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u16_double);
@@ -5677,15 +5742,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u16_double = p;
+    _orc_code_orc_audio_convert_unpack_u16_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s16_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s16_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s16_double);
@@ -5698,15 +5763,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s16_double = p;
+    _orc_code_orc_audio_convert_unpack_s16_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u16_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u16_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u16_double_swap);
@@ -5723,15 +5788,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u16_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_u16_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s16_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s16_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s16_double_swap);
@@ -5746,15 +5811,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s16_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_s16_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u32_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u32_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u32_double);
@@ -5768,15 +5833,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u32_double = p;
+    _orc_code_orc_audio_convert_unpack_u32_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s32_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s32_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s32_double);
@@ -5788,15 +5853,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s32_double = p;
+    _orc_code_orc_audio_convert_unpack_s32_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_u32_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_u32_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_u32_double_swap);
@@ -5811,15 +5876,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_u32_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_u32_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_unpack_s32_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_unpack_s32_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_unpack_s32_double_swap);
@@ -5832,15 +5897,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shll", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convld", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_unpack_s32_double_swap = p;
+    _orc_code_orc_audio_convert_unpack_s32_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_u8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_u8);
@@ -5856,15 +5921,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convwb", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_u8 = p;
+    _orc_code_orc_audio_convert_pack_u8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s8);
@@ -5878,15 +5943,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convwb", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s8 = p;
+    _orc_code_orc_audio_convert_pack_s8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_u16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_u16);
@@ -5900,15 +5965,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_u16 = p;
+    _orc_code_orc_audio_convert_pack_u16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s16);
@@ -5920,15 +5985,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s16 = p;
+    _orc_code_orc_audio_convert_pack_s16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_u16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_u16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_u16_swap);
@@ -5944,15 +6009,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapw", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_u16_swap = p;
+    _orc_code_orc_audio_convert_pack_u16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s16_swap);
@@ -5966,15 +6031,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapw", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s16_swap = p;
+    _orc_code_orc_audio_convert_pack_s16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_u32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_u32);
@@ -5987,15 +6052,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_u32 = p;
+    _orc_code_orc_audio_convert_pack_u32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32);
@@ -6005,15 +6070,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32 = p;
+    _orc_code_orc_audio_convert_pack_s32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_u32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_u32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_u32_swap);
@@ -6027,15 +6092,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_u32_swap = p;
+    _orc_code_orc_audio_convert_pack_u32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32_swap);
@@ -6047,15 +6112,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32_swap = p;
+    _orc_code_orc_audio_convert_pack_s32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32_float */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32_float");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32_float);
@@ -6068,15 +6133,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "divf", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "storel", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32_float = p;
+    _orc_code_orc_audio_convert_pack_s32_float = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32_float_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32_float_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32_float_swap);
@@ -6089,15 +6154,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "divf", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32_float_swap = p;
+    _orc_code_orc_audio_convert_pack_s32_float_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32_double */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32_double");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32_double);
@@ -6110,15 +6175,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "divd", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "storeq", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32_double = p;
+    _orc_code_orc_audio_convert_pack_s32_double = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_s32_double_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_s32_double_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_s32_double_swap);
@@ -6131,15 +6196,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "divd", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapq", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_s32_double_swap = p;
+    _orc_code_orc_audio_convert_pack_s32_double_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_float */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_float");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_float);
@@ -6148,15 +6213,15 @@ gst_audio_convert_orc_init (void)
 
       orc_program_append_2 (p, "convdf", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_float = p;
+    _orc_code_orc_audio_convert_pack_double_float = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_float_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_float_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_float_swap);
@@ -6167,15 +6232,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convdf", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_float_swap = p;
+    _orc_code_orc_audio_convert_pack_double_float_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_u8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_u8);
@@ -6192,15 +6257,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convwb", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_u8 = p;
+    _orc_code_orc_audio_convert_pack_double_u8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_s8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_s8");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_s8);
@@ -6215,15 +6280,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convwb", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_s8 = p;
+    _orc_code_orc_audio_convert_pack_double_s8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_u16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_u16);
@@ -6238,15 +6303,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_u16 = p;
+    _orc_code_orc_audio_convert_pack_double_u16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_s16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_s16");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_s16);
@@ -6259,15 +6324,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_s16 = p;
+    _orc_code_orc_audio_convert_pack_double_s16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_u16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_u16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_u16_swap);
@@ -6284,15 +6349,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapw", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_u16_swap = p;
+    _orc_code_orc_audio_convert_pack_double_u16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_s16_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_s16_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_s16_swap);
@@ -6307,15 +6372,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapw", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_s16_swap = p;
+    _orc_code_orc_audio_convert_pack_double_s16_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_u32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_u32);
@@ -6329,15 +6394,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "xorl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_u32 = p;
+    _orc_code_orc_audio_convert_pack_double_u32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_s32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_s32");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_s32);
@@ -6349,15 +6414,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "convdl", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_s32 = p;
+    _orc_code_orc_audio_convert_pack_double_s32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_u32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_u32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_u32_swap);
@@ -6372,15 +6437,15 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrul", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_u32_swap = p;
+    _orc_code_orc_audio_convert_pack_double_u32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_audio_convert_pack_double_s32_swap */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_audio_convert_pack_double_s32_swap");
       orc_program_set_backup_function (p, _backup_orc_audio_convert_pack_double_s32_swap);
@@ -6393,9 +6458,10 @@ gst_audio_convert_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_P1, ORC_VAR_D1);
       orc_program_append_2 (p, "swapl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_audio_convert_pack_double_s32_swap = p;
+    _orc_code_orc_audio_convert_pack_double_s32_swap = orc_program_take_code (p);
+    orc_program_free (p);
   }
 #endif
 }

@@ -4,9 +4,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef DISABLE_ORC
-#include <orc/orc.h>
-#endif
 #include <glib.h>
 
 #ifndef _ORC_INTEGER_TYPEDEFS_
@@ -32,6 +29,7 @@ typedef unsigned __int16 orc_uint16;
 typedef unsigned __int32 orc_uint32;
 typedef unsigned __int64 orc_uint64;
 #define ORC_UINT64_C(x) (x##Ui64)
+#define inline __inline
 #else
 #include <limits.h>
 typedef signed char orc_int8;
@@ -54,25 +52,37 @@ typedef union { orc_int16 i; orc_int8 x2[2]; } orc_union16;
 typedef union { orc_int32 i; float f; orc_int16 x2[2]; orc_int8 x4[4]; } orc_union32;
 typedef union { orc_int64 i; double f; orc_int32 x2[2]; float x2f[2]; orc_int16 x4[4]; } orc_union64;
 #endif
+#ifndef ORC_RESTRICT
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#define ORC_RESTRICT restrict
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define ORC_RESTRICT __restrict__
+#else
+#define ORC_RESTRICT
+#endif
+#endif
 
-void orc_scalarmultiply_f64_ns (double * d1, double p1, int n);
-void orc_scalarmultiply_f32_ns (float * d1, float p1, int n);
-void orc_process_int32 (gint32 * d1, int p1, int n);
-void orc_process_int32_clamp (gint32 * d1, int p1, int n);
-void orc_process_int16 (gint16 * d1, int p1, int n);
-void orc_process_int16_clamp (gint16 * d1, int p1, int n);
-void orc_process_int8 (gint8 * d1, int p1, int n);
-void orc_process_int8_clamp (gint8 * d1, int p1, int n);
-void orc_memset_f64 (gdouble * d1, double p1, int n);
-void orc_prepare_volumes (gdouble * d1, const gboolean * s1, int n);
-void orc_process_controlled_f64_1ch (gdouble * d1, const gdouble * s1, int n);
-void orc_process_controlled_f32_1ch (gfloat * d1, const gdouble * s1, int n);
-void orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n);
-void orc_process_controlled_int32_1ch (gint32 * d1, const gdouble * s1, int n);
-void orc_process_controlled_int16_1ch (gint16 * d1, const gdouble * s1, int n);
-void orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n);
-void orc_process_controlled_int8_1ch (gint8 * d1, const gdouble * s1, int n);
-void orc_process_controlled_int8_2ch (gint8 * d1, const gdouble * s1, int n);
+#ifndef DISABLE_ORC
+#include <orc/orc.h>
+#endif
+void orc_scalarmultiply_f64_ns (double * ORC_RESTRICT d1, double p1, int n);
+void orc_scalarmultiply_f32_ns (float * ORC_RESTRICT d1, float p1, int n);
+void orc_process_int32 (gint32 * ORC_RESTRICT d1, int p1, int n);
+void orc_process_int32_clamp (gint32 * ORC_RESTRICT d1, int p1, int n);
+void orc_process_int16 (gint16 * ORC_RESTRICT d1, int p1, int n);
+void orc_process_int16_clamp (gint16 * ORC_RESTRICT d1, int p1, int n);
+void orc_process_int8 (gint8 * ORC_RESTRICT d1, int p1, int n);
+void orc_process_int8_clamp (gint8 * ORC_RESTRICT d1, int p1, int n);
+void orc_memset_f64 (gdouble * ORC_RESTRICT d1, double p1, int n);
+void orc_prepare_volumes (gdouble * ORC_RESTRICT d1, const gboolean * ORC_RESTRICT s1, int n);
+void orc_process_controlled_f64_1ch (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_f32_1ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_f32_2ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_int32_1ch (gint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_int16_1ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_int16_2ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_int8_1ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
+void orc_process_controlled_int8_2ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n);
 
 void gst_volume_orc_init (void);
 
@@ -108,12 +118,14 @@ void gst_volume_orc_init (void);
 #define ORC_ISNAN(x) ((((x)&0x7f800000) == 0x7f800000) && (((x)&0x007fffff) != 0))
 #define ORC_DENORMAL_DOUBLE(x) ((x) & ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == 0) ? ORC_UINT64_C(0xfff0000000000000) : ORC_UINT64_C(0xffffffffffffffff)))
 #define ORC_ISNAN_DOUBLE(x) ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == ORC_UINT64_C(0x7ff0000000000000)) && (((x)&ORC_UINT64_C(0x000fffffffffffff)) != 0))
+#ifndef ORC_RESTRICT
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #define ORC_RESTRICT restrict
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #define ORC_RESTRICT __restrict__
 #else
 #define ORC_RESTRICT
+#endif
 #endif
 /* end Orc C target preamble */
 
@@ -122,7 +134,7 @@ void gst_volume_orc_init (void);
 /* orc_scalarmultiply_f64_ns */
 #ifdef DISABLE_ORC
 void
-orc_scalarmultiply_f64_ns (double * d1, double p1, int n){
+orc_scalarmultiply_f64_ns (double * ORC_RESTRICT d1, double p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   orc_union64 var32;
@@ -188,15 +200,16 @@ _backup_orc_scalarmultiply_f64_ns (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_scalarmultiply_f64_ns;
+static OrcCode *_orc_code_orc_scalarmultiply_f64_ns;
 void
-orc_scalarmultiply_f64_ns (double * d1, double p1, int n)
+orc_scalarmultiply_f64_ns (double * ORC_RESTRICT d1, double p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_scalarmultiply_f64_ns;
+  OrcCode *c = _orc_code_orc_scalarmultiply_f64_ns;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -207,7 +220,7 @@ orc_scalarmultiply_f64_ns (double * d1, double p1, int n)
     ex->params[ORC_VAR_T1] = tmp.x2[1];
   }
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -216,7 +229,7 @@ orc_scalarmultiply_f64_ns (double * d1, double p1, int n)
 /* orc_scalarmultiply_f32_ns */
 #ifdef DISABLE_ORC
 void
-orc_scalarmultiply_f32_ns (float * d1, float p1, int n){
+orc_scalarmultiply_f32_ns (float * ORC_RESTRICT d1, float p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   orc_union32 var32;
@@ -282,15 +295,16 @@ _backup_orc_scalarmultiply_f32_ns (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_scalarmultiply_f32_ns;
+static OrcCode *_orc_code_orc_scalarmultiply_f32_ns;
 void
-orc_scalarmultiply_f32_ns (float * d1, float p1, int n)
+orc_scalarmultiply_f32_ns (float * ORC_RESTRICT d1, float p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_scalarmultiply_f32_ns;
+  OrcCode *c = _orc_code_orc_scalarmultiply_f32_ns;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -300,7 +314,7 @@ orc_scalarmultiply_f32_ns (float * d1, float p1, int n)
     ex->params[ORC_VAR_P1] = tmp.i;
   }
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -309,7 +323,7 @@ orc_scalarmultiply_f32_ns (float * d1, float p1, int n)
 /* orc_process_int32 */
 #ifdef DISABLE_ORC
 void
-orc_process_int32 (gint32 * d1, int p1, int n){
+orc_process_int32 (gint32 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   orc_union32 var33;
@@ -371,21 +385,22 @@ _backup_orc_process_int32 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int32;
+static OrcCode *_orc_code_orc_process_int32;
 void
-orc_process_int32 (gint32 * d1, int p1, int n)
+orc_process_int32 (gint32 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int32;
+  OrcCode *c = _orc_code_orc_process_int32;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -394,7 +409,7 @@ orc_process_int32 (gint32 * d1, int p1, int n)
 /* orc_process_int32_clamp */
 #ifdef DISABLE_ORC
 void
-orc_process_int32_clamp (gint32 * d1, int p1, int n){
+orc_process_int32_clamp (gint32 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   orc_union32 var33;
@@ -456,21 +471,22 @@ _backup_orc_process_int32_clamp (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int32_clamp;
+static OrcCode *_orc_code_orc_process_int32_clamp;
 void
-orc_process_int32_clamp (gint32 * d1, int p1, int n)
+orc_process_int32_clamp (gint32 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int32_clamp;
+  OrcCode *c = _orc_code_orc_process_int32_clamp;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -479,7 +495,7 @@ orc_process_int32_clamp (gint32 * d1, int p1, int n)
 /* orc_process_int16 */
 #ifdef DISABLE_ORC
 void
-orc_process_int16 (gint16 * d1, int p1, int n){
+orc_process_int16 (gint16 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   orc_union16 var33;
@@ -541,21 +557,22 @@ _backup_orc_process_int16 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int16;
+static OrcCode *_orc_code_orc_process_int16;
 void
-orc_process_int16 (gint16 * d1, int p1, int n)
+orc_process_int16 (gint16 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int16;
+  OrcCode *c = _orc_code_orc_process_int16;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -564,7 +581,7 @@ orc_process_int16 (gint16 * d1, int p1, int n)
 /* orc_process_int16_clamp */
 #ifdef DISABLE_ORC
 void
-orc_process_int16_clamp (gint16 * d1, int p1, int n){
+orc_process_int16_clamp (gint16 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   orc_union16 var33;
@@ -626,21 +643,22 @@ _backup_orc_process_int16_clamp (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int16_clamp;
+static OrcCode *_orc_code_orc_process_int16_clamp;
 void
-orc_process_int16_clamp (gint16 * d1, int p1, int n)
+orc_process_int16_clamp (gint16 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int16_clamp;
+  OrcCode *c = _orc_code_orc_process_int16_clamp;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -649,7 +667,7 @@ orc_process_int16_clamp (gint16 * d1, int p1, int n)
 /* orc_process_int8 */
 #ifdef DISABLE_ORC
 void
-orc_process_int8 (gint8 * d1, int p1, int n){
+orc_process_int8 (gint8 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   orc_int8 var33;
@@ -711,21 +729,22 @@ _backup_orc_process_int8 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int8;
+static OrcCode *_orc_code_orc_process_int8;
 void
-orc_process_int8 (gint8 * d1, int p1, int n)
+orc_process_int8 (gint8 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int8;
+  OrcCode *c = _orc_code_orc_process_int8;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -734,7 +753,7 @@ orc_process_int8 (gint8 * d1, int p1, int n)
 /* orc_process_int8_clamp */
 #ifdef DISABLE_ORC
 void
-orc_process_int8_clamp (gint8 * d1, int p1, int n){
+orc_process_int8_clamp (gint8 * ORC_RESTRICT d1, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   orc_int8 var33;
@@ -796,21 +815,22 @@ _backup_orc_process_int8_clamp (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_int8_clamp;
+static OrcCode *_orc_code_orc_process_int8_clamp;
 void
-orc_process_int8_clamp (gint8 * d1, int p1, int n)
+orc_process_int8_clamp (gint8 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_int8_clamp;
+  OrcCode *c = _orc_code_orc_process_int8_clamp;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -819,7 +839,7 @@ orc_process_int8_clamp (gint8 * d1, int p1, int n)
 /* orc_memset_f64 */
 #ifdef DISABLE_ORC
 void
-orc_memset_f64 (gdouble * d1, double p1, int n){
+orc_memset_f64 (gdouble * ORC_RESTRICT d1, double p1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   orc_union64 var32;
@@ -863,15 +883,16 @@ _backup_orc_memset_f64 (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_memset_f64;
+static OrcCode *_orc_code_orc_memset_f64;
 void
-orc_memset_f64 (gdouble * d1, double p1, int n)
+orc_memset_f64 (gdouble * ORC_RESTRICT d1, double p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_memset_f64;
+  OrcCode *c = _orc_code_orc_memset_f64;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -882,7 +903,7 @@ orc_memset_f64 (gdouble * d1, double p1, int n)
     ex->params[ORC_VAR_T1] = tmp.x2[1];
   }
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -891,7 +912,7 @@ orc_memset_f64 (gdouble * d1, double p1, int n)
 /* orc_prepare_volumes */
 #ifdef DISABLE_ORC
 void
-orc_prepare_volumes (gdouble * d1, const gboolean * s1, int n){
+orc_prepare_volumes (gdouble * ORC_RESTRICT d1, const gboolean * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union32 * ORC_RESTRICT ptr4;
@@ -995,21 +1016,22 @@ _backup_orc_prepare_volumes (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_prepare_volumes;
+static OrcCode *_orc_code_orc_prepare_volumes;
 void
-orc_prepare_volumes (gdouble * d1, const gboolean * s1, int n)
+orc_prepare_volumes (gdouble * ORC_RESTRICT d1, const gboolean * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_prepare_volumes;
+  OrcCode *c = _orc_code_orc_prepare_volumes;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1018,7 +1040,7 @@ orc_prepare_volumes (gdouble * d1, const gboolean * s1, int n)
 /* orc_process_controlled_f64_1ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_f64_1ch (gdouble * d1, const gdouble * s1, int n){
+orc_process_controlled_f64_1ch (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1088,21 +1110,22 @@ _backup_orc_process_controlled_f64_1ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_f64_1ch;
+static OrcCode *_orc_code_orc_process_controlled_f64_1ch;
 void
-orc_process_controlled_f64_1ch (gdouble * d1, const gdouble * s1, int n)
+orc_process_controlled_f64_1ch (gdouble * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_f64_1ch;
+  OrcCode *c = _orc_code_orc_process_controlled_f64_1ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1111,7 +1134,7 @@ orc_process_controlled_f64_1ch (gdouble * d1, const gdouble * s1, int n)
 /* orc_process_controlled_f32_1ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_f32_1ch (gfloat * d1, const gdouble * s1, int n){
+orc_process_controlled_f32_1ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1199,21 +1222,22 @@ _backup_orc_process_controlled_f32_1ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_f32_1ch;
+static OrcCode *_orc_code_orc_process_controlled_f32_1ch;
 void
-orc_process_controlled_f32_1ch (gfloat * d1, const gdouble * s1, int n)
+orc_process_controlled_f32_1ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_f32_1ch;
+  OrcCode *c = _orc_code_orc_process_controlled_f32_1ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1222,7 +1246,7 @@ orc_process_controlled_f32_1ch (gfloat * d1, const gdouble * s1, int n)
 /* orc_process_controlled_f32_2ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n){
+orc_process_controlled_f32_2ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union64 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1248,7 +1272,12 @@ orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n){
        var37.i = ORC_DENORMAL(_dest.i);
     }
     /* 2: mergelq */
-    var38.i = ((orc_uint64)var37.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var37.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var37.i;
+       _dest.x2[1] = var37.i;
+       var38.i = _dest.i;
+    }
     /* 3: loadq */
     var35 = ptr0[i];
     /* 4: mulf */
@@ -1306,7 +1335,12 @@ _backup_orc_process_controlled_f32_2ch (OrcExecutor * ORC_RESTRICT ex)
        var37.i = ORC_DENORMAL(_dest.i);
     }
     /* 2: mergelq */
-    var38.i = ((orc_uint64)var37.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var37.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var37.i;
+       _dest.x2[1] = var37.i;
+       var38.i = _dest.i;
+    }
     /* 3: loadq */
     var35 = ptr0[i];
     /* 4: mulf */
@@ -1334,21 +1368,22 @@ _backup_orc_process_controlled_f32_2ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_f32_2ch;
+static OrcCode *_orc_code_orc_process_controlled_f32_2ch;
 void
-orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n)
+orc_process_controlled_f32_2ch (gfloat * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_f32_2ch;
+  OrcCode *c = _orc_code_orc_process_controlled_f32_2ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1357,7 +1392,7 @@ orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n)
 /* orc_process_controlled_int32_1ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_int32_1ch (gint32 * d1, const gdouble * s1, int n){
+orc_process_controlled_int32_1ch (gint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1449,21 +1484,22 @@ _backup_orc_process_controlled_int32_1ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_int32_1ch;
+static OrcCode *_orc_code_orc_process_controlled_int32_1ch;
 void
-orc_process_controlled_int32_1ch (gint32 * d1, const gdouble * s1, int n)
+orc_process_controlled_int32_1ch (gint32 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_int32_1ch;
+  OrcCode *c = _orc_code_orc_process_controlled_int32_1ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1472,7 +1508,7 @@ orc_process_controlled_int32_1ch (gint32 * d1, const gdouble * s1, int n)
 /* orc_process_controlled_int16_1ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_int16_1ch (gint16 * d1, const gdouble * s1, int n){
+orc_process_controlled_int16_1ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1594,21 +1630,22 @@ _backup_orc_process_controlled_int16_1ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_int16_1ch;
+static OrcCode *_orc_code_orc_process_controlled_int16_1ch;
 void
-orc_process_controlled_int16_1ch (gint16 * d1, const gdouble * s1, int n)
+orc_process_controlled_int16_1ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_int16_1ch;
+  OrcCode *c = _orc_code_orc_process_controlled_int16_1ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1617,7 +1654,7 @@ orc_process_controlled_int16_1ch (gint16 * d1, const gdouble * s1, int n)
 /* orc_process_controlled_int16_2ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n){
+orc_process_controlled_int16_2ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union32 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1655,7 +1692,12 @@ orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n){
        var40.i = ORC_DENORMAL(_dest.i);
     }
     /* 5: mergelq */
-    var41.i = ((orc_uint64)var40.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var40.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var40.i;
+       _dest.x2[1] = var40.i;
+       var41.i = _dest.i;
+    }
     /* 6: mulf */
     {
        orc_union32 _src1;
@@ -1739,7 +1781,12 @@ _backup_orc_process_controlled_int16_2ch (OrcExecutor * ORC_RESTRICT ex)
        var40.i = ORC_DENORMAL(_dest.i);
     }
     /* 5: mergelq */
-    var41.i = ((orc_uint64)var40.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var40.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var40.i;
+       _dest.x2[1] = var40.i;
+       var41.i = _dest.i;
+    }
     /* 6: mulf */
     {
        orc_union32 _src1;
@@ -1781,21 +1828,22 @@ _backup_orc_process_controlled_int16_2ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_int16_2ch;
+static OrcCode *_orc_code_orc_process_controlled_int16_2ch;
 void
-orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n)
+orc_process_controlled_int16_2ch (gint16 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_int16_2ch;
+  OrcCode *c = _orc_code_orc_process_controlled_int16_2ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1804,7 +1852,7 @@ orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n)
 /* orc_process_controlled_int8_1ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_int8_1ch (gint8 * d1, const gdouble * s1, int n){
+orc_process_controlled_int8_1ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -1938,21 +1986,22 @@ _backup_orc_process_controlled_int8_1ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_int8_1ch;
+static OrcCode *_orc_code_orc_process_controlled_int8_1ch;
 void
-orc_process_controlled_int8_1ch (gint8 * d1, const gdouble * s1, int n)
+orc_process_controlled_int8_1ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_int8_1ch;
+  OrcCode *c = _orc_code_orc_process_controlled_int8_1ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -1961,7 +2010,7 @@ orc_process_controlled_int8_1ch (gint8 * d1, const gdouble * s1, int n)
 /* orc_process_controlled_int8_2ch */
 #ifdef DISABLE_ORC
 void
-orc_process_controlled_int8_2ch (gint8 * d1, const gdouble * s1, int n){
+orc_process_controlled_int8_2ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n){
   int i;
   orc_union16 * ORC_RESTRICT ptr0;
   const orc_union64 * ORC_RESTRICT ptr4;
@@ -2004,7 +2053,12 @@ orc_process_controlled_int8_2ch (gint8 * d1, const gdouble * s1, int n){
        var41.i = ORC_DENORMAL(_dest.i);
     }
     /* 6: mergelq */
-    var42.i = ((orc_uint64)var41.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var41.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var41.i;
+       _dest.x2[1] = var41.i;
+       var42.i = _dest.i;
+    }
     /* 7: mulf */
     {
        orc_union32 _src1;
@@ -2096,7 +2150,12 @@ _backup_orc_process_controlled_int8_2ch (OrcExecutor * ORC_RESTRICT ex)
        var41.i = ORC_DENORMAL(_dest.i);
     }
     /* 6: mergelq */
-    var42.i = ((orc_uint64)var41.i & ORC_UINT64_C(0xffffffff)) | ((orc_uint64)var41.i << 32);
+    {
+       orc_union64 _dest;
+       _dest.x2[0] = var41.i;
+       _dest.x2[1] = var41.i;
+       var42.i = _dest.i;
+    }
     /* 7: mulf */
     {
        orc_union32 _src1;
@@ -2141,21 +2200,22 @@ _backup_orc_process_controlled_int8_2ch (OrcExecutor * ORC_RESTRICT ex)
 
 }
 
-static OrcProgram *_orc_program_orc_process_controlled_int8_2ch;
+static OrcCode *_orc_code_orc_process_controlled_int8_2ch;
 void
-orc_process_controlled_int8_2ch (gint8 * d1, const gdouble * s1, int n)
+orc_process_controlled_int8_2ch (gint8 * ORC_RESTRICT d1, const gdouble * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  OrcProgram *p = _orc_program_orc_process_controlled_int8_2ch;
+  OrcCode *c = _orc_code_orc_process_controlled_int8_2ch;
   void (*func) (OrcExecutor *);
 
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -2168,8 +2228,7 @@ gst_volume_orc_init (void)
   {
     /* orc_scalarmultiply_f64_ns */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_scalarmultiply_f64_ns");
       orc_program_set_backup_function (p, _backup_orc_scalarmultiply_f64_ns);
@@ -2178,15 +2237,15 @@ gst_volume_orc_init (void)
 
       orc_program_append_2 (p, "muld", 0, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_scalarmultiply_f64_ns = p;
+    _orc_code_orc_scalarmultiply_f64_ns = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_scalarmultiply_f32_ns */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_scalarmultiply_f32_ns");
       orc_program_set_backup_function (p, _backup_orc_scalarmultiply_f32_ns);
@@ -2195,15 +2254,15 @@ gst_volume_orc_init (void)
 
       orc_program_append_2 (p, "mulf", 0, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_scalarmultiply_f32_ns = p;
+    _orc_code_orc_scalarmultiply_f32_ns = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int32 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int32");
       orc_program_set_backup_function (p, _backup_orc_process_int32);
@@ -2216,15 +2275,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsq", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convql", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int32 = p;
+    _orc_code_orc_process_int32 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int32_clamp */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int32_clamp");
       orc_program_set_backup_function (p, _backup_orc_process_int32_clamp);
@@ -2237,15 +2296,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsq", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convsssql", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int32_clamp = p;
+    _orc_code_orc_process_int32_clamp = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int16 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int16");
       orc_program_set_backup_function (p, _backup_orc_process_int16);
@@ -2258,15 +2317,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int16 = p;
+    _orc_code_orc_process_int16 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int16_clamp */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int16_clamp");
       orc_program_set_backup_function (p, _backup_orc_process_int16_clamp);
@@ -2279,15 +2338,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssslw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int16_clamp = p;
+    _orc_code_orc_process_int16_clamp = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int8 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int8");
       orc_program_set_backup_function (p, _backup_orc_process_int8);
@@ -2300,15 +2359,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsw", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convwb", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int8 = p;
+    _orc_code_orc_process_int8 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_int8_clamp */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_int8_clamp");
       orc_program_set_backup_function (p, _backup_orc_process_int8_clamp);
@@ -2321,15 +2380,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "shrsw", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssswb", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_int8_clamp = p;
+    _orc_code_orc_process_int8_clamp = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_memset_f64 */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_memset_f64");
       orc_program_set_backup_function (p, _backup_orc_memset_f64);
@@ -2338,15 +2397,15 @@ gst_volume_orc_init (void)
 
       orc_program_append_2 (p, "copyq", 0, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_memset_f64 = p;
+    _orc_code_orc_memset_f64 = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_prepare_volumes */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_prepare_volumes");
       orc_program_set_backup_function (p, _backup_orc_prepare_volumes);
@@ -2359,15 +2418,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "subd", 0, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_T1, ORC_VAR_D1);
       orc_program_append_2 (p, "muld", 0, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_prepare_volumes = p;
+    _orc_code_orc_prepare_volumes = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_f64_1ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_f64_1ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_f64_1ch);
@@ -2376,15 +2435,15 @@ gst_volume_orc_init (void)
 
       orc_program_append_2 (p, "muld", 0, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_f64_1ch = p;
+    _orc_code_orc_process_controlled_f64_1ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_f32_1ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_f32_1ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_f32_1ch);
@@ -2395,15 +2454,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "convdf", 0, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "mulf", 0, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_f32_1ch = p;
+    _orc_code_orc_process_controlled_f32_1ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_f32_2ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_f32_2ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_f32_2ch);
@@ -2416,15 +2475,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "mergelq", 0, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_D1);
       orc_program_append_2 (p, "mulf", 1, ORC_VAR_D1, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_f32_2ch = p;
+    _orc_code_orc_process_controlled_f32_2ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_int32_1ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_int32_1ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_int32_1ch);
@@ -2436,15 +2495,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "muld", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_S1, ORC_VAR_D1);
       orc_program_append_2 (p, "convdl", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_int32_1ch = p;
+    _orc_code_orc_process_controlled_int32_1ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_int16_1ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_int16_1ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_int16_1ch);
@@ -2460,15 +2519,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "convfl", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssslw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_int16_1ch = p;
+    _orc_code_orc_process_controlled_int16_1ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_int16_2ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_int16_2ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_int16_2ch);
@@ -2486,15 +2545,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "convfl", 1, ORC_VAR_T3, ORC_VAR_T3, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssslw", 1, ORC_VAR_D1, ORC_VAR_T3, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_int16_2ch = p;
+    _orc_code_orc_process_controlled_int16_2ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_int8_1ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_int8_1ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_int8_1ch);
@@ -2513,15 +2572,15 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "convlw", 0, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssswb", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_int8_1ch = p;
+    _orc_code_orc_process_controlled_int8_1ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
   {
     /* orc_process_controlled_int8_2ch */
     OrcProgram *p;
-    OrcCompileResult result;
-    
+
       p = orc_program_new ();
       orc_program_set_name (p, "orc_process_controlled_int8_2ch");
       orc_program_set_backup_function (p, _backup_orc_process_controlled_int8_2ch);
@@ -2541,9 +2600,10 @@ gst_volume_orc_init (void)
       orc_program_append_2 (p, "convlw", 1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
       orc_program_append_2 (p, "convssswb", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+    orc_program_compile (p);
 
-    _orc_program_orc_process_controlled_int8_2ch = p;
+    _orc_code_orc_process_controlled_int8_2ch = orc_program_take_code (p);
+    orc_program_free (p);
   }
 #endif
 }

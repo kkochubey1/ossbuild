@@ -163,7 +163,7 @@ gst_rtcp_buffer_validate_data (guint8 * data, guint len)
       goto wrong_length;
 
     /* get padding */
-    pad_bytes = data[len - 1];
+    pad_bytes = data[data_len - 1];
     if (data_len != pad_bytes)
       goto wrong_padding;
   }
@@ -997,7 +997,7 @@ gst_rtcp_packet_sdes_next_item (GstRTCPPacket * packet)
   while (offset < len) {
     if (data[offset] == 0) {
       /* end of list, round to next 32-bit word */
-      offset = (offset + 3) & ~3;
+      offset = (offset + 4) & ~3;
       break;
     }
     offset += data[offset + 1] + 2;

@@ -1,6 +1,6 @@
 /* GStreamer
  * Copyright (C) <2005> Julien Moutte <julien@moutte.net>
- *               <2009>,<2010> Stefan Kost <stefan.kost@nokia.com> 
+ *               <2009>,<2010> Stefan Kost <stefan.kost@nokia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -170,23 +170,25 @@ static GstStaticPadTemplate gst_xvimagesink_sink_template_factory =
 
 enum
 {
-  ARG_0,
-  ARG_CONTRAST,
-  ARG_BRIGHTNESS,
-  ARG_HUE,
-  ARG_SATURATION,
-  ARG_DISPLAY,
-  ARG_SYNCHRONOUS,
-  ARG_PIXEL_ASPECT_RATIO,
-  ARG_FORCE_ASPECT_RATIO,
-  ARG_HANDLE_EVENTS,
-  ARG_DEVICE,
-  ARG_DEVICE_NAME,
-  ARG_HANDLE_EXPOSE,
-  ARG_DOUBLE_BUFFER,
-  ARG_AUTOPAINT_COLORKEY,
-  ARG_COLORKEY,
-  ARG_DRAW_BORDERS
+  PROP_0,
+  PROP_CONTRAST,
+  PROP_BRIGHTNESS,
+  PROP_HUE,
+  PROP_SATURATION,
+  PROP_DISPLAY,
+  PROP_SYNCHRONOUS,
+  PROP_PIXEL_ASPECT_RATIO,
+  PROP_FORCE_ASPECT_RATIO,
+  PROP_HANDLE_EVENTS,
+  PROP_DEVICE,
+  PROP_DEVICE_NAME,
+  PROP_HANDLE_EXPOSE,
+  PROP_DOUBLE_BUFFER,
+  PROP_AUTOPAINT_COLORKEY,
+  PROP_COLORKEY,
+  PROP_DRAW_BORDERS,
+  PROP_WINDOW_WIDTH,
+  PROP_WINDOW_HEIGHT
 };
 
 static GstVideoSinkClass *parent_class = NULL;
@@ -1083,13 +1085,6 @@ gst_xvimagesink_xwindow_clear (GstXvImageSink * xvimagesink,
   XvStopVideo (xvimagesink->xcontext->disp, xvimagesink->xcontext->xv_port_id,
       xwindow->win);
 
-  XSetForeground (xvimagesink->xcontext->disp, xwindow->gc,
-      xvimagesink->xcontext->black);
-
-  XFillRectangle (xvimagesink->xcontext->disp, xwindow->win, xwindow->gc,
-      xvimagesink->render_rect.x, xvimagesink->render_rect.y,
-      xvimagesink->render_rect.w, xvimagesink->render_rect.h);
-
   XSync (xvimagesink->xcontext->disp, FALSE);
 
   g_mutex_unlock (xvimagesink->x_lock);
@@ -1877,7 +1872,7 @@ gst_xvimagesink_xcontext_get (GstXvImageSink * xvimagesink)
   for (i = 0; i < (sizeof (channels) / sizeof (char *)); i++) {
     XvAttribute *matching_attr = NULL;
 
-    /* Retrieve the property atom if it exists. If it doesn't exist, 
+    /* Retrieve the property atom if it exists. If it doesn't exist,
      * the attribute itself must not either, so we can skip */
     prop_atom = XInternAtom (xcontext->disp, channels[i], True);
     if (prop_atom == None)
@@ -2087,7 +2082,7 @@ gst_xvimagesink_setcaps (GstBaseSink * bsink, GstCaps * caps)
       "In setcaps. Possible caps %" GST_PTR_FORMAT ", setting caps %"
       GST_PTR_FORMAT, xvimagesink->xcontext->caps, caps);
 
-  if (!gst_caps_intersect (xvimagesink->xcontext->caps, caps))
+  if (!gst_caps_can_intersect (xvimagesink->xcontext->caps, caps))
     goto incompatible_caps;
 
   structure = gst_caps_get_structure (caps, 0);
@@ -2204,7 +2199,7 @@ gst_xvimagesink_setcaps (GstBaseSink * bsink, GstCaps * caps)
         GST_VIDEO_SINK_HEIGHT (xvimagesink));
   }
 
-  /* After a resize, we want to redraw the borders in case the new frame size 
+  /* After a resize, we want to redraw the borders in case the new frame size
    * doesn't cover the same area */
   xvimagesink->redraw_border = TRUE;
 
@@ -2513,6 +2508,9 @@ gst_xvimagesink_buffer_alloc (GstBaseSink * bsink, guint64 offset, guint size,
 
   xvimagesink = GST_XVIMAGESINK (bsink);
 
+  if (G_UNLIKELY (!caps))
+    goto no_caps;
+
   g_mutex_lock (xvimagesink->pool_lock);
   if (G_UNLIKELY (xvimagesink->pool_invalid))
     goto invalid;
@@ -2704,6 +2702,13 @@ invalid_caps:
         GST_PTR_FORMAT, intersection);
     ret = GST_FLOW_NOT_NEGOTIATED;
     g_mutex_unlock (xvimagesink->pool_lock);
+    goto beach;
+  }
+no_caps:
+  {
+    GST_WARNING_OBJECT (xvimagesink, "have no caps, doing fallback allocation");
+    *buf = NULL;
+    ret = GST_FLOW_OK;
     goto beach;
   }
 }
@@ -3068,10 +3073,10 @@ gst_xvimagesink_probe_probe_property (GstPropertyProbe * probe,
   GstXvImageSink *xvimagesink = GST_XVIMAGESINK (probe);
 
   switch (prop_id) {
-    case ARG_DEVICE:
-    case ARG_AUTOPAINT_COLORKEY:
-    case ARG_DOUBLE_BUFFER:
-    case ARG_COLORKEY:
+    case PROP_DEVICE:
+    case PROP_AUTOPAINT_COLORKEY:
+    case PROP_DOUBLE_BUFFER:
+    case PROP_COLORKEY:
       GST_DEBUG_OBJECT (xvimagesink,
           "probing device list and get capabilities");
       if (!xvimagesink->xcontext) {
@@ -3093,10 +3098,10 @@ gst_xvimagesink_probe_needs_probe (GstPropertyProbe * probe,
   gboolean ret = FALSE;
 
   switch (prop_id) {
-    case ARG_DEVICE:
-    case ARG_AUTOPAINT_COLORKEY:
-    case ARG_DOUBLE_BUFFER:
-    case ARG_COLORKEY:
+    case PROP_DEVICE:
+    case PROP_AUTOPAINT_COLORKEY:
+    case PROP_DOUBLE_BUFFER:
+    case PROP_COLORKEY:
       if (xvimagesink->xcontext != NULL) {
         ret = FALSE;
       } else {
@@ -3125,7 +3130,7 @@ gst_xvimagesink_probe_get_values (GstPropertyProbe * probe,
   }
 
   switch (prop_id) {
-    case ARG_DEVICE:
+    case PROP_DEVICE:
     {
       guint i;
       GValue value = { 0 };
@@ -3143,7 +3148,7 @@ gst_xvimagesink_probe_get_values (GstPropertyProbe * probe,
       g_value_unset (&value);
       break;
     }
-    case ARG_AUTOPAINT_COLORKEY:
+    case PROP_AUTOPAINT_COLORKEY:
       if (xvimagesink->have_autopaint_colorkey) {
         GValue value = { 0 };
 
@@ -3156,7 +3161,7 @@ gst_xvimagesink_probe_get_values (GstPropertyProbe * probe,
         g_value_unset (&value);
       }
       break;
-    case ARG_DOUBLE_BUFFER:
+    case PROP_DOUBLE_BUFFER:
       if (xvimagesink->have_double_buffer) {
         GValue value = { 0 };
 
@@ -3169,7 +3174,7 @@ gst_xvimagesink_probe_get_values (GstPropertyProbe * probe,
         g_value_unset (&value);
       }
       break;
-    case ARG_COLORKEY:
+    case PROP_COLORKEY:
       if (xvimagesink->have_colorkey) {
         GValue value = { 0 };
 
@@ -3216,30 +3221,30 @@ gst_xvimagesink_set_property (GObject * object, guint prop_id,
   xvimagesink = GST_XVIMAGESINK (object);
 
   switch (prop_id) {
-    case ARG_HUE:
+    case PROP_HUE:
       xvimagesink->hue = g_value_get_int (value);
       xvimagesink->cb_changed = TRUE;
       gst_xvimagesink_update_colorbalance (xvimagesink);
       break;
-    case ARG_CONTRAST:
+    case PROP_CONTRAST:
       xvimagesink->contrast = g_value_get_int (value);
       xvimagesink->cb_changed = TRUE;
       gst_xvimagesink_update_colorbalance (xvimagesink);
       break;
-    case ARG_BRIGHTNESS:
+    case PROP_BRIGHTNESS:
       xvimagesink->brightness = g_value_get_int (value);
       xvimagesink->cb_changed = TRUE;
       gst_xvimagesink_update_colorbalance (xvimagesink);
       break;
-    case ARG_SATURATION:
+    case PROP_SATURATION:
       xvimagesink->saturation = g_value_get_int (value);
       xvimagesink->cb_changed = TRUE;
       gst_xvimagesink_update_colorbalance (xvimagesink);
       break;
-    case ARG_DISPLAY:
+    case PROP_DISPLAY:
       xvimagesink->display_name = g_strdup (g_value_get_string (value));
       break;
-    case ARG_SYNCHRONOUS:
+    case PROP_SYNCHRONOUS:
       xvimagesink->synchronous = g_value_get_boolean (value);
       if (xvimagesink->xcontext) {
         XSynchronize (xvimagesink->xcontext->disp, xvimagesink->synchronous);
@@ -3247,7 +3252,7 @@ gst_xvimagesink_set_property (GObject * object, guint prop_id,
             xvimagesink->synchronous ? "TRUE" : "FALSE");
       }
       break;
-    case ARG_PIXEL_ASPECT_RATIO:
+    case PROP_PIXEL_ASPECT_RATIO:
       g_free (xvimagesink->par);
       xvimagesink->par = g_new0 (GValue, 1);
       g_value_init (xvimagesink->par, GST_TYPE_FRACTION);
@@ -3259,31 +3264,31 @@ gst_xvimagesink_set_property (GObject * object, guint prop_id,
           gst_value_get_fraction_numerator (xvimagesink->par),
           gst_value_get_fraction_denominator (xvimagesink->par));
       break;
-    case ARG_FORCE_ASPECT_RATIO:
+    case PROP_FORCE_ASPECT_RATIO:
       xvimagesink->keep_aspect = g_value_get_boolean (value);
       break;
-    case ARG_HANDLE_EVENTS:
+    case PROP_HANDLE_EVENTS:
       gst_xvimagesink_set_event_handling (GST_X_OVERLAY (xvimagesink),
           g_value_get_boolean (value));
       gst_xvimagesink_manage_event_thread (xvimagesink);
       break;
-    case ARG_DEVICE:
+    case PROP_DEVICE:
       xvimagesink->adaptor_no = atoi (g_value_get_string (value));
       break;
-    case ARG_HANDLE_EXPOSE:
+    case PROP_HANDLE_EXPOSE:
       xvimagesink->handle_expose = g_value_get_boolean (value);
       gst_xvimagesink_manage_event_thread (xvimagesink);
       break;
-    case ARG_DOUBLE_BUFFER:
+    case PROP_DOUBLE_BUFFER:
       xvimagesink->double_buffer = g_value_get_boolean (value);
       break;
-    case ARG_AUTOPAINT_COLORKEY:
+    case PROP_AUTOPAINT_COLORKEY:
       xvimagesink->autopaint_colorkey = g_value_get_boolean (value);
       break;
-    case ARG_COLORKEY:
+    case PROP_COLORKEY:
       xvimagesink->colorkey = g_value_get_int (value);
       break;
-    case ARG_DRAW_BORDERS:
+    case PROP_DRAW_BORDERS:
       xvimagesink->draw_borders = g_value_get_boolean (value);
       break;
     default:
@@ -3303,35 +3308,35 @@ gst_xvimagesink_get_property (GObject * object, guint prop_id,
   xvimagesink = GST_XVIMAGESINK (object);
 
   switch (prop_id) {
-    case ARG_HUE:
+    case PROP_HUE:
       g_value_set_int (value, xvimagesink->hue);
       break;
-    case ARG_CONTRAST:
+    case PROP_CONTRAST:
       g_value_set_int (value, xvimagesink->contrast);
       break;
-    case ARG_BRIGHTNESS:
+    case PROP_BRIGHTNESS:
       g_value_set_int (value, xvimagesink->brightness);
       break;
-    case ARG_SATURATION:
+    case PROP_SATURATION:
       g_value_set_int (value, xvimagesink->saturation);
       break;
-    case ARG_DISPLAY:
+    case PROP_DISPLAY:
       g_value_set_string (value, xvimagesink->display_name);
       break;
-    case ARG_SYNCHRONOUS:
+    case PROP_SYNCHRONOUS:
       g_value_set_boolean (value, xvimagesink->synchronous);
       break;
-    case ARG_PIXEL_ASPECT_RATIO:
+    case PROP_PIXEL_ASPECT_RATIO:
       if (xvimagesink->par)
         g_value_transform (xvimagesink->par, value);
       break;
-    case ARG_FORCE_ASPECT_RATIO:
+    case PROP_FORCE_ASPECT_RATIO:
       g_value_set_boolean (value, xvimagesink->keep_aspect);
       break;
-    case ARG_HANDLE_EVENTS:
+    case PROP_HANDLE_EVENTS:
       g_value_set_boolean (value, xvimagesink->handle_events);
       break;
-    case ARG_DEVICE:
+    case PROP_DEVICE:
     {
       char *adaptor_no_s = g_strdup_printf ("%u", xvimagesink->adaptor_no);
 
@@ -3339,7 +3344,7 @@ gst_xvimagesink_get_property (GObject * object, guint prop_id,
       g_free (adaptor_no_s);
       break;
     }
-    case ARG_DEVICE_NAME:
+    case PROP_DEVICE_NAME:
       if (xvimagesink->xcontext && xvimagesink->xcontext->adaptors) {
         g_value_set_string (value,
             xvimagesink->xcontext->adaptors[xvimagesink->adaptor_no]);
@@ -3347,20 +3352,32 @@ gst_xvimagesink_get_property (GObject * object, guint prop_id,
         g_value_set_string (value, NULL);
       }
       break;
-    case ARG_HANDLE_EXPOSE:
+    case PROP_HANDLE_EXPOSE:
       g_value_set_boolean (value, xvimagesink->handle_expose);
       break;
-    case ARG_DOUBLE_BUFFER:
+    case PROP_DOUBLE_BUFFER:
       g_value_set_boolean (value, xvimagesink->double_buffer);
       break;
-    case ARG_AUTOPAINT_COLORKEY:
+    case PROP_AUTOPAINT_COLORKEY:
       g_value_set_boolean (value, xvimagesink->autopaint_colorkey);
       break;
-    case ARG_COLORKEY:
+    case PROP_COLORKEY:
       g_value_set_int (value, xvimagesink->colorkey);
       break;
-    case ARG_DRAW_BORDERS:
+    case PROP_DRAW_BORDERS:
       g_value_set_boolean (value, xvimagesink->draw_borders);
+      break;
+    case PROP_WINDOW_WIDTH:
+      if (xvimagesink->xwindow)
+        g_value_set_uint64 (value, xvimagesink->xwindow->width);
+      else
+        g_value_set_uint64 (value, 0);
+      break;
+    case PROP_WINDOW_HEIGHT:
+      if (xvimagesink->xwindow)
+        g_value_set_uint64 (value, xvimagesink->xwindow->height);
+      else
+        g_value_set_uint64 (value, 0);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -3526,45 +3543,45 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
   gobject_class->set_property = gst_xvimagesink_set_property;
   gobject_class->get_property = gst_xvimagesink_get_property;
 
-  g_object_class_install_property (gobject_class, ARG_CONTRAST,
+  g_object_class_install_property (gobject_class, PROP_CONTRAST,
       g_param_spec_int ("contrast", "Contrast", "The contrast of the video",
           -1000, 1000, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_BRIGHTNESS,
+  g_object_class_install_property (gobject_class, PROP_BRIGHTNESS,
       g_param_spec_int ("brightness", "Brightness",
           "The brightness of the video", -1000, 1000, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_HUE,
+  g_object_class_install_property (gobject_class, PROP_HUE,
       g_param_spec_int ("hue", "Hue", "The hue of the video", -1000, 1000, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_SATURATION,
+  g_object_class_install_property (gobject_class, PROP_SATURATION,
       g_param_spec_int ("saturation", "Saturation",
           "The saturation of the video", -1000, 1000, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_DISPLAY,
+  g_object_class_install_property (gobject_class, PROP_DISPLAY,
       g_param_spec_string ("display", "Display", "X Display name", NULL,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_SYNCHRONOUS,
+  g_object_class_install_property (gobject_class, PROP_SYNCHRONOUS,
       g_param_spec_boolean ("synchronous", "Synchronous",
           "When enabled, runs "
           "the X display in synchronous mode. (used only for debugging)", FALSE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_PIXEL_ASPECT_RATIO,
+  g_object_class_install_property (gobject_class, PROP_PIXEL_ASPECT_RATIO,
       g_param_spec_string ("pixel-aspect-ratio", "Pixel Aspect Ratio",
           "The pixel aspect ratio of the device", "1/1",
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_FORCE_ASPECT_RATIO,
+  g_object_class_install_property (gobject_class, PROP_FORCE_ASPECT_RATIO,
       g_param_spec_boolean ("force-aspect-ratio", "Force aspect ratio",
           "When enabled, scaling will respect original aspect ratio", FALSE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_HANDLE_EVENTS,
+  g_object_class_install_property (gobject_class, PROP_HANDLE_EVENTS,
       g_param_spec_boolean ("handle-events", "Handle XEvents",
           "When enabled, XEvents will be selected and handled", TRUE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_DEVICE,
+  g_object_class_install_property (gobject_class, PROP_DEVICE,
       g_param_spec_string ("device", "Adaptor number",
           "The number of the video adaptor", "0",
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  g_object_class_install_property (gobject_class, ARG_DEVICE_NAME,
+  g_object_class_install_property (gobject_class, PROP_DEVICE_NAME,
       g_param_spec_string ("device-name", "Adaptor name",
           "The name of the video adaptor", NULL,
           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
@@ -3576,11 +3593,12 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
    *
    * Since: 0.10.14
    */
-  g_object_class_install_property (gobject_class, ARG_HANDLE_EXPOSE,
+  g_object_class_install_property (gobject_class, PROP_HANDLE_EXPOSE,
       g_param_spec_boolean ("handle-expose", "Handle expose",
           "When enabled, "
           "the current frame will always be drawn in response to X Expose "
           "events", TRUE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   /**
    * GstXvImageSink:double-buffer
    *
@@ -3588,7 +3606,7 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
    *
    * Since: 0.10.14
    */
-  g_object_class_install_property (gobject_class, ARG_DOUBLE_BUFFER,
+  g_object_class_install_property (gobject_class, PROP_DOUBLE_BUFFER,
       g_param_spec_boolean ("double-buffer", "Double-buffer",
           "Whether to double-buffer the output", TRUE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -3599,7 +3617,7 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
    *
    * Since: 0.10.21
    */
-  g_object_class_install_property (gobject_class, ARG_AUTOPAINT_COLORKEY,
+  g_object_class_install_property (gobject_class, PROP_AUTOPAINT_COLORKEY,
       g_param_spec_boolean ("autopaint-colorkey", "Autofill with colorkey",
           "Whether to autofill overlay with colorkey", TRUE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -3610,7 +3628,7 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
    *
    * Since: 0.10.21
    */
-  g_object_class_install_property (gobject_class, ARG_COLORKEY,
+  g_object_class_install_property (gobject_class, PROP_COLORKEY,
       g_param_spec_int ("colorkey", "Colorkey",
           "Color to use for the overlay mask", G_MININT, G_MAXINT, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -3623,10 +3641,34 @@ gst_xvimagesink_class_init (GstXvImageSinkClass * klass)
    *
    * Since: 0.10.21
    */
-  g_object_class_install_property (gobject_class, ARG_DRAW_BORDERS,
+  g_object_class_install_property (gobject_class, PROP_DRAW_BORDERS,
       g_param_spec_boolean ("draw-borders", "Colorkey",
           "Draw black borders to fill unused area in force-aspect-ratio mode",
           TRUE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GstXvImageSink:window-width
+   *
+   * Actual width of the video window.
+   *
+   * Since: 0.10.32
+   */
+  g_object_class_install_property (gobject_class, PROP_WINDOW_WIDTH,
+      g_param_spec_uint64 ("window-width", "window-width",
+          "Width of the window", 0, G_MAXUINT64, 0,
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GstXvImageSink:window-height
+   *
+   * Actual height of the video window.
+   *
+   * Since: 0.10.32
+   */
+  g_object_class_install_property (gobject_class, PROP_WINDOW_HEIGHT,
+      g_param_spec_uint64 ("window-height", "window-height",
+          "Height of the window", 0, G_MAXUINT64, 0,
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   gobject_class->finalize = gst_xvimagesink_finalize;
 

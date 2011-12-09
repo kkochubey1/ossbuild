@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gst-plugins-base 0.10.30.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-11-30 18:18+0000\n"
+"POT-Creation-Date: 2011-06-15 14:34+0100\n"
 "PO-Revision-Date: 2010-10-25 10:27+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -330,6 +330,14 @@ msgstr ""
 
 msgid "The exposure mode used when capturing an image"
 msgstr ""
+
+#, fuzzy
+msgid "capturing exposure compensation"
+msgstr "キャプチャーの彩度"
+
+#, fuzzy
+msgid "The exposure compensation used when capturing an image"
+msgstr "イメージをキャプチャするときのホワイトバランスモードセット"
 
 msgid "capturing scene capture type"
 msgstr ""

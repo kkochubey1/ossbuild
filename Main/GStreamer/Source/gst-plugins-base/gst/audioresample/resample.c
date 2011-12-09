@@ -97,10 +97,6 @@ speex_free (void *ptr)
 
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI 3.14159263
-#endif
-
 #ifdef FIXED_POINT
 #define WORD2INT(x) ((x) < -32767 ? -32768 : ((x) > 32766 ? 32767 : (x)))
 #else
@@ -323,7 +319,7 @@ sinc (float cutoff, float x, int N, struct FuncDef *window_func)
   else if (fabs (x) > .5f * N)
     return 0;
   /*FIXME: Can it really be any slower than this? */
-  return WORD2INT (32768. * cutoff * sin (M_PI * xx) / (M_PI * xx) *
+  return WORD2INT (32768. * cutoff * sin (G_PI * xx) / (G_PI * xx) *
       compute_func (fabs (2. * x / N), window_func));
 }
 #else
@@ -346,7 +342,7 @@ sinc (float cutoff, float x, int N, struct FuncDef *window_func)
   else if (fabs (x) > .5 * N)
     return 0;
   /*FIXME: Can it really be any slower than this? */
-  return cutoff * sin (M_PI * xx) / (M_PI * xx) * compute_func (fabs (2. * x /
+  return cutoff * sin (G_PI * xx) / (G_PI * xx) * compute_func (fabs (2. * x /
           N), window_func);
 }
 #endif
@@ -1308,6 +1304,12 @@ speex_resampler_get_output_latency (SpeexResamplerState * st)
 {
   return ((st->filt_len / 2) * st->den_rate +
       (st->num_rate >> 1)) / st->num_rate;
+}
+
+EXPORT int
+speex_resampler_get_filt_len (SpeexResamplerState * st)
+{
+  return st->filt_len;
 }
 
 EXPORT int

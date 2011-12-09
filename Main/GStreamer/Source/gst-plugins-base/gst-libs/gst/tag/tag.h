@@ -203,6 +203,15 @@ G_BEGIN_DECLS
 #define GST_TAG_CAPTURING_EXPOSURE_MODE       "capturing-exposure-mode"
 
 /**
+ * GST_TAG_CAPTURING_EXPOSURE_COMPENSATION:
+ *
+ * Exposure compensation using when capturing an image in EV. (double)
+ *
+ * Since: 0.10.33
+ */
+#define GST_TAG_CAPTURING_EXPOSURE_COMPENSATION "capturing-exposure-compensation"
+
+/**
  * GST_TAG_CAPTURING_SCENE_CAPTURE_TYPE:
  *
  * Scene mode used when capturing an image. (string)
@@ -435,8 +444,8 @@ GType   gst_tag_image_type_get_type (void);
 
 /* functions for vorbis comment manipulation */
 
-G_CONST_RETURN gchar *  gst_tag_from_vorbis_tag                 (const gchar *          vorbis_tag);
-G_CONST_RETURN gchar *  gst_tag_to_vorbis_tag                   (const gchar *          gst_tag);
+const gchar *           gst_tag_from_vorbis_tag                 (const gchar *          vorbis_tag);
+const gchar *           gst_tag_to_vorbis_tag                   (const gchar *          gst_tag);
 void                    gst_vorbis_tag_add                      (GstTagList *           list, 
                                                                  const gchar *          tag, 
                                                                  const gchar *          value);
@@ -457,13 +466,13 @@ GstBuffer *             gst_tag_list_to_vorbiscomment_buffer    (const GstTagLis
 /* functions for ID3 tag manipulation */
 
 guint                   gst_tag_id3_genre_count                 (void);
-G_CONST_RETURN gchar *  gst_tag_id3_genre_get                   (const guint            id);
+const gchar *           gst_tag_id3_genre_get                   (const guint            id);
 GstTagList *            gst_tag_list_new_from_id3v1             (const guint8 *         data);
 
-G_CONST_RETURN gchar *  gst_tag_from_id3_tag                    (const gchar *          id3_tag);
-G_CONST_RETURN gchar *  gst_tag_from_id3_user_tag               (const gchar *          type,
+const gchar *           gst_tag_from_id3_tag                    (const gchar *          id3_tag);
+const gchar *           gst_tag_from_id3_user_tag               (const gchar *          type,
                                                                  const gchar *          id3_user_tag);
-G_CONST_RETURN gchar *  gst_tag_to_id3_tag                      (const gchar *          gst_tag);
+const gchar *           gst_tag_to_id3_tag                      (const gchar *          gst_tag);
 
 gboolean                gst_tag_list_add_id3_image (GstTagList   * tag_list,
                                                     const guint8 * image_data,
@@ -474,6 +483,9 @@ gboolean                gst_tag_list_add_id3_image (GstTagList   * tag_list,
 GstTagList *            gst_tag_list_from_xmp_buffer  (const GstBuffer *  buffer);
 GstBuffer *             gst_tag_list_to_xmp_buffer    (const GstTagList * list,
                                                        gboolean           read_only);
+GstBuffer *		gst_tag_list_to_xmp_buffer_full (const GstTagList * list,
+							gboolean read_only, const gchar ** schemas);
+const gchar**		gst_tag_xmp_list_schemas      (void);
 
 /* functions related to exif */
 GstBuffer *             gst_tag_list_to_exif_buffer (const GstTagList * taglist,
@@ -505,7 +517,7 @@ GstBuffer             * gst_tag_image_data_to_image_buffer (const guint8   * ima
                                                             guint            image_data_len,
                                                             GstTagImageType  image_type);
 
-/* FIXME 0.11: replace with a more general gst_tag_library_init() */
+/* FIXME 0.11: get rid of this awkward register/init function, see tags.c */
 void                    gst_tag_register_musicbrainz_tags (void);
 
 

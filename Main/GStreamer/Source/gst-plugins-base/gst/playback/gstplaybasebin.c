@@ -425,7 +425,6 @@ group_commit (GstPlayBaseBin * play_base_bin, gboolean fatal, gboolean subtitle)
 {
   GstPlayBaseGroup *group;
   gboolean had_active_group;
-  gboolean res;
 
   GROUP_LOCK (play_base_bin);
   group = play_base_bin->building_group;
@@ -486,8 +485,7 @@ group_commit (GstPlayBaseBin * play_base_bin, gboolean fatal, gboolean subtitle)
 
     setup_substreams (play_base_bin);
     GST_DEBUG_OBJECT (play_base_bin, "Emitting signal");
-    res =
-        GST_PLAY_BASE_BIN_GET_CLASS (play_base_bin)->setup_output_pads
+    GST_PLAY_BASE_BIN_GET_CLASS (play_base_bin)->setup_output_pads
         (play_base_bin, group);
     GST_DEBUG_OBJECT (play_base_bin, "done");
 
@@ -705,7 +703,7 @@ queue_threshold_reached (GstElement * queue, GstPlayBaseBin * play_base_bin)
 }
 
 /* this signal will be fired when one of the queues with raw
- * data is filled. This means that the group building stage is over 
+ * data is filled. This means that the group building stage is over
  * and playback of the new queued group should start. This is a rather unusual
  * situation because normally the group is commited when the "no_more_pads"
  * signal is fired.
@@ -843,7 +841,7 @@ gen_preroll_element (GstPlayBaseBin * play_base_bin,
 
   /* the overrun signal is always attached and serves two purposes:
    *
-   *  1) when we are building a group and the overrun is called, we commit the 
+   *  1) when we are building a group and the overrun is called, we commit the
    *     group. The reason being that if we fill the entire queue without a
    *     normal group commit (with _no_more_pads()) we can assume the
    *     audio/video is completely wacked or the element just does not know when
@@ -1167,7 +1165,6 @@ probe_triggered (GstPad * pad, GstEvent * event, gpointer user_data)
   GstPlayBaseGroup *group;
   GstPlayBaseBin *play_base_bin;
   GstStreamInfo *info;
-  gboolean res;
   GstEventType type;
 
   type = GST_EVENT_TYPE (event);
@@ -1231,8 +1228,7 @@ probe_triggered (GstPad * pad, GstEvent * event, gpointer user_data)
       setup_substreams (play_base_bin);
       GST_DEBUG ("switching to next group %p - emitting signal", group);
       /* and signal the new group */
-      res =
-          GST_PLAY_BASE_BIN_GET_CLASS (play_base_bin)->setup_output_pads
+      GST_PLAY_BASE_BIN_GET_CLASS (play_base_bin)->setup_output_pads
           (play_base_bin, group);
 
       GROUP_UNLOCK (play_base_bin);
@@ -1252,7 +1248,7 @@ probe_triggered (GstPad * pad, GstEvent * event, gpointer user_data)
 
 /* This function will be called when the sinkpad of the preroll element
  * is unlinked, we have to connect something to the sinkpad or else the
- * state change will fail.. 
+ * state change will fail..
  */
 static void
 preroll_unlinked (GstPad * pad, GstPad * peerpad,
@@ -1315,8 +1311,8 @@ silence_stream (GstPad * pad, GstMiniObject * data, gpointer user_data)
   return FALSE;
 }
 
-/* Called by the signal handlers when a decodebin (main or subtitle) has 
- * found a new raw pad.  We create a preroll element if needed and the 
+/* Called by the signal handlers when a decodebin (main or subtitle) has
+ * found a new raw pad.  We create a preroll element if needed and the
  * appropriate streaminfo. Commits the group if there will be no more pads
  * from decodebin */
 static void
@@ -1936,7 +1932,7 @@ analyse_source (GstPlayBaseBin * play_base_bin, gboolean * is_raw,
       if (GST_PAD_TEMPLATE_DIRECTION (templ) == GST_PAD_SRC) {
         if (GST_PAD_TEMPLATE_PRESENCE (templ) == GST_PAD_SOMETIMES) {
           *is_dynamic = TRUE;
-          break;                /* only break out if we found a sometimes src pad 
+          break;                /* only break out if we found a sometimes src pad
                                    continue walking through if say a request src pad is found
                                    elements such as mpegtsparse and dvbbasebin have request
                                    and sometimes src pads */

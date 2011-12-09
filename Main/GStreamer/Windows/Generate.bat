@@ -114,6 +114,24 @@ rem gst-plugins-base/gst-libs/gst/rtsp
 rem gst-plugins-base/gst-libs/gst/video
 %MK_ENUMS_BAT% VIDEO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video" "%BUILDDIR%\Libraries\video.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.c"
 
+rem gst-plugins-base/gst/encoding
+%GEN_MARSHAL_BAT% gst_encode_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst\encoding\gstencode-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst\encoding\gstencode-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst\encoding\gstencode-marshal.c"
+
+rem gstadder/gstadderorc
+%GEN_ORC_BAT% gstadderorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\adder %GEN_GST_PLUGINS_BASE_DIR%\gst\adder
+
+rem videoscale/gstvideoscaleorc
+%GEN_ORC_BAT% gstvideoscaleorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\videoscale %GEN_GST_PLUGINS_BASE_DIR%\gst\videoscale
+
+rem videotestsrc/gstvideotestsrcorc
+%GEN_ORC_BAT% gstvideotestsrcorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\videotestsrc %GEN_GST_PLUGINS_BASE_DIR%\gst\videotestsrc
+
+rem audioconvert/gstaudioconvertorc
+%GEN_ORC_BAT% gstaudioconvertorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\audioconvert %GEN_GST_PLUGINS_BASE_DIR%\gst\audioconvert
+
+rem volume/volumeorc
+%GEN_ORC_BAT% gstvolumeorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\volume %GEN_GST_PLUGINS_BASE_DIR%\gst\volume
+goto exit
 
 rem gst-plugins-good/gst/udp
 %MK_ENUMS_BAT% UDP "%SRC_GST_PLUGINS_GOOD_DIR%\gst\udp" "%BUILDDIR%\Plugins\Good\gst\udp.mkenum.lst.txt" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\udp\gstudp-enumtypes.h" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\udp\gstudp-enumtypes.c"
@@ -177,21 +195,6 @@ rem gst-python/gst/gst
 
 rem farsight2/python
 %GEN_PYTHON_FS_BAT% "%SRC_GST_PYTHON_DIR%" "%GEN_FS_PYTHON_DIR%"
-
-rem gstadder/gstadderorc
-%GEN_ORC_BAT% gstadderorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\adder %GEN_GST_PLUGINS_BASE_DIR%\gst\adder
-
-rem videoscale/gstvideoscaleorc
-%GEN_ORC_BAT% gstvideoscaleorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\videoscale %GEN_GST_PLUGINS_BASE_DIR%\gst\videoscale
-
-rem videotestsrc/gstvideotestsrcorc
-%GEN_ORC_BAT% gstvideotestsrcorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\videotestsrc %GEN_GST_PLUGINS_BASE_DIR%\gst\videotestsrc
-
-rem audioconvert/gstaudioconvertorc
-%GEN_ORC_BAT% gstaudioconvertorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\audioconvert %GEN_GST_PLUGINS_BASE_DIR%\gst\audioconvert
-
-rem voloume/volumeorc
-%GEN_ORC_BAT% gstvolumeorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\volume %GEN_GST_PLUGINS_BASE_DIR%\gst\volume
 
 rem deinterlace/tvtime
 %GEN_ORC_BAT% tvtime  %SRC_GST_PLUGINS_GOOD_DIR%\gst\deinterlace %GEN_GST_PLUGINS_GOOD_DIR%\gst\deinterlace

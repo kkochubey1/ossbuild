@@ -4,6 +4,8 @@
 
 #include <orc/orcutils.h>
 
+ORC_BEGIN_DECLS
+
 typedef struct _OrcOpcodeExecutor OrcOpcodeExecutor;
 typedef struct _OrcExecutor OrcExecutor;
 typedef struct _OrcExecutorAlt OrcExecutorAlt;
@@ -49,9 +51,6 @@ typedef void (*OrcExecutorFunc)(OrcExecutor *ex);
 #define ORC_N_RULE_SETS 10
 
 #define ORC_MAX_VAR_SIZE 8
-
-#define ORC_STRUCT_OFFSET(struct_type, member)    \
-      ((long) ((unsigned int *) &((struct_type*) 0)->member))
 
 #ifndef TRUE
 #define TRUE 1
@@ -223,6 +222,7 @@ struct _OrcVariable {
   int alloc;
   int is_chained;
   int is_aligned;
+  int alignment;
   int is_uncached;
 
   orc_union64 value;
@@ -408,12 +408,16 @@ struct _OrcProgram {
   void *backup_func;
   int is_2d;
   int constant_n;
+  int n_multiple;
+  int n_minimum;
+  int n_maximum;
   int constant_m;
 
   OrcCode *orccode;
 
   /* Hide this here.  Belongs in a Parser object */
   char *init_function;
+  char *error_msg;
 };
 
 /**
@@ -444,9 +448,11 @@ struct _OrcCompiler {
   OrcFixup fixups[ORC_N_FIXUPS];
   int n_fixups;
   unsigned char *labels[ORC_N_LABELS];
+  int labels_int[ORC_N_LABELS];
   int n_labels;
 
   int error;
+  char *error_msg;
   OrcCompileResult result;
 
   int valid_regs[ORC_N_REGS];
@@ -463,6 +469,7 @@ struct _OrcCompiler {
 
   int is_64bit;
   int tmpreg;
+  int tmpreg2;
   int exec_reg;
   int gp_tmpreg;
 
@@ -483,6 +490,11 @@ struct _OrcCompiler {
 
   int insn_shift; /* used when emitting rules */
   int max_var_size; /* size of largest var */
+  int load_params;
+
+  void *output_insns;
+  int n_output_insns;
+  int n_output_insns_alloc;
 };
 
 #define ORC_SRC_ARG(p,i,n) ((p)->vars[(i)->src_args[(n)]].alloc)
@@ -525,6 +537,7 @@ struct _OrcExecutor {
   int params[ORC_N_VARIABLES];
   int accumulators[4];
   /* exec pointer is stored in arrays[ORC_VAR_A1] */
+  /* OrcCode pointer is stored in arrays[ORC_VAR_A2] */
   /* row pointers are stored in arrays[i+ORC_VAR_C1] */
   /* the stride for arrays[x] is stored in params[x] */
   /* m is stored in params[ORC_VAR_A1] */
@@ -544,7 +557,8 @@ struct _OrcExecutorAlt {
 
   void *arrays[ORC_N_ARRAYS];
   OrcExecutorFunc exec;
-  void *unused1[ORC_N_VARIABLES - ORC_N_ARRAYS - 1];
+  OrcCode *code;
+  void *unused1[ORC_N_VARIABLES - ORC_N_ARRAYS - 2];
   int strides[ORC_N_ARRAYS];
   int m;
   int m_index;
@@ -570,12 +584,14 @@ struct _OrcCodeVariable {
 };
 
 struct _OrcCode {
+  /*< public >*/
+  OrcExecutorFunc exec;
+
   /*< private >*/
   OrcCompileResult result;
   char *name;
 
   /* for execution */
-  OrcExecutorFunc exec;
   unsigned char *code;
   int code_size;
   void *chunk;
@@ -630,6 +646,9 @@ const char * orc_program_get_name (OrcProgram *program);
 void orc_program_set_name (OrcProgram *program, const char *name);
 void orc_program_set_2d (OrcProgram *program);
 void orc_program_set_constant_n (OrcProgram *program, int n);
+void orc_program_set_n_multiple (OrcProgram *ex, int n);
+void orc_program_set_n_minimum (OrcProgram *ex, int n);
+void orc_program_set_n_maximum (OrcProgram *ex, int n);
 void orc_program_set_constant_m (OrcProgram *program, int m);
 
 void orc_program_append (OrcProgram *p, const char *opcode, int arg0, int arg1, int arg2);
@@ -668,7 +687,11 @@ int orc_program_find_var_by_name (OrcProgram *program, const char *name);
 int orc_program_add_temporary (OrcProgram *program, int size, const char *name);
 int orc_program_dup_temporary (OrcProgram *program, int i, int j);
 int orc_program_add_source (OrcProgram *program, int size, const char *name);
+int orc_program_add_source_full (OrcProgram *program, int size, const char *name,
+    const char *type_name, int alignment);
 int orc_program_add_destination (OrcProgram *program, int size, const char *name);
+int orc_program_add_destination_full (OrcProgram *program, int size, const char *name,
+    const char *type_name, int alignment);
 int orc_program_add_constant (OrcProgram *program, int size, int value, const char *name);
 int orc_program_add_constant_int64 (OrcProgram *program, int size, orc_int64 value, const char *name);
 int orc_program_add_constant_float (OrcProgram *program, int size, float value, const char *name);
@@ -680,6 +703,7 @@ int orc_program_add_parameter_double (OrcProgram *program, int size, const char 
 int orc_program_add_parameter_int64 (OrcProgram *program, int size, const char *name);
 int orc_program_add_accumulator (OrcProgram *program, int size, const char *name);
 void orc_program_set_type_name (OrcProgram *program, int var, const char *type_name);
+void orc_program_set_var_alignment (OrcProgram *program, int var, int alignment);
 void orc_program_set_sampling_type (OrcProgram *program, int var, int sampling_type);
 
 OrcExecutor * orc_executor_new (OrcProgram *program);
@@ -729,6 +753,7 @@ int orc_compiler_try_get_constant_long (OrcCompiler *compiler, orc_uint32 a,
 int orc_compiler_get_temp_constant (OrcCompiler *compiler, int size, int value);
 int orc_compiler_get_temp_reg (OrcCompiler *compiler);
 int orc_compiler_get_constant_reg (OrcCompiler *compiler);
+void orc_compiler_error (OrcCompiler *compiler, const char *fmt, ...);
 
 void orc_program_reset (OrcProgram *program);
 OrcCode *orc_program_take_code (OrcProgram *program);
@@ -737,6 +762,7 @@ const char *orc_program_get_asm_code (OrcProgram *program);
 const char *orc_target_get_asm_preamble (const char *target);
 const char * orc_target_get_preamble (OrcTarget *target);
 const char * orc_target_c_get_typedefs (void);
+const char * orc_program_get_error (OrcProgram *program);
 
 void orc_compiler_append_code (OrcCompiler *p, const char *fmt, ...)
   ORC_GNU_PRINTF(2,3);
@@ -769,10 +795,13 @@ extern const char *_orc_cpu_name;
 extern int _orc_compiler_flag_backup;
 extern int _orc_compiler_flag_emulate;
 extern int _orc_compiler_flag_debug;
+extern int _orc_compiler_flag_randomize;
 
 void orc_code_chunk_free (OrcCodeChunk *chunk);
 
 #endif
+
+ORC_END_DECLS
 
 #endif
 

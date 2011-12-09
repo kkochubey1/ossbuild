@@ -262,6 +262,24 @@ GstURIDecodeBin *gsturidecodebin
 </SIGNAL>
 
 <SIGNAL>
+<NAME>GstURIDecodeBin::autoplug-sort</NAME>
+<RETURNS>GValueArray*</RETURNS>
+<FLAGS>l</FLAGS>
+GstURIDecodeBin *gsturidecodebin
+GstPad *arg1
+GstCaps *arg2
+GValueArray *arg3
+</SIGNAL>
+
+<SIGNAL>
+<NAME>GstURIDecodeBin::source-setup</NAME>
+<RETURNS>void</RETURNS>
+<FLAGS>l</FLAGS>
+GstURIDecodeBin *gsturidecodebin
+GstElement *arg1
+</SIGNAL>
+
+<SIGNAL>
 <NAME>GstPlayBin2::about-to-finish</NAME>
 <RETURNS>void</RETURNS>
 <FLAGS>l</FLAGS>
@@ -370,6 +388,14 @@ gint  arg1
 </SIGNAL>
 
 <SIGNAL>
+<NAME>GstPlayBin2::source-setup</NAME>
+<RETURNS>void</RETURNS>
+<FLAGS>l</FLAGS>
+GstPlayBin2 *gstplaybin2
+GstElement *arg1
+</SIGNAL>
+
+<SIGNAL>
 <NAME>GstAppSink::eos</NAME>
 <RETURNS>void</RETURNS>
 <FLAGS>l</FLAGS>
@@ -468,6 +494,14 @@ GstPlaySink *gstplaysink
 <RETURNS>GstBuffer*</RETURNS>
 <FLAGS>la</FLAGS>
 GstPlaySink *gstplaysink
+GstCaps *arg1
+</SIGNAL>
+
+<SIGNAL>
+<NAME>GstEncodeBin::request-pad</NAME>
+<RETURNS>GstPad*</RETURNS>
+<FLAGS>la</FLAGS>
+GstEncodeBin *gstencodebin
 GstCaps *arg1
 </SIGNAL>
 

@@ -51,11 +51,6 @@
 #include "tag.h"
 #include "lang-tables.dat"
 
-/* FIXME: remove once we depend on GLib >= 2.22 */
-#if !GLIB_CHECK_VERSION (2, 22, 0)
-#define g_mapped_file_unref g_mapped_file_free
-#endif
-
 #ifndef GST_DISABLE_GST_DEBUG
 
 #define GST_CAT_DEFAULT ensure_debug_category()
@@ -416,7 +411,7 @@ gst_tag_get_language_code_iso_639_2X (const gchar * lang_code, guint8 flags)
       } else if (i > 0 && (iso_639_codes[i - 1].flags & flags) == flags &&
           iso_639_codes[i].name_offset == iso_639_codes[i - 1].name_offset) {
         return iso_639_codes[i - 1].iso_639_2;
-      } else if (i < G_N_ELEMENTS (iso_639_codes) &&
+      } else if ((i + 1) < G_N_ELEMENTS (iso_639_codes) &&
           (iso_639_codes[i + 1].flags & flags) == flags &&
           iso_639_codes[i].name_offset == iso_639_codes[i + 1].name_offset) {
         return iso_639_codes[i + 1].iso_639_2;

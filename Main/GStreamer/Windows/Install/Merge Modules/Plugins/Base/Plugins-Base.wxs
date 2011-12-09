@@ -21,6 +21,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstcoreindexers\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdecodebin\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdecodebin2\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstencodebin\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstffmpegcolorspace\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstgdp\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstgio\.dll" />

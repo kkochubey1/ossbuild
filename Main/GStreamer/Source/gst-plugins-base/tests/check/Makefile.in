@@ -15,6 +15,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -34,8 +35,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/common/check.mak
+DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(top_srcdir)/common/check.mak
 check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) elements/adder$(EXEEXT) \
@@ -43,21 +44,24 @@ check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	elements/audioconvert$(EXEEXT) elements/audiorate$(EXEEXT) \
 	elements/audioresample$(EXEEXT) elements/audiotestsrc$(EXEEXT) \
 	elements/decodebin$(EXEEXT) elements/decodebin2$(EXEEXT) \
-	elements/ffmpegcolorspace$(EXEEXT) elements/gdpdepay$(EXEEXT) \
-	elements/gdppay$(EXEEXT) elements/multifdsink$(EXEEXT) \
-	elements/playbin$(EXEEXT) elements/playbin2$(EXEEXT) \
-	$(am__EXEEXT_8) elements/videorate$(EXEEXT) \
-	elements/videoscale$(EXEEXT) elements/videotestsrc$(EXEEXT) \
-	elements/volume$(EXEEXT) generic/clock-selection$(EXEEXT) \
-	generic/states$(EXEEXT) gst/typefindfunctions$(EXEEXT) \
+	$(am__EXEEXT_8) elements/ffmpegcolorspace$(EXEEXT) \
+	elements/gdpdepay$(EXEEXT) elements/gdppay$(EXEEXT) \
+	elements/multifdsink$(EXEEXT) elements/playbin$(EXEEXT) \
+	elements/playbin2$(EXEEXT) $(am__EXEEXT_9) \
+	elements/videorate$(EXEEXT) elements/videoscale$(EXEEXT) \
+	elements/videotestsrc$(EXEEXT) elements/volume$(EXEEXT) \
+	generic/clock-selection$(EXEEXT) generic/states$(EXEEXT) \
+	gst/typefindfunctions$(EXEEXT) libs/libsabi$(EXEEXT) \
 	libs/audio$(EXEEXT) libs/cddabasesrc$(EXEEXT) \
-	libs/fft$(EXEEXT) libs/mixer$(EXEEXT) libs/navigation$(EXEEXT) \
-	libs/netbuffer$(EXEEXT) libs/pbutils$(EXEEXT) \
-	libs/rtp$(EXEEXT) libs/tag$(EXEEXT) libs/video$(EXEEXT) \
-	$(am__EXEEXT_9) pipelines/simple-launch-lines$(EXEEXT) \
+	libs/discoverer$(EXEEXT) libs/fft$(EXEEXT) libs/mixer$(EXEEXT) \
+	libs/navigation$(EXEEXT) libs/netbuffer$(EXEEXT) \
+	libs/pbutils$(EXEEXT) libs/profile$(EXEEXT) libs/rtp$(EXEEXT) \
+	libs/rtsp$(EXEEXT) libs/tag$(EXEEXT) libs/video$(EXEEXT) \
+	libs/xmpwriter$(EXEEXT) $(am__EXEEXT_10) $(am__EXEEXT_11) \
+	pipelines/simple-launch-lines$(EXEEXT) \
 	pipelines/streamheader$(EXEEXT) pipelines/basetime$(EXEEXT) \
 	pipelines/capsfilter-renegotiation$(EXEEXT)
-noinst_PROGRAMS = $(am__EXEEXT_10)
+noinst_PROGRAMS = $(am__EXEEXT_12)
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -112,12 +116,15 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_VORBIS_TRUE@	pipelines/vorbisdec$(EXEEXT) \
 @USE_VORBIS_TRUE@	elements/vorbistag$(EXEEXT)
 @USE_THEORA_TRUE@am__EXEEXT_7 = pipelines/theoraenc$(EXEEXT)
-@USE_PLUGIN_SUBPARSE_TRUE@am__EXEEXT_8 = elements/subparse$(EXEEXT)
-@HAVE_ORC_TRUE@am__EXEEXT_9 = orc/adder$(EXEEXT) \
+@USE_THEORA_TRUE@@USE_VORBIS_TRUE@am__EXEEXT_8 =  \
+@USE_THEORA_TRUE@@USE_VORBIS_TRUE@	elements/encodebin$(EXEEXT)
+@USE_PLUGIN_SUBPARSE_TRUE@am__EXEEXT_9 = elements/subparse$(EXEEXT)
+@HAVE_CXX_TRUE@am__EXEEXT_10 = libs/gstlibscpp$(EXEEXT)
+@HAVE_ORC_TRUE@am__EXEEXT_11 = orc/adder$(EXEEXT) \
 @HAVE_ORC_TRUE@	orc/audioconvert$(EXEEXT) orc/volume$(EXEEXT) \
 @HAVE_ORC_TRUE@	orc/videoscale$(EXEEXT) \
 @HAVE_ORC_TRUE@	orc/videotestsrc$(EXEEXT)
-@USE_LIBVISUAL_TRUE@am__EXEEXT_10 = elements/libvisual$(EXEEXT)
+@USE_LIBVISUAL_TRUE@am__EXEEXT_12 = elements/libvisual$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 elements_adder_SOURCES = elements/adder.c
 elements_adder_OBJECTS = adder.$(OBJEXT)
@@ -201,6 +208,14 @@ elements_decodebin2_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 elements_decodebin2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_decodebin2_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+elements_encodebin_SOURCES = elements/encodebin.c
+elements_encodebin_OBJECTS = elements_encodebin-encodebin.$(OBJEXT)
+elements_encodebin_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+elements_encodebin_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_encodebin_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 elements_ffmpegcolorspace_SOURCES = elements/ffmpegcolorspace.c
 elements_ffmpegcolorspace_OBJECTS = ffmpegcolorspace.$(OBJEXT)
@@ -344,12 +359,42 @@ libs_cddabasesrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libs_cddabasesrc_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+libs_discoverer_SOURCES = libs/discoverer.c
+libs_discoverer_OBJECTS = libs_discoverer-discoverer.$(OBJEXT)
+libs_discoverer_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+libs_discoverer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(libs_discoverer_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 libs_fft_SOURCES = libs/fft.c
 libs_fft_OBJECTS = libs_fft-fft.$(OBJEXT)
 libs_fft_DEPENDENCIES = $(top_builddir)/gst-libs/gst/fft/libgstfft-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 libs_fft_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_fft_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_libs_gstlibscpp_OBJECTS = gstlibscpp.$(OBJEXT)
+libs_gstlibscpp_OBJECTS = $(am_libs_gstlibscpp_OBJECTS)
+libs_gstlibscpp_LDADD = $(LDADD)
+libs_gstlibscpp_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+libs_libsabi_SOURCES = libs/libsabi.c
+libs_libsabi_OBJECTS = libs_libsabi-libsabi.$(OBJEXT)
+libs_libsabi_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/audio/libgstaudio-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/cdda/libgstcdda-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/fft/libgstfft-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/netbuffer/libgstnetbuffer-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/rtsp/libgstrtsp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+libs_libsabi_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_libsabi_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 libs_mixer_SOURCES = libs/mixer.c
 libs_mixer_OBJECTS = libs_mixer-mixer.$(OBJEXT)
@@ -382,6 +427,13 @@ libs_pbutils_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@
 libs_pbutils_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_pbutils_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+libs_profile_SOURCES = libs/profile.c
+libs_profile_OBJECTS = libs_profile-profile.$(OBJEXT)
+libs_profile_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_2)
+libs_profile_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_profile_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 libs_rtp_SOURCES = libs/rtp.c
 libs_rtp_OBJECTS = libs_rtp-rtp.$(OBJEXT)
 libs_rtp_DEPENDENCIES = $(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
@@ -389,11 +441,17 @@ libs_rtp_DEPENDENCIES = $(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMIN
 libs_rtp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_rtp_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+libs_rtsp_SOURCES = libs/rtsp.c
+libs_rtsp_OBJECTS = libs_rtsp-rtsp.$(OBJEXT)
+libs_rtsp_DEPENDENCIES = $(top_builddir)/gst-libs/gst/rtsp/libgstrtsp-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+libs_rtsp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_rtsp_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 libs_tag_SOURCES = libs/tag.c
 libs_tag_OBJECTS = libs_tag-tag.$(OBJEXT)
-libs_tag_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_2)
+libs_tag_DEPENDENCIES = $(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 libs_tag_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_tag_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -404,6 +462,14 @@ libs_video_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MA
 libs_video_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_video_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+libs_xmpwriter_SOURCES = libs/xmpwriter.c
+libs_xmpwriter_OBJECTS = libs_xmpwriter-xmpwriter.$(OBJEXT)
+libs_xmpwriter_DEPENDENCIES = $(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+libs_xmpwriter_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(libs_xmpwriter_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 nodist_orc_adder_OBJECTS = orc_adder-adder.$(OBJEXT)
 orc_adder_OBJECTS = $(nodist_orc_adder_OBJECTS)
 orc_adder_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -531,6 +597,22 @@ LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD  " $@;
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_$(V))
+am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
+am__v_CXX_0 = @echo "  CXX   " $@;
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_$(V))
+am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
@@ -538,17 +620,19 @@ SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	elements/appsrc.c elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
 	elements/decodebin.c elements/decodebin2.c \
-	elements/ffmpegcolorspace.c elements/gdpdepay.c \
-	elements/gdppay.c elements/gnomevfssink.c elements/libvisual.c \
-	elements/multifdsink.c elements/playbin.c elements/playbin2.c \
-	elements/subparse.c elements/textoverlay.c \
+	elements/encodebin.c elements/ffmpegcolorspace.c \
+	elements/gdpdepay.c elements/gdppay.c elements/gnomevfssink.c \
+	elements/libvisual.c elements/multifdsink.c elements/playbin.c \
+	elements/playbin2.c elements/subparse.c elements/textoverlay.c \
 	elements/videorate.c elements/videoscale.c \
 	elements/videotestsrc.c elements/volume.c elements/vorbisdec.c \
 	elements/vorbistag.c generic/clock-selection.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
-	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
-	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c $(nodist_orc_adder_SOURCES) \
+	libs/cddabasesrc.c libs/discoverer.c libs/fft.c \
+	$(libs_gstlibscpp_SOURCES) libs/libsabi.c libs/mixer.c \
+	libs/navigation.c libs/netbuffer.c libs/pbutils.c \
+	libs/profile.c libs/rtp.c libs/rtsp.c libs/tag.c libs/video.c \
+	libs/xmpwriter.c $(nodist_orc_adder_SOURCES) \
 	$(nodist_orc_audioconvert_SOURCES) \
 	$(nodist_orc_videoscale_SOURCES) \
 	$(nodist_orc_videotestsrc_SOURCES) \
@@ -561,21 +645,24 @@ DIST_SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	elements/appsrc.c elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
 	elements/decodebin.c elements/decodebin2.c \
-	elements/ffmpegcolorspace.c elements/gdpdepay.c \
-	elements/gdppay.c elements/gnomevfssink.c elements/libvisual.c \
-	elements/multifdsink.c elements/playbin.c elements/playbin2.c \
-	elements/subparse.c elements/textoverlay.c \
+	elements/encodebin.c elements/ffmpegcolorspace.c \
+	elements/gdpdepay.c elements/gdppay.c elements/gnomevfssink.c \
+	elements/libvisual.c elements/multifdsink.c elements/playbin.c \
+	elements/playbin2.c elements/subparse.c elements/textoverlay.c \
 	elements/videorate.c elements/videoscale.c \
 	elements/videotestsrc.c elements/volume.c elements/vorbisdec.c \
 	elements/vorbistag.c generic/clock-selection.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
-	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
-	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c pipelines/basetime.c \
+	libs/cddabasesrc.c libs/discoverer.c libs/fft.c \
+	$(libs_gstlibscpp_SOURCES) libs/libsabi.c libs/mixer.c \
+	libs/navigation.c libs/netbuffer.c libs/pbutils.c \
+	libs/profile.c libs/rtp.c libs/rtsp.c libs/tag.c libs/video.c \
+	libs/xmpwriter.c pipelines/basetime.c \
 	pipelines/capsfilter-renegotiation.c pipelines/gio.c \
 	pipelines/oggmux.c pipelines/simple-launch-lines.c \
 	pipelines/streamheader.c pipelines/theoraenc.c \
 	pipelines/vorbisdec.c pipelines/vorbisenc.c
+HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -699,7 +786,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -736,6 +822,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -812,6 +899,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -845,7 +933,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -908,10 +995,15 @@ TESTS = $(check_PROGRAMS)
 
 @USE_THEORA_FALSE@check_theora = 
 @USE_THEORA_TRUE@check_theora = pipelines/theoraenc
+@USE_THEORA_FALSE@@USE_VORBIS_TRUE@check_encodebin = 
+@USE_THEORA_TRUE@@USE_VORBIS_TRUE@check_encodebin = elements/encodebin
+@USE_VORBIS_FALSE@check_encodebin = 
 @USE_PLUGIN_SUBPARSE_FALSE@check_subparse = 
 @USE_PLUGIN_SUBPARSE_TRUE@check_subparse = elements/subparse
 @HAVE_ORC_FALSE@check_orc = 
 @HAVE_ORC_TRUE@check_orc = orc/adder orc/audioconvert orc/volume orc/videoscale orc/videotestsrc
+@HAVE_CXX_FALSE@cxx_checks = 
+@HAVE_CXX_TRUE@cxx_checks = libs/gstlibscpp
 
 # TORTURE_TO_FIX = \
 #       elements/adder
@@ -921,14 +1013,46 @@ VALGRIND_TO_FIX = \
 	elements/ffmpegcolorspace \
 	libs/video
 
-AM_CFLAGS = $(GST_CFLAGS) $(GST_CHECK_CFLAGS) \
-	-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\""
+noinst_HEADERS = \
+	libs/struct_i386.h     \
+	libs/struct_i386_osx.h \
+	libs/struct_x86_64.h
+
+AM_CFLAGS = -I$(top_srcdir)/gst-libs -I$(top_builddir)/gst-libs \
+	$(GST_CFLAGS) $(GST_CHECK_CFLAGS) \
+	-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\"" \
+	-UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
+
+AM_CXXFLAGS = -I$(top_srcdir)/gst-libs -I$(top_builddir)/gst-libs \
+	$(GST_CXXFLAGS) $(GST_CHECK_CFLAGS) \
+	-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\"" \
+	-UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
 
 LDADD = $(GST_LIBS) $(GST_CHECK_LIBS)
 
 # valgrind testing
 VALGRIND_TESTS_DISABLE = $(VALGRIND_TO_FIX)
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp $(srcdir)/gst-plugins-base.supp
+libs_libsabi_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+libs_libsabi_LDADD = \
+	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/audio/libgstaudio-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/cdda/libgstcdda-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/fft/libgstfft-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/netbuffer/libgstnetbuffer-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/rtsp/libgstrtsp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) \
+	$(LDADD)
+
 libs_audio_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(GST_BASE_CFLAGS) \
@@ -950,6 +1074,15 @@ libs_cddabasesrc_LDADD = \
 	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
 	$(GST_BASE_LIBS) \
 	$(LDADD)
+
+libs_discoverer_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(AM_CFLAGS) \
+	-DGST_TEST_FILE="\"$(abs_top_srcdir)/tests/files/partialframe.mjpeg\""
+
+libs_discoverer_LDADD = \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 libs_fft_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
@@ -997,14 +1130,22 @@ libs_rtp_LDADD = \
 	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
 	$(GST_BASE_LIBS) $(LDADD)
 
+libs_rtsp_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+libs_rtsp_LDADD = \
+	$(top_builddir)/gst-libs/gst/rtsp/libgstrtsp-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
+
 libs_tag_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(GST_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 
 libs_tag_LDADD = \
-	$(GST_BASE_LIBS) \
-	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la $(LDADD)
+	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 libs_pbutils_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
@@ -1015,6 +1156,24 @@ libs_pbutils_LDADD = \
 	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
 	$(GST_BASE_LIBS) $(LDADD)
 
+libs_profile_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+libs_profile_LDADD = \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la $(LDADD)
+
+libs_xmpwriter_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+        $(GST_BASE_CFLAGS) \
+        $(AM_CFLAGS)
+
+libs_xmpwriter_LDADD = \
+	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+        $(GST_BASE_LIBS) \
+        $(LDADD)
+
+libs_gstlibscpp_SOURCES = libs/gstlibscpp.cc
 elements_appsink_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
@@ -1062,6 +1221,8 @@ elements_playbin2_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_playbin2_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_decodebin_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_decodebin_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_encodebin_LDADD = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la $(GST_BASE_LIBS) $(LDADD)
+elements_encodebin_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_decodebin2_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_decodebin2_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_subparse_LDADD = $(LDADD)
@@ -1179,7 +1340,7 @@ EXTRA_DIST = gst-plugins-base.supp
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cc .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/check.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -1261,6 +1422,9 @@ elements/decodebin$(EXEEXT): $(elements_decodebin_OBJECTS) $(elements_decodebin_
 elements/decodebin2$(EXEEXT): $(elements_decodebin2_OBJECTS) $(elements_decodebin2_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/decodebin2$(EXEEXT)
 	$(AM_V_CCLD)$(elements_decodebin2_LINK) $(elements_decodebin2_OBJECTS) $(elements_decodebin2_LDADD) $(LIBS)
+elements/encodebin$(EXEEXT): $(elements_encodebin_OBJECTS) $(elements_encodebin_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/encodebin$(EXEEXT)
+	$(AM_V_CCLD)$(elements_encodebin_LINK) $(elements_encodebin_OBJECTS) $(elements_encodebin_LDADD) $(LIBS)
 elements/ffmpegcolorspace$(EXEEXT): $(elements_ffmpegcolorspace_OBJECTS) $(elements_ffmpegcolorspace_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/ffmpegcolorspace$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_ffmpegcolorspace_OBJECTS) $(elements_ffmpegcolorspace_LDADD) $(LIBS)
@@ -1333,9 +1497,18 @@ libs/audio$(EXEEXT): $(libs_audio_OBJECTS) $(libs_audio_DEPENDENCIES) libs/$(am_
 libs/cddabasesrc$(EXEEXT): $(libs_cddabasesrc_OBJECTS) $(libs_cddabasesrc_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/cddabasesrc$(EXEEXT)
 	$(AM_V_CCLD)$(libs_cddabasesrc_LINK) $(libs_cddabasesrc_OBJECTS) $(libs_cddabasesrc_LDADD) $(LIBS)
+libs/discoverer$(EXEEXT): $(libs_discoverer_OBJECTS) $(libs_discoverer_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/discoverer$(EXEEXT)
+	$(AM_V_CCLD)$(libs_discoverer_LINK) $(libs_discoverer_OBJECTS) $(libs_discoverer_LDADD) $(LIBS)
 libs/fft$(EXEEXT): $(libs_fft_OBJECTS) $(libs_fft_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/fft$(EXEEXT)
 	$(AM_V_CCLD)$(libs_fft_LINK) $(libs_fft_OBJECTS) $(libs_fft_LDADD) $(LIBS)
+libs/gstlibscpp$(EXEEXT): $(libs_gstlibscpp_OBJECTS) $(libs_gstlibscpp_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/gstlibscpp$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(libs_gstlibscpp_OBJECTS) $(libs_gstlibscpp_LDADD) $(LIBS)
+libs/libsabi$(EXEEXT): $(libs_libsabi_OBJECTS) $(libs_libsabi_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/libsabi$(EXEEXT)
+	$(AM_V_CCLD)$(libs_libsabi_LINK) $(libs_libsabi_OBJECTS) $(libs_libsabi_LDADD) $(LIBS)
 libs/mixer$(EXEEXT): $(libs_mixer_OBJECTS) $(libs_mixer_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/mixer$(EXEEXT)
 	$(AM_V_CCLD)$(libs_mixer_LINK) $(libs_mixer_OBJECTS) $(libs_mixer_LDADD) $(LIBS)
@@ -1348,15 +1521,24 @@ libs/netbuffer$(EXEEXT): $(libs_netbuffer_OBJECTS) $(libs_netbuffer_DEPENDENCIES
 libs/pbutils$(EXEEXT): $(libs_pbutils_OBJECTS) $(libs_pbutils_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/pbutils$(EXEEXT)
 	$(AM_V_CCLD)$(libs_pbutils_LINK) $(libs_pbutils_OBJECTS) $(libs_pbutils_LDADD) $(LIBS)
+libs/profile$(EXEEXT): $(libs_profile_OBJECTS) $(libs_profile_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/profile$(EXEEXT)
+	$(AM_V_CCLD)$(libs_profile_LINK) $(libs_profile_OBJECTS) $(libs_profile_LDADD) $(LIBS)
 libs/rtp$(EXEEXT): $(libs_rtp_OBJECTS) $(libs_rtp_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/rtp$(EXEEXT)
 	$(AM_V_CCLD)$(libs_rtp_LINK) $(libs_rtp_OBJECTS) $(libs_rtp_LDADD) $(LIBS)
+libs/rtsp$(EXEEXT): $(libs_rtsp_OBJECTS) $(libs_rtsp_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/rtsp$(EXEEXT)
+	$(AM_V_CCLD)$(libs_rtsp_LINK) $(libs_rtsp_OBJECTS) $(libs_rtsp_LDADD) $(LIBS)
 libs/tag$(EXEEXT): $(libs_tag_OBJECTS) $(libs_tag_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/tag$(EXEEXT)
 	$(AM_V_CCLD)$(libs_tag_LINK) $(libs_tag_OBJECTS) $(libs_tag_LDADD) $(LIBS)
 libs/video$(EXEEXT): $(libs_video_OBJECTS) $(libs_video_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/video$(EXEEXT)
 	$(AM_V_CCLD)$(libs_video_LINK) $(libs_video_OBJECTS) $(libs_video_LDADD) $(LIBS)
+libs/xmpwriter$(EXEEXT): $(libs_xmpwriter_OBJECTS) $(libs_xmpwriter_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/xmpwriter$(EXEEXT)
+	$(AM_V_CCLD)$(libs_xmpwriter_LINK) $(libs_xmpwriter_OBJECTS) $(libs_xmpwriter_LDADD) $(LIBS)
 orc/$(am__dirstamp):
 	@$(MKDIR_P) orc
 	@: > orc/$(am__dirstamp)
@@ -1425,6 +1607,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audioresample-audioresample.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_decodebin-decodebin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_decodebin2-decodebin2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_encodebin-encodebin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_libvisual-libvisual.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_playbin-playbin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_playbin2-playbin2.Po@am__quote@
@@ -1439,16 +1622,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdppay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnomevfssink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gst_typefindfunctions-typefindfunctions.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstlibscpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_audio-audio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_cddabasesrc-cddabasesrc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_discoverer-discoverer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_fft-fft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_libsabi-libsabi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_mixer-mixer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_navigation-navigation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_netbuffer-netbuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_pbutils-pbutils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_profile-profile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_rtp-rtp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_rtsp-rtsp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_tag-tag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_video-video.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_xmpwriter-xmpwriter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multifdsink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_adder-adder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_audioconvert-audioconvert.Po@am__quote@
@@ -1649,6 +1838,22 @@ elements_decodebin2-decodebin2.obj: elements/decodebin2.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/decodebin2.c' object='elements_decodebin2-decodebin2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin2_CFLAGS) $(CFLAGS) -c -o elements_decodebin2-decodebin2.obj `if test -f 'elements/decodebin2.c'; then $(CYGPATH_W) 'elements/decodebin2.c'; else $(CYGPATH_W) '$(srcdir)/elements/decodebin2.c'; fi`
+
+elements_encodebin-encodebin.o: elements/encodebin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_encodebin_CFLAGS) $(CFLAGS) -MT elements_encodebin-encodebin.o -MD -MP -MF $(DEPDIR)/elements_encodebin-encodebin.Tpo -c -o elements_encodebin-encodebin.o `test -f 'elements/encodebin.c' || echo '$(srcdir)/'`elements/encodebin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_encodebin-encodebin.Tpo $(DEPDIR)/elements_encodebin-encodebin.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/encodebin.c' object='elements_encodebin-encodebin.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_encodebin_CFLAGS) $(CFLAGS) -c -o elements_encodebin-encodebin.o `test -f 'elements/encodebin.c' || echo '$(srcdir)/'`elements/encodebin.c
+
+elements_encodebin-encodebin.obj: elements/encodebin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_encodebin_CFLAGS) $(CFLAGS) -MT elements_encodebin-encodebin.obj -MD -MP -MF $(DEPDIR)/elements_encodebin-encodebin.Tpo -c -o elements_encodebin-encodebin.obj `if test -f 'elements/encodebin.c'; then $(CYGPATH_W) 'elements/encodebin.c'; else $(CYGPATH_W) '$(srcdir)/elements/encodebin.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_encodebin-encodebin.Tpo $(DEPDIR)/elements_encodebin-encodebin.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/encodebin.c' object='elements_encodebin-encodebin.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_encodebin_CFLAGS) $(CFLAGS) -c -o elements_encodebin-encodebin.obj `if test -f 'elements/encodebin.c'; then $(CYGPATH_W) 'elements/encodebin.c'; else $(CYGPATH_W) '$(srcdir)/elements/encodebin.c'; fi`
 
 ffmpegcolorspace.o: elements/ffmpegcolorspace.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ffmpegcolorspace.o -MD -MP -MF $(DEPDIR)/ffmpegcolorspace.Tpo -c -o ffmpegcolorspace.o `test -f 'elements/ffmpegcolorspace.c' || echo '$(srcdir)/'`elements/ffmpegcolorspace.c
@@ -1986,6 +2191,22 @@ libs_cddabasesrc-cddabasesrc.obj: libs/cddabasesrc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_cddabasesrc_CFLAGS) $(CFLAGS) -c -o libs_cddabasesrc-cddabasesrc.obj `if test -f 'libs/cddabasesrc.c'; then $(CYGPATH_W) 'libs/cddabasesrc.c'; else $(CYGPATH_W) '$(srcdir)/libs/cddabasesrc.c'; fi`
 
+libs_discoverer-discoverer.o: libs/discoverer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_discoverer_CFLAGS) $(CFLAGS) -MT libs_discoverer-discoverer.o -MD -MP -MF $(DEPDIR)/libs_discoverer-discoverer.Tpo -c -o libs_discoverer-discoverer.o `test -f 'libs/discoverer.c' || echo '$(srcdir)/'`libs/discoverer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_discoverer-discoverer.Tpo $(DEPDIR)/libs_discoverer-discoverer.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/discoverer.c' object='libs_discoverer-discoverer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_discoverer_CFLAGS) $(CFLAGS) -c -o libs_discoverer-discoverer.o `test -f 'libs/discoverer.c' || echo '$(srcdir)/'`libs/discoverer.c
+
+libs_discoverer-discoverer.obj: libs/discoverer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_discoverer_CFLAGS) $(CFLAGS) -MT libs_discoverer-discoverer.obj -MD -MP -MF $(DEPDIR)/libs_discoverer-discoverer.Tpo -c -o libs_discoverer-discoverer.obj `if test -f 'libs/discoverer.c'; then $(CYGPATH_W) 'libs/discoverer.c'; else $(CYGPATH_W) '$(srcdir)/libs/discoverer.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_discoverer-discoverer.Tpo $(DEPDIR)/libs_discoverer-discoverer.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/discoverer.c' object='libs_discoverer-discoverer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_discoverer_CFLAGS) $(CFLAGS) -c -o libs_discoverer-discoverer.obj `if test -f 'libs/discoverer.c'; then $(CYGPATH_W) 'libs/discoverer.c'; else $(CYGPATH_W) '$(srcdir)/libs/discoverer.c'; fi`
+
 libs_fft-fft.o: libs/fft.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_fft_CFLAGS) $(CFLAGS) -MT libs_fft-fft.o -MD -MP -MF $(DEPDIR)/libs_fft-fft.Tpo -c -o libs_fft-fft.o `test -f 'libs/fft.c' || echo '$(srcdir)/'`libs/fft.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_fft-fft.Tpo $(DEPDIR)/libs_fft-fft.Po
@@ -2001,6 +2222,22 @@ libs_fft-fft.obj: libs/fft.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/fft.c' object='libs_fft-fft.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_fft_CFLAGS) $(CFLAGS) -c -o libs_fft-fft.obj `if test -f 'libs/fft.c'; then $(CYGPATH_W) 'libs/fft.c'; else $(CYGPATH_W) '$(srcdir)/libs/fft.c'; fi`
+
+libs_libsabi-libsabi.o: libs/libsabi.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_libsabi_CFLAGS) $(CFLAGS) -MT libs_libsabi-libsabi.o -MD -MP -MF $(DEPDIR)/libs_libsabi-libsabi.Tpo -c -o libs_libsabi-libsabi.o `test -f 'libs/libsabi.c' || echo '$(srcdir)/'`libs/libsabi.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_libsabi-libsabi.Tpo $(DEPDIR)/libs_libsabi-libsabi.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/libsabi.c' object='libs_libsabi-libsabi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_libsabi_CFLAGS) $(CFLAGS) -c -o libs_libsabi-libsabi.o `test -f 'libs/libsabi.c' || echo '$(srcdir)/'`libs/libsabi.c
+
+libs_libsabi-libsabi.obj: libs/libsabi.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_libsabi_CFLAGS) $(CFLAGS) -MT libs_libsabi-libsabi.obj -MD -MP -MF $(DEPDIR)/libs_libsabi-libsabi.Tpo -c -o libs_libsabi-libsabi.obj `if test -f 'libs/libsabi.c'; then $(CYGPATH_W) 'libs/libsabi.c'; else $(CYGPATH_W) '$(srcdir)/libs/libsabi.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_libsabi-libsabi.Tpo $(DEPDIR)/libs_libsabi-libsabi.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/libsabi.c' object='libs_libsabi-libsabi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_libsabi_CFLAGS) $(CFLAGS) -c -o libs_libsabi-libsabi.obj `if test -f 'libs/libsabi.c'; then $(CYGPATH_W) 'libs/libsabi.c'; else $(CYGPATH_W) '$(srcdir)/libs/libsabi.c'; fi`
 
 libs_mixer-mixer.o: libs/mixer.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_mixer_CFLAGS) $(CFLAGS) -MT libs_mixer-mixer.o -MD -MP -MF $(DEPDIR)/libs_mixer-mixer.Tpo -c -o libs_mixer-mixer.o `test -f 'libs/mixer.c' || echo '$(srcdir)/'`libs/mixer.c
@@ -2066,6 +2303,22 @@ libs_pbutils-pbutils.obj: libs/pbutils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_pbutils_CFLAGS) $(CFLAGS) -c -o libs_pbutils-pbutils.obj `if test -f 'libs/pbutils.c'; then $(CYGPATH_W) 'libs/pbutils.c'; else $(CYGPATH_W) '$(srcdir)/libs/pbutils.c'; fi`
 
+libs_profile-profile.o: libs/profile.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_profile_CFLAGS) $(CFLAGS) -MT libs_profile-profile.o -MD -MP -MF $(DEPDIR)/libs_profile-profile.Tpo -c -o libs_profile-profile.o `test -f 'libs/profile.c' || echo '$(srcdir)/'`libs/profile.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_profile-profile.Tpo $(DEPDIR)/libs_profile-profile.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/profile.c' object='libs_profile-profile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_profile_CFLAGS) $(CFLAGS) -c -o libs_profile-profile.o `test -f 'libs/profile.c' || echo '$(srcdir)/'`libs/profile.c
+
+libs_profile-profile.obj: libs/profile.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_profile_CFLAGS) $(CFLAGS) -MT libs_profile-profile.obj -MD -MP -MF $(DEPDIR)/libs_profile-profile.Tpo -c -o libs_profile-profile.obj `if test -f 'libs/profile.c'; then $(CYGPATH_W) 'libs/profile.c'; else $(CYGPATH_W) '$(srcdir)/libs/profile.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_profile-profile.Tpo $(DEPDIR)/libs_profile-profile.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/profile.c' object='libs_profile-profile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_profile_CFLAGS) $(CFLAGS) -c -o libs_profile-profile.obj `if test -f 'libs/profile.c'; then $(CYGPATH_W) 'libs/profile.c'; else $(CYGPATH_W) '$(srcdir)/libs/profile.c'; fi`
+
 libs_rtp-rtp.o: libs/rtp.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtp_CFLAGS) $(CFLAGS) -MT libs_rtp-rtp.o -MD -MP -MF $(DEPDIR)/libs_rtp-rtp.Tpo -c -o libs_rtp-rtp.o `test -f 'libs/rtp.c' || echo '$(srcdir)/'`libs/rtp.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_rtp-rtp.Tpo $(DEPDIR)/libs_rtp-rtp.Po
@@ -2081,6 +2334,22 @@ libs_rtp-rtp.obj: libs/rtp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/rtp.c' object='libs_rtp-rtp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtp_CFLAGS) $(CFLAGS) -c -o libs_rtp-rtp.obj `if test -f 'libs/rtp.c'; then $(CYGPATH_W) 'libs/rtp.c'; else $(CYGPATH_W) '$(srcdir)/libs/rtp.c'; fi`
+
+libs_rtsp-rtsp.o: libs/rtsp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtsp_CFLAGS) $(CFLAGS) -MT libs_rtsp-rtsp.o -MD -MP -MF $(DEPDIR)/libs_rtsp-rtsp.Tpo -c -o libs_rtsp-rtsp.o `test -f 'libs/rtsp.c' || echo '$(srcdir)/'`libs/rtsp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_rtsp-rtsp.Tpo $(DEPDIR)/libs_rtsp-rtsp.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/rtsp.c' object='libs_rtsp-rtsp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtsp_CFLAGS) $(CFLAGS) -c -o libs_rtsp-rtsp.o `test -f 'libs/rtsp.c' || echo '$(srcdir)/'`libs/rtsp.c
+
+libs_rtsp-rtsp.obj: libs/rtsp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtsp_CFLAGS) $(CFLAGS) -MT libs_rtsp-rtsp.obj -MD -MP -MF $(DEPDIR)/libs_rtsp-rtsp.Tpo -c -o libs_rtsp-rtsp.obj `if test -f 'libs/rtsp.c'; then $(CYGPATH_W) 'libs/rtsp.c'; else $(CYGPATH_W) '$(srcdir)/libs/rtsp.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_rtsp-rtsp.Tpo $(DEPDIR)/libs_rtsp-rtsp.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/rtsp.c' object='libs_rtsp-rtsp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_rtsp_CFLAGS) $(CFLAGS) -c -o libs_rtsp-rtsp.obj `if test -f 'libs/rtsp.c'; then $(CYGPATH_W) 'libs/rtsp.c'; else $(CYGPATH_W) '$(srcdir)/libs/rtsp.c'; fi`
 
 libs_tag-tag.o: libs/tag.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_tag_CFLAGS) $(CFLAGS) -MT libs_tag-tag.o -MD -MP -MF $(DEPDIR)/libs_tag-tag.Tpo -c -o libs_tag-tag.o `test -f 'libs/tag.c' || echo '$(srcdir)/'`libs/tag.c
@@ -2113,6 +2382,22 @@ libs_video-video.obj: libs/video.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/video.c' object='libs_video-video.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_video_CFLAGS) $(CFLAGS) -c -o libs_video-video.obj `if test -f 'libs/video.c'; then $(CYGPATH_W) 'libs/video.c'; else $(CYGPATH_W) '$(srcdir)/libs/video.c'; fi`
+
+libs_xmpwriter-xmpwriter.o: libs/xmpwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_xmpwriter_CFLAGS) $(CFLAGS) -MT libs_xmpwriter-xmpwriter.o -MD -MP -MF $(DEPDIR)/libs_xmpwriter-xmpwriter.Tpo -c -o libs_xmpwriter-xmpwriter.o `test -f 'libs/xmpwriter.c' || echo '$(srcdir)/'`libs/xmpwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_xmpwriter-xmpwriter.Tpo $(DEPDIR)/libs_xmpwriter-xmpwriter.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/xmpwriter.c' object='libs_xmpwriter-xmpwriter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_xmpwriter_CFLAGS) $(CFLAGS) -c -o libs_xmpwriter-xmpwriter.o `test -f 'libs/xmpwriter.c' || echo '$(srcdir)/'`libs/xmpwriter.c
+
+libs_xmpwriter-xmpwriter.obj: libs/xmpwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_xmpwriter_CFLAGS) $(CFLAGS) -MT libs_xmpwriter-xmpwriter.obj -MD -MP -MF $(DEPDIR)/libs_xmpwriter-xmpwriter.Tpo -c -o libs_xmpwriter-xmpwriter.obj `if test -f 'libs/xmpwriter.c'; then $(CYGPATH_W) 'libs/xmpwriter.c'; else $(CYGPATH_W) '$(srcdir)/libs/xmpwriter.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libs_xmpwriter-xmpwriter.Tpo $(DEPDIR)/libs_xmpwriter-xmpwriter.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/xmpwriter.c' object='libs_xmpwriter-xmpwriter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_xmpwriter_CFLAGS) $(CFLAGS) -c -o libs_xmpwriter-xmpwriter.obj `if test -f 'libs/xmpwriter.c'; then $(CYGPATH_W) 'libs/xmpwriter.c'; else $(CYGPATH_W) '$(srcdir)/libs/xmpwriter.c'; fi`
 
 orc_adder-adder.o: orc/adder.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_adder_CFLAGS) $(CFLAGS) -MT orc_adder-adder.o -MD -MP -MF $(DEPDIR)/orc_adder-adder.Tpo -c -o orc_adder-adder.o `test -f 'orc/adder.c' || echo '$(srcdir)/'`orc/adder.c
@@ -2338,6 +2623,46 @@ pipelines_vorbisenc-vorbisenc.obj: pipelines/vorbisenc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pipelines_vorbisenc_CFLAGS) $(CFLAGS) -c -o pipelines_vorbisenc-vorbisenc.obj `if test -f 'pipelines/vorbisenc.c'; then $(CYGPATH_W) 'pipelines/vorbisenc.c'; else $(CYGPATH_W) '$(srcdir)/pipelines/vorbisenc.c'; fi`
 
+.cc.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cc.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cc.lo:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+gstlibscpp.o: libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gstlibscpp.o -MD -MP -MF $(DEPDIR)/gstlibscpp.Tpo -c -o gstlibscpp.o `test -f 'libs/gstlibscpp.cc' || echo '$(srcdir)/'`libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstlibscpp.Tpo $(DEPDIR)/gstlibscpp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libs/gstlibscpp.cc' object='gstlibscpp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstlibscpp.o `test -f 'libs/gstlibscpp.cc' || echo '$(srcdir)/'`libs/gstlibscpp.cc
+
+gstlibscpp.obj: libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gstlibscpp.obj -MD -MP -MF $(DEPDIR)/gstlibscpp.Tpo -c -o gstlibscpp.obj `if test -f 'libs/gstlibscpp.cc'; then $(CYGPATH_W) 'libs/gstlibscpp.cc'; else $(CYGPATH_W) '$(srcdir)/libs/gstlibscpp.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstlibscpp.Tpo $(DEPDIR)/gstlibscpp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libs/gstlibscpp.cc' object='gstlibscpp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstlibscpp.obj `if test -f 'libs/gstlibscpp.cc'; then $(CYGPATH_W) 'libs/gstlibscpp.cc'; else $(CYGPATH_W) '$(srcdir)/libs/gstlibscpp.cc'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -2528,7 +2853,7 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs:
 install: install-am
 install-exec: install-exec-am

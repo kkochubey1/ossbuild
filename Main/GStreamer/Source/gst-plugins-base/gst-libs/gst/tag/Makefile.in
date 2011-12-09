@@ -119,7 +119,8 @@ am_libgsttag_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgsttag_@GST_MAJORMINOR@_la-lang.lo \
 	libgsttag_@GST_MAJORMINOR@_la-tags.lo \
 	libgsttag_@GST_MAJORMINOR@_la-gsttagdemux.lo \
-	libgsttag_@GST_MAJORMINOR@_la-gsttageditingprivate.lo
+	libgsttag_@GST_MAJORMINOR@_la-gsttageditingprivate.lo \
+	libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo
 libgsttag_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgsttag_@GST_MAJORMINOR@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -292,7 +293,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -329,6 +329,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -405,6 +406,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -438,7 +440,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -463,12 +464,12 @@ libgsttagincludedir = \
 	$(includedir)/gstreamer-@GST_MAJORMINOR@/gst/tag
 
 libgsttaginclude_HEADERS = \
-	tag.h gsttagdemux.h
+	tag.h gsttagdemux.h xmpwriter.h
 
 lib_LTLIBRARIES = libgsttag-@GST_MAJORMINOR@.la
 libgsttag_@GST_MAJORMINOR@_la_SOURCES = \
     gstvorbistag.c gstid3tag.c gstxmptag.c gstexiftag.c \
-    lang.c tags.c gsttagdemux.c gsttageditingprivate.c
+    lang.c tags.c gsttagdemux.c gsttageditingprivate.c xmpwriter.c
 
 libgsttag_@GST_MAJORMINOR@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
 libgsttag_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(LIBM)
@@ -480,7 +481,7 @@ noinst_HEADERS = gsttageditingprivate.h
 @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstTag-@GST_MAJORMINOR@.gir
 @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, $(libgsttaginclude_HEADERS))
 @HAVE_INTROSPECTION_TRUE@gir_sources = $(patsubst %,$(srcdir)/%, $(libgsttag_@GST_MAJORMINOR@_la_SOURCES))
-@HAVE_INTROSPECTION_TRUE@gir_cincludes = $(patsubst %,--c-include='gst/audio/%',$(libgsttainclude_HEADERS))
+@HAVE_INTROSPECTION_TRUE@gir_cincludes = $(patsubst %,--c-include='gst/tag/%',$(libgsttaginclude_HEADERS))
 
 # INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
 # install anything - we need to install inside our prefix.
@@ -592,6 +593,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-gstxmptag.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-lang.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-tags.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-xmpwriter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mklangtables-mklangtables.Po@am__quote@
 
 .c.o:
@@ -681,6 +683,14 @@ libgsttag_@GST_MAJORMINOR@_la-gsttageditingprivate.lo: gsttageditingprivate.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gsttageditingprivate.c' object='libgsttag_@GST_MAJORMINOR@_la-gsttageditingprivate.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttag_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgsttag_@GST_MAJORMINOR@_la-gsttageditingprivate.lo `test -f 'gsttageditingprivate.c' || echo '$(srcdir)/'`gsttageditingprivate.c
+
+libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo: xmpwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttag_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo -MD -MP -MF $(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-xmpwriter.Tpo -c -o libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo `test -f 'xmpwriter.c' || echo '$(srcdir)/'`xmpwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-xmpwriter.Tpo $(DEPDIR)/libgsttag_@GST_MAJORMINOR@_la-xmpwriter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmpwriter.c' object='libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttag_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgsttag_@GST_MAJORMINOR@_la-xmpwriter.lo `test -f 'xmpwriter.c' || echo '$(srcdir)/'`xmpwriter.c
 
 mklangtables-mklangtables.o: mklangtables.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mklangtables_CFLAGS) $(CFLAGS) -MT mklangtables-mklangtables.o -MD -MP -MF $(DEPDIR)/mklangtables-mklangtables.Tpo -c -o mklangtables-mklangtables.o `test -f 'mklangtables.c' || echo '$(srcdir)/'`mklangtables.c
@@ -974,30 +984,47 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 @HAVE_INTROSPECTION_TRUE@GstTag-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgsttag-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstTag \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--library=libgsttag-0.10.la \
-@HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--include=GstBase-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgsttag-@GST_MAJORMINOR@.la \
+@HAVE_INTROSPECTION_TRUE@		--include=Gst-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=GstBase-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-tag-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-tag-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+Android.mk: Makefile.am
+	androgenizer -:PROJECT libgsttag -:SHARED libgsttag-@GST_MAJORMINOR@ \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgsttag_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(libgsttag_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgsttag_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgsttag_@GST_MAJORMINOR@_la_LIBADD) \
+	           -ldl \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/tag \
+	 -:HEADERS $(libgsttaginclude_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

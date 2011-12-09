@@ -297,20 +297,24 @@
 		/>
 	</References>
 	<Files>
+		<Filter
+			Name="Generated"
+			>
+			<File
+				RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videotestsrc\gstvideotestsrc.c"
 			>
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videotestsrc\gstvideotestsrc.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.h"
 			>
 		</File>
 		<File

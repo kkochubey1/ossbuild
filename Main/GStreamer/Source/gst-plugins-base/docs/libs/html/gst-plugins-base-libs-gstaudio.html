@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-audio.html" title="Audio Library">
 <link rel="prev" href="gstreamer-audio.html" title="Audio Library">
 <link rel="next" href="gst-plugins-base-libs-gstaudioclock.html" title="gstaudioclock">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-gstaudio.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gstaudio">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gstaudio"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,7 +35,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gstaudio.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/audio/audio.h&gt;
@@ -65,15 +65,15 @@ enum                <a class="link" href="gst-plugins-base-libs-gstaudio.html#Gs
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_size</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstaudio.description"></a><h2>Description</h2>
 <p>
 This library contains some helper functions for audio elements.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstaudio.details"></a><h2>Details</h2>
-<div class="refsect2" title="enum GstAudioFieldFlag">
+<div class="refsect2">
 <a name="GstAudioFieldFlag"></a><h3>enum GstAudioFieldFlag</h3>
 <pre class="programlisting">typedef enum {
   GST_AUDIO_FIELD_RATE          = (1 &lt;&lt; 0),
@@ -84,7 +84,7 @@ This library contains some helper functions for audio elements.
   GST_AUDIO_FIELD_SIGNED        = (1 &lt;&lt; 5)
 } GstAudioFieldFlag;
 </pre>
-<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">GstAudioFieldFlag</code> is deprecated and should not be used in newly-written code. use <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#gst-structure-set"><code class="function">gst_structure_set()</code></a> directly</p>
 </div>
@@ -128,7 +128,7 @@ Do not use anymore.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_FRAMES_TO_CLOCK_TIME()">
+<div class="refsect2">
 <a name="GST-FRAMES-TO-CLOCK-TIME:CAPS"></a><h3>GST_FRAMES_TO_CLOCK_TIME()</h3>
 <pre class="programlisting">#define             GST_FRAMES_TO_CLOCK_TIME(frames, rate)</pre>
 <p>
@@ -139,19 +139,17 @@ Calculate clocktime from sample <em class="parameter"><code>frames</code></em> a
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>frames</code></em> :</span></p></td>
-<td>sample frames
-</td>
+<td>sample frames</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>sampling rate
-</td>
+<td>sampling rate</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_CLOCK_TIME_TO_FRAMES()">
+<div class="refsect2">
 <a name="GST-CLOCK-TIME-TO-FRAMES:CAPS"></a><h3>GST_CLOCK_TIME_TO_FRAMES()</h3>
 <pre class="programlisting">#define             GST_CLOCK_TIME_TO_FRAMES(clocktime, rate)</pre>
 <p>
@@ -162,19 +160,17 @@ Calculate frames from <em class="parameter"><code>clocktime</code></em> and samp
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>clocktime</code></em> :</span></p></td>
-<td>clock time
-</td>
+<td>clock time</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>sampling rate
-</td>
+<td>sampling rate</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_AUDIO_DEF_RATE">
+<div class="refsect2">
 <a name="GST-AUDIO-DEF-RATE:CAPS"></a><h3>GST_AUDIO_DEF_RATE</h3>
 <pre class="programlisting">#define GST_AUDIO_DEF_RATE 44100
 </pre>
@@ -183,7 +179,7 @@ Standard sampling rate used in consumer audio.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_AUDIO_FLOAT_PAD_TEMPLATE_CAPS">
+<div class="refsect2">
 <a name="GST-AUDIO-FLOAT-PAD-TEMPLATE-CAPS"></a><h3>GST_AUDIO_FLOAT_PAD_TEMPLATE_CAPS</h3>
 <pre class="programlisting">#define             GST_AUDIO_FLOAT_PAD_TEMPLATE_CAPS</pre>
 <p>
@@ -192,7 +188,7 @@ Template caps for float audio. Can be used when defining a
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_AUDIO_FLOAT_STANDARD_PAD_TEMPLATE_CAPS">
+<div class="refsect2">
 <a name="GST-AUDIO-FLOAT-STANDARD-PAD-TEMPLATE-CAPS"></a><h3>GST_AUDIO_FLOAT_STANDARD_PAD_TEMPLATE_CAPS</h3>
 <pre class="programlisting">#define             GST_AUDIO_FLOAT_STANDARD_PAD_TEMPLATE_CAPS</pre>
 <p>
@@ -201,7 +197,7 @@ Can be used when defining a <a href="http://gstreamer.freedesktop.org/data/doc/g
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_AUDIO_INT_PAD_TEMPLATE_CAPS">
+<div class="refsect2">
 <a name="GST-AUDIO-INT-PAD-TEMPLATE-CAPS"></a><h3>GST_AUDIO_INT_PAD_TEMPLATE_CAPS</h3>
 <pre class="programlisting">#define             GST_AUDIO_INT_PAD_TEMPLATE_CAPS</pre>
 <p>
@@ -210,7 +206,7 @@ Template caps for integer audio. Can be used when defining a
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_AUDIO_INT_STANDARD_PAD_TEMPLATE_CAPS">
+<div class="refsect2">
 <a name="GST-AUDIO-INT-STANDARD-PAD-TEMPLATE-CAPS"></a><h3>GST_AUDIO_INT_STANDARD_PAD_TEMPLATE_CAPS</h3>
 <pre class="programlisting">#define             GST_AUDIO_INT_STANDARD_PAD_TEMPLATE_CAPS</pre>
 <p>
@@ -219,7 +215,7 @@ Can be used when defining a <a href="http://gstreamer.freedesktop.org/data/doc/g
 </p>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_frame_byte_size ()">
+<div class="refsect2">
 <a name="gst-audio-frame-byte-size"></a><h3>gst_audio_frame_byte_size ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>                 gst_audio_frame_byte_size           (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
@@ -230,19 +226,17 @@ Calculate byte size of an audio frame.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from
-</td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the byte size, or 0 if there was an error
-</td>
+<td>the byte size, or 0 if there was an error</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_frame_length ()">
+<div class="refsect2">
 <a name="gst-audio-frame-length"></a><h3>gst_audio_frame_length ()</h3>
 <pre class="programlisting"><span class="returnvalue">long</span>                gst_audio_frame_length              (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);</pre>
@@ -254,8 +248,7 @@ Calculate length of buffer in frames.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from
-</td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buf</code></em> :</span></p></td>
@@ -264,14 +257,13 @@ Calculate length of buffer in frames.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> 0 if there's an error, or the number of frames if everything's ok
-</td>
+<td>0 if there's an error, or the number of frames if everything's ok</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_duration_from_pad_buffer ()">
+<div class="refsect2">
 <a name="gst-audio-duration-from-pad-buffer"></a><h3>gst_audio_duration_from_pad_buffer ()</h3>
 <pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_audio_duration_from_pad_buffer  (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);</pre>
@@ -284,8 +276,7 @@ Calculate length in nanoseconds of audio buffer <em class="parameter"><code>buf<
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from
-</td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buf</code></em> :</span></p></td>
@@ -294,14 +285,13 @@ Calculate length in nanoseconds of audio buffer <em class="parameter"><code>buf<
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the length.
-</td>
+<td>the length.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_is_buffer_framed ()">
+<div class="refsect2">
 <a name="gst-audio-is-buffer-framed"></a><h3>gst_audio_is_buffer_framed ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_audio_is_buffer_framed          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);</pre>
@@ -313,8 +303,7 @@ Check if the buffer size is a whole multiple of the frame size.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from
-</td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> to get the caps from</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buf</code></em> :</span></p></td>
@@ -323,18 +312,18 @@ Check if the buffer size is a whole multiple of the frame size.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if buffer size is multiple.
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if buffer size is multiple.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_structure_set_int ()">
+<div class="refsect2">
 <a name="gst-audio-structure-set-int"></a><h3>gst_audio_structure_set_int ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_structure_set_int         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> *structure</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudio.html#GstAudioFieldFlag" title="enum GstAudioFieldFlag"><span class="type">GstAudioFieldFlag</span></a> flag</code></em>);</pre>
-<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_audio_structure_set_int</code> is deprecated and should not be used in newly-written code. use <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#gst-structure-set"><code class="function">gst_structure_set()</code></a></p>
 </div>
@@ -358,7 +347,7 @@ Do not use anymore.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_buffer_clip ()">
+<div class="refsect2">
 <a name="gst-audio-buffer-clip"></a><h3>gst_audio_buffer_clip ()</h3>
 <pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_audio_buffer_clip               (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstSegment.html#GstSegment"><span class="type">GstSegment</span></a> *segment</code></em>,
@@ -376,33 +365,27 @@ After calling this function the caller does not own a reference to
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>The buffer to clip.
-</td>
+<td>The buffer to clip.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>segment</code></em> :</span></p></td>
-<td>Segment in <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GST-FORMAT-TIME:CAPS"><code class="literal">GST_FORMAT_TIME</code></a> or <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GST-FORMAT-DEFAULT:CAPS"><code class="literal">GST_FORMAT_DEFAULT</code></a> to which the buffer should be clipped.
-</td>
+<td>Segment in <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GST-FORMAT-TIME:CAPS"><code class="literal">GST_FORMAT_TIME</code></a> or <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GST-FORMAT-DEFAULT:CAPS"><code class="literal">GST_FORMAT_DEFAULT</code></a> to which the buffer should be clipped.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>sample rate.
-</td>
+<td>sample rate.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>frame_size</code></em> :</span></p></td>
-<td>size of one audio frame in bytes.
-</td>
+<td>size of one audio frame in bytes.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the buffer is completely outside the configured segment,
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the buffer is completely outside the configured segment,
 otherwise the clipped buffer is returned.
-
 If the buffer has no timestamp, it is assumed to be inside the segment and
-is not clipped 
-
-</td>
+is not clipped</td>
 </tr>
 </tbody>
 </table></div>
@@ -412,6 +395,6 @@ is not clipped
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

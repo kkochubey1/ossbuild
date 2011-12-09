@@ -4,6 +4,10 @@
 
 #include <orc/orcprogram.h>
 
+ORC_BEGIN_DECLS
+
+#ifdef ORC_ENABLE_UNSTABLE_API
+
 enum {
   POWERPC_R0 = ORC_GP_REG_BASE,
   POWERPC_R1,
@@ -121,8 +125,11 @@ void powerpc_emit_VX_4 (OrcCompiler *p, const char *name, unsigned int insn,
     int d, int a);
 int powerpc_get_constant (OrcCompiler *p, int type, int value);
 int powerpc_get_constant_full (OrcCompiler *p, int value0, int value1, int value2, int value3);
+void powerpc_load_long_constant (OrcCompiler *p, int reg, orc_uint32 a,
+    orc_uint32 b, orc_uint32 c, orc_uint32 d);
 
 /* instructions */
+#define powerpc_emit_vand(p,a,b,c)         powerpc_emit_VX_2 (p, "vand", 0x10000404, a, b, c)
 #define powerpc_emit_vandc(p,a,b,c)        powerpc_emit_VX_2 (p, "vandc", 0x10000444, a, b, c)
 
 #define powerpc_emit_vor(p,a,b,c)          powerpc_emit_VX_2 (p, "vor", 0x10000484, a, b, c)
@@ -168,6 +175,9 @@ int powerpc_get_constant_full (OrcCompiler *p, int value0, int value1, int value
 
 #define powerpc_emit_vperm(p,a,b,c,d)      powerpc_emit_VA (p, "vperm", 0x1000002b, a, b, c, d)
 
+#endif
+
+ORC_END_DECLS
 
 #endif
 

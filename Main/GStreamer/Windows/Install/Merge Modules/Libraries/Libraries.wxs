@@ -19,6 +19,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstcontroller-$(var.GST_VERSION)\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdataprotocol-$(var.GST_VERSION)\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstfarsight-$(var.GST_VERSION)\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstfloatcast-$(var.GST_VERSION)\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstfft-$(var.GST_VERSION)\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstgl-$(var.GST_VERSION)\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstinterfaces-$(var.GST_VERSION)\.dll" />

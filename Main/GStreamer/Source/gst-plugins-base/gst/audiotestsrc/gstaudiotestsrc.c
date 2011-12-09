@@ -48,15 +48,7 @@
 #include "gstaudiotestsrc.h"
 
 
-#ifndef M_PI
-#define M_PI  3.14159265358979323846
-#endif
-
-#ifndef M_PI_2
-#define M_PI_2  1.57079632679489661923
-#endif
-
-#define M_PI_M2 ( M_PI + M_PI )
+#define M_PI_M2 ( G_PI + G_PI )
 
 GST_DEBUG_CATEGORY_STATIC (audio_test_src_debug);
 #define GST_CAT_DEFAULT audio_test_src_debug
@@ -140,6 +132,8 @@ gst_audiostestsrc_wave_get_type (void)
   return audiostestsrc_wave_type;
 }
 
+static void gst_audio_test_src_finalize (GObject * object);
+
 static void gst_audio_test_src_set_property (GObject * object,
     guint prop_id, const GValue * value, GParamSpec * pspec);
 static void gst_audio_test_src_get_property (GObject * object,
@@ -190,6 +184,7 @@ gst_audio_test_src_class_init (GstAudioTestSrcClass * klass)
 
   gobject_class->set_property = gst_audio_test_src_set_property;
   gobject_class->get_property = gst_audio_test_src_get_property;
+  gobject_class->finalize = gst_audio_test_src_finalize;
 
   g_object_class_install_property (gobject_class, PROP_SAMPLES_PER_BUFFER,
       g_param_spec_int ("samplesperbuffer", "Samples per buffer",
@@ -263,8 +258,22 @@ gst_audio_test_src_init (GstAudioTestSrc * src, GstAudioTestSrcClass * g_class)
   src->timestamp_offset = DEFAULT_TIMESTAMP_OFFSET;
   src->can_activate_pull = DEFAULT_CAN_ACTIVATE_PULL;
 
+  src->gen = NULL;
+
   src->wave = DEFAULT_WAVE;
   gst_base_src_set_blocksize (GST_BASE_SRC (src), -1);
+}
+
+static void
+gst_audio_test_src_finalize (GObject * object)
+{
+  GstAudioTestSrc *src = GST_AUDIO_TEST_SRC (object);
+
+  if (src->gen)
+    g_rand_free (src->gen);
+  src->gen = NULL;
+
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -459,7 +468,7 @@ gst_audio_test_src_create_square_##type (GstAudioTestSrc * src, g##type * sample
       src->accumulator -= M_PI_M2; \
     \
     for (c = 0; c < src->channels; ++c) { \
-      samples[i++] = (g##type) ((src->accumulator < M_PI) ? amp : -amp); \
+      samples[i++] = (g##type) ((src->accumulator < G_PI) ? amp : -amp); \
     } \
   } \
 }
@@ -484,7 +493,7 @@ gst_audio_test_src_create_saw_##type (GstAudioTestSrc * src, g##type * samples) 
   gdouble step, amp; \
   \
   step = M_PI_M2 * src->freq / src->samplerate; \
-  amp = (src->volume * scale) / M_PI; \
+  amp = (src->volume * scale) / G_PI; \
   \
   i = 0; \
   while (i < (src->generate_samples_per_buffer * src->channels)) { \
@@ -492,7 +501,7 @@ gst_audio_test_src_create_saw_##type (GstAudioTestSrc * src, g##type * samples) 
     if (src->accumulator >= M_PI_M2) \
       src->accumulator -= M_PI_M2; \
     \
-    if (src->accumulator < M_PI) { \
+    if (src->accumulator < G_PI) { \
       for (c = 0; c < src->channels; ++c) \
         samples[i++] = (g##type) (src->accumulator * amp); \
     } else { \
@@ -522,7 +531,7 @@ gst_audio_test_src_create_triangle_##type (GstAudioTestSrc * src, g##type * samp
   gdouble step, amp; \
   \
   step = M_PI_M2 * src->freq / src->samplerate; \
-  amp = (src->volume * scale) / M_PI_2; \
+  amp = (src->volume * scale) / G_PI_2; \
   \
   i = 0; \
   while (i < (src->generate_samples_per_buffer * src->channels)) { \
@@ -530,12 +539,12 @@ gst_audio_test_src_create_triangle_##type (GstAudioTestSrc * src, g##type * samp
     if (src->accumulator >= M_PI_M2) \
       src->accumulator -= M_PI_M2; \
     \
-    if (src->accumulator < (M_PI * 0.5)) { \
+    if (src->accumulator < (G_PI_2)) { \
       for (c = 0; c < src->channels; ++c) \
         samples[i++] = (g##type) (src->accumulator * amp); \
-    } else if (src->accumulator < (M_PI * 1.5)) { \
+    } else if (src->accumulator < (G_PI * 1.5)) { \
       for (c = 0; c < src->channels; ++c) \
-        samples[i++] = (g##type) ((src->accumulator - M_PI) * -amp); \
+        samples[i++] = (g##type) ((src->accumulator - G_PI) * -amp); \
     } else { \
       for (c = 0; c < src->channels; ++c) \
         samples[i++] = (g##type) ((M_PI_M2 - src->accumulator) * -amp); \
@@ -584,7 +593,7 @@ gst_audio_test_src_create_white_noise_##type (GstAudioTestSrc * src, g##type * s
   i = 0; \
   while (i < (src->generate_samples_per_buffer * src->channels)) { \
     for (c = 0; c < src->channels; ++c) \
-      samples[i++] = (g##type) (amp * g_random_double_range (-1.0, 1.0)); \
+      samples[i++] = (g##type) (amp * g_rand_double_range (src->gen, -1.0, 1.0)); \
   } \
 }
 
@@ -626,8 +635,9 @@ gst_audio_test_src_init_pink_noise (GstAudioTestSrc * src)
 
 /* Generate Pink noise values between -1.0 and +1.0 */
 static gdouble
-gst_audio_test_src_generate_pink_noise_value (GstPinkNoise * pink)
+gst_audio_test_src_generate_pink_noise_value (GstAudioTestSrc * src)
 {
+  GstPinkNoise *pink = &src->pink;
   glong new_random;
   glong sum;
 
@@ -651,13 +661,15 @@ gst_audio_test_src_generate_pink_noise_value (GstPinkNoise * pink)
      * values together. Only one changes each time.
      */
     pink->running_sum -= pink->rows[num_zeros];
-    new_random = 32768.0 - (65536.0 * (gulong) rand () / (RAND_MAX + 1.0));
+    new_random = 32768.0 - (65536.0 * (gulong) g_rand_int (src->gen)
+        / (G_MAXUINT32 + 1.0));
     pink->running_sum += new_random;
     pink->rows[num_zeros] = new_random;
   }
 
   /* Add extra white noise value. */
-  new_random = 32768.0 - (65536.0 * (gulong) rand () / (RAND_MAX + 1.0));
+  new_random = 32768.0 - (65536.0 * (gulong) g_rand_int (src->gen)
+      / (G_MAXUINT32 + 1.0));
   sum = pink->running_sum + new_random;
 
   /* Scale to range of -1.0 to 0.9999. */
@@ -677,7 +689,7 @@ gst_audio_test_src_create_pink_noise_##type (GstAudioTestSrc * src, g##type * sa
   while (i < (src->generate_samples_per_buffer * src->channels)) { \
     for (c = 0; c < src->channels; ++c) { \
       samples[i++] = \
-        (g##type) (gst_audio_test_src_generate_pink_noise_value (&src->pink) * \
+        (g##type) (gst_audio_test_src_generate_pink_noise_value (src) * \
         amp); \
     } \
   } \
@@ -794,8 +806,8 @@ gst_audio_test_src_create_gaussian_white_noise_##type (GstAudioTestSrc * src, g#
   \
   for (i = 0; i < src->generate_samples_per_buffer * src->channels; ) { \
     for (c = 0; c < src->channels; ++c) { \
-      gdouble mag = sqrt (-2 * log (1.0 - g_random_double ())); \
-      gdouble phs = g_random_double_range (0.0, M_PI_M2); \
+      gdouble mag = sqrt (-2 * log (1.0 - g_rand_double (src->gen))); \
+      gdouble phs = g_rand_double_range (src->gen, 0.0, M_PI_M2); \
       \
       samples[i++] = (g##type) (amp * mag * cos (phs)); \
       if (++c >= src->channels) \
@@ -846,9 +858,13 @@ gst_audio_test_src_change_wave (GstAudioTestSrc * src)
       src->process = silence_funcs[src->format];
       break;
     case GST_AUDIO_TEST_SRC_WAVE_WHITE_NOISE:
+      if (!(src->gen))
+        src->gen = g_rand_new ();
       src->process = white_noise_funcs[src->format];
       break;
     case GST_AUDIO_TEST_SRC_WAVE_PINK_NOISE:
+      if (!(src->gen))
+        src->gen = g_rand_new ();
       gst_audio_test_src_init_pink_noise (src);
       src->process = pink_noise_funcs[src->format];
       break;
@@ -861,6 +877,8 @@ gst_audio_test_src_change_wave (GstAudioTestSrc * src)
       src->process = tick_funcs[src->format];
       break;
     case GST_AUDIO_TEST_SRC_WAVE_GAUSSIAN_WHITE_NOISE:
+      if (!(src->gen))
+        src->gen = g_rand_new ();
       src->process = gaussian_white_noise_funcs[src->format];
       break;
     default:

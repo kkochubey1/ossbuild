@@ -50,6 +50,9 @@
 /* The GnomeVFS modules directory. */
 #undef GNOME_VFS_MODULES_DIR
 
+/* system wide data directory */
+#undef GST_DATADIR
+
 /* macro to use to show function name */
 #undef GST_FUNCTION
 
@@ -64,6 +67,9 @@
 
 /* GStreamer license */
 #undef GST_LICENSE
+
+/* major/minor version */
+#undef GST_MAJORMINOR
 
 /* package name in plugins */
 #undef GST_PACKAGE_NAME
@@ -359,6 +365,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* "Define if building for android" */
+#undef USE_TREMOLO
 
 /* Version number of package */
 #undef VERSION
