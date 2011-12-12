@@ -45,6 +45,9 @@
 /* package origin */
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
+/* GStreamer package release date/time for plugins as YYYY-MM-DD */
+#undef GST_PACKAGE_RELEASE_DATETIME
+
 /* Define to enable a52dec (used by a52dec). */
 #undef HAVE_A52DEC
 
@@ -138,6 +141,9 @@
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
 
+/* defined if libid3tag is available */
+#undef HAVE_ID3TAG
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -155,6 +161,9 @@
 
 /* Define to enable mpeg2dec (used by mpeg2dec). */
 #undef HAVE_MPEG2DEC
+
+/* Use Orc */
+#undef HAVE_ORC
 
 /* defined if the compiler implements __PRETTY_FUNCTION__ */
 #undef HAVE_PRETTY_FUNCTION
@@ -221,7 +230,7 @@
 #define PACKAGE_NAME "GStreamer Ugly Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Ugly Plug-ins 0.10.17"
+#define PACKAGE_STRING "GStreamer Ugly Plug-ins 0.10.18"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-ugly"
@@ -230,7 +239,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.17"
+#define PACKAGE_VERSION "0.10.18"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -258,7 +267,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.17"
+#define VERSION "0.10.18"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

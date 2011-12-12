@@ -37,9 +37,9 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/common/check.mak
-check_PROGRAMS = generic/states$(EXEEXT) $(am__EXEEXT_1) \
-	$(am__EXEEXT_2) $(am__EXEEXT_3) $(am__EXEEXT_4) \
-	elements/xingmux$(EXEEXT)
+check_PROGRAMS = generic/index$(EXEEXT) generic/states$(EXEEXT) \
+	$(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+	$(am__EXEEXT_4) elements/xingmux$(EXEEXT)
 noinst_PROGRAMS =
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -60,20 +60,21 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/a52.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-sid.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/a52.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-sid.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -90,6 +91,9 @@ elements_amrnbenc_OBJECTS = amrnbenc.$(OBJEXT)
 elements_amrnbenc_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 elements_amrnbenc_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
 am__dirstamp = $(am__leading_dot)dirstamp
 elements_mpeg2dec_SOURCES = elements/mpeg2dec.c
 elements_mpeg2dec_OBJECTS = mpeg2dec.$(OBJEXT)
@@ -103,6 +107,10 @@ elements_xingmux_SOURCES = elements/xingmux.c
 elements_xingmux_OBJECTS = xingmux.$(OBJEXT)
 elements_xingmux_LDADD = $(LDADD)
 elements_xingmux_DEPENDENCIES = $(am__DEPENDENCIES_1)
+generic_index_SOURCES = generic/index.c
+generic_index_OBJECTS = index.$(OBJEXT)
+generic_index_LDADD = $(LDADD)
+generic_index_DEPENDENCIES = $(am__DEPENDENCIES_1)
 generic_states_SOURCES = generic/states.c
 generic_states_OBJECTS = states.$(OBJEXT)
 generic_states_LDADD = $(LDADD)
@@ -117,18 +125,32 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = elements/amrnbenc.c elements/mpeg2dec.c elements/x264enc.c \
-	elements/xingmux.c generic/states.c pipelines/lame.c
-DIST_SOURCES = elements/amrnbenc.c elements/mpeg2dec.c \
-	elements/x264enc.c elements/xingmux.c generic/states.c \
+	elements/xingmux.c generic/index.c generic/states.c \
 	pipelines/lame.c
+DIST_SOURCES = elements/amrnbenc.c elements/mpeg2dec.c \
+	elements/x264enc.c elements/xingmux.c generic/index.c \
+	generic/states.c pipelines/lame.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -144,7 +166,7 @@ AMRNB_LIBS = @AMRNB_LIBS@
 AMRWB_CFLAGS = @AMRWB_CFLAGS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -183,8 +205,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 GCOV = @GCOV@
@@ -218,6 +238,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -230,7 +251,6 @@ HAVE_AMRWB = @HAVE_AMRWB@
 HAVE_CXX = @HAVE_CXX@
 HAVE_DVDREAD = @HAVE_DVDREAD@
 HAVE_LAME = @HAVE_LAME@
-HAVE_X264 = @HAVE_X264@
 HTML_DIR = @HTML_DIR@
 ID3TAG_CFLAGS = @ID3TAG_CFLAGS@
 ID3TAG_LIBS = @ID3TAG_LIBS@
@@ -249,8 +269,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -262,8 +280,8 @@ LTLIBOBJS = @LTLIBOBJS@
 MAD_CFLAGS = @MAD_CFLAGS@
 MAD_LIBS = @MAD_LIBS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MPEG2DEC_CFLAGS = @MPEG2DEC_CFLAGS@
 MPEG2DEC_LIBS = @MPEG2DEC_LIBS@
@@ -272,9 +290,12 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -299,7 +320,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -310,11 +330,12 @@ STRIP = @STRIP@
 TWOLAME_CFLAGS = @TWOLAME_CFLAGS@
 TWOLAME_LIBS = @TWOLAME_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 X264_CFLAGS = @X264_CFLAGS@
 X264_LIBS = @X264_LIBS@
@@ -325,6 +346,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -358,7 +380,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -373,7 +394,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -392,7 +412,8 @@ TESTS_ENVIRONMENT = \
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/ext:$(top_builddir)/sys:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR)  \
-	STATE_IGNORE_ELEMENTS="siddec dvdreadsrc cdiocddasrc"
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-ugly@$(top_builddir)" \
+	GST_STATE_IGNORE_ELEMENTS="siddec dvdreadsrc cdiocddasrc"
 
 
 # ths core dumps of some machines have PIDs appended
@@ -407,14 +428,19 @@ TESTS = $(check_PROGRAMS)
 @USE_X264_FALSE@check_x264enc = 
 @USE_X264_TRUE@check_x264enc = elements/x264enc
 noinst_HEADERS = elements/xingmux_testdata.h
-AM_CFLAGS = $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS)
+AM_CFLAGS = $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS) \
+		-UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
+
 LDADD = $(GST_OBJ_LIBS) $(GST_CHECK_LIBS) $(CHECK_LIBS)
 
 # valgrind testing
-VALGRIND_TESTS_DISABLE = elements/x264enc
+VALGRIND_TESTS_DISABLE = \
+	generic/index \
+	elements/x264enc
+
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp $(srcdir)/gst-plugins-ugly.supp
-elements_cmmldec_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS)
-elements_cmmlenc_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS)
+elements_cmmldec_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(AM_CFLAGS)
+elements_cmmlenc_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(AM_CFLAGS)
 EXTRA_DIST = gst-plugins-ugly.supp
 all: all-am
 
@@ -473,28 +499,31 @@ elements/$(am__dirstamp):
 	@: > elements/$(am__dirstamp)
 elements/amrnbenc$(EXEEXT): $(elements_amrnbenc_OBJECTS) $(elements_amrnbenc_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/amrnbenc$(EXEEXT)
-	$(LINK) $(elements_amrnbenc_OBJECTS) $(elements_amrnbenc_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(elements_amrnbenc_OBJECTS) $(elements_amrnbenc_LDADD) $(LIBS)
 elements/mpeg2dec$(EXEEXT): $(elements_mpeg2dec_OBJECTS) $(elements_mpeg2dec_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/mpeg2dec$(EXEEXT)
-	$(LINK) $(elements_mpeg2dec_OBJECTS) $(elements_mpeg2dec_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(elements_mpeg2dec_OBJECTS) $(elements_mpeg2dec_LDADD) $(LIBS)
 elements/x264enc$(EXEEXT): $(elements_x264enc_OBJECTS) $(elements_x264enc_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/x264enc$(EXEEXT)
-	$(LINK) $(elements_x264enc_OBJECTS) $(elements_x264enc_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(elements_x264enc_OBJECTS) $(elements_x264enc_LDADD) $(LIBS)
 elements/xingmux$(EXEEXT): $(elements_xingmux_OBJECTS) $(elements_xingmux_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/xingmux$(EXEEXT)
-	$(LINK) $(elements_xingmux_OBJECTS) $(elements_xingmux_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(elements_xingmux_OBJECTS) $(elements_xingmux_LDADD) $(LIBS)
 generic/$(am__dirstamp):
 	@$(MKDIR_P) generic
 	@: > generic/$(am__dirstamp)
+generic/index$(EXEEXT): $(generic_index_OBJECTS) $(generic_index_DEPENDENCIES) generic/$(am__dirstamp)
+	@rm -f generic/index$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(generic_index_OBJECTS) $(generic_index_LDADD) $(LIBS)
 generic/states$(EXEEXT): $(generic_states_OBJECTS) $(generic_states_DEPENDENCIES) generic/$(am__dirstamp)
 	@rm -f generic/states$(EXEEXT)
-	$(LINK) $(generic_states_OBJECTS) $(generic_states_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(generic_states_OBJECTS) $(generic_states_LDADD) $(LIBS)
 pipelines/$(am__dirstamp):
 	@$(MKDIR_P) pipelines
 	@: > pipelines/$(am__dirstamp)
 pipelines/lame$(EXEEXT): $(pipelines_lame_OBJECTS) $(pipelines_lame_DEPENDENCIES) pipelines/$(am__dirstamp)
 	@rm -f pipelines/lame$(EXEEXT)
-	$(LINK) $(pipelines_lame_OBJECTS) $(pipelines_lame_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(pipelines_lame_OBJECTS) $(pipelines_lame_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -503,6 +532,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/amrnbenc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/index.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lame.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mpeg2dec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/states.Po@am__quote@
@@ -510,106 +540,137 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xingmux.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 amrnbenc.o: elements/amrnbenc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT amrnbenc.o -MD -MP -MF $(DEPDIR)/amrnbenc.Tpo -c -o amrnbenc.o `test -f 'elements/amrnbenc.c' || echo '$(srcdir)/'`elements/amrnbenc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/amrnbenc.Tpo $(DEPDIR)/amrnbenc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT amrnbenc.o -MD -MP -MF $(DEPDIR)/amrnbenc.Tpo -c -o amrnbenc.o `test -f 'elements/amrnbenc.c' || echo '$(srcdir)/'`elements/amrnbenc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/amrnbenc.Tpo $(DEPDIR)/amrnbenc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/amrnbenc.c' object='amrnbenc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o amrnbenc.o `test -f 'elements/amrnbenc.c' || echo '$(srcdir)/'`elements/amrnbenc.c
 
 amrnbenc.obj: elements/amrnbenc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT amrnbenc.obj -MD -MP -MF $(DEPDIR)/amrnbenc.Tpo -c -o amrnbenc.obj `if test -f 'elements/amrnbenc.c'; then $(CYGPATH_W) 'elements/amrnbenc.c'; else $(CYGPATH_W) '$(srcdir)/elements/amrnbenc.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/amrnbenc.Tpo $(DEPDIR)/amrnbenc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT amrnbenc.obj -MD -MP -MF $(DEPDIR)/amrnbenc.Tpo -c -o amrnbenc.obj `if test -f 'elements/amrnbenc.c'; then $(CYGPATH_W) 'elements/amrnbenc.c'; else $(CYGPATH_W) '$(srcdir)/elements/amrnbenc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/amrnbenc.Tpo $(DEPDIR)/amrnbenc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/amrnbenc.c' object='amrnbenc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o amrnbenc.obj `if test -f 'elements/amrnbenc.c'; then $(CYGPATH_W) 'elements/amrnbenc.c'; else $(CYGPATH_W) '$(srcdir)/elements/amrnbenc.c'; fi`
 
 mpeg2dec.o: elements/mpeg2dec.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mpeg2dec.o -MD -MP -MF $(DEPDIR)/mpeg2dec.Tpo -c -o mpeg2dec.o `test -f 'elements/mpeg2dec.c' || echo '$(srcdir)/'`elements/mpeg2dec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mpeg2dec.Tpo $(DEPDIR)/mpeg2dec.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mpeg2dec.o -MD -MP -MF $(DEPDIR)/mpeg2dec.Tpo -c -o mpeg2dec.o `test -f 'elements/mpeg2dec.c' || echo '$(srcdir)/'`elements/mpeg2dec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mpeg2dec.Tpo $(DEPDIR)/mpeg2dec.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/mpeg2dec.c' object='mpeg2dec.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mpeg2dec.o `test -f 'elements/mpeg2dec.c' || echo '$(srcdir)/'`elements/mpeg2dec.c
 
 mpeg2dec.obj: elements/mpeg2dec.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mpeg2dec.obj -MD -MP -MF $(DEPDIR)/mpeg2dec.Tpo -c -o mpeg2dec.obj `if test -f 'elements/mpeg2dec.c'; then $(CYGPATH_W) 'elements/mpeg2dec.c'; else $(CYGPATH_W) '$(srcdir)/elements/mpeg2dec.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mpeg2dec.Tpo $(DEPDIR)/mpeg2dec.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mpeg2dec.obj -MD -MP -MF $(DEPDIR)/mpeg2dec.Tpo -c -o mpeg2dec.obj `if test -f 'elements/mpeg2dec.c'; then $(CYGPATH_W) 'elements/mpeg2dec.c'; else $(CYGPATH_W) '$(srcdir)/elements/mpeg2dec.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mpeg2dec.Tpo $(DEPDIR)/mpeg2dec.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/mpeg2dec.c' object='mpeg2dec.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mpeg2dec.obj `if test -f 'elements/mpeg2dec.c'; then $(CYGPATH_W) 'elements/mpeg2dec.c'; else $(CYGPATH_W) '$(srcdir)/elements/mpeg2dec.c'; fi`
 
 x264enc.o: elements/x264enc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT x264enc.o -MD -MP -MF $(DEPDIR)/x264enc.Tpo -c -o x264enc.o `test -f 'elements/x264enc.c' || echo '$(srcdir)/'`elements/x264enc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/x264enc.Tpo $(DEPDIR)/x264enc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT x264enc.o -MD -MP -MF $(DEPDIR)/x264enc.Tpo -c -o x264enc.o `test -f 'elements/x264enc.c' || echo '$(srcdir)/'`elements/x264enc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/x264enc.Tpo $(DEPDIR)/x264enc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/x264enc.c' object='x264enc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o x264enc.o `test -f 'elements/x264enc.c' || echo '$(srcdir)/'`elements/x264enc.c
 
 x264enc.obj: elements/x264enc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT x264enc.obj -MD -MP -MF $(DEPDIR)/x264enc.Tpo -c -o x264enc.obj `if test -f 'elements/x264enc.c'; then $(CYGPATH_W) 'elements/x264enc.c'; else $(CYGPATH_W) '$(srcdir)/elements/x264enc.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/x264enc.Tpo $(DEPDIR)/x264enc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT x264enc.obj -MD -MP -MF $(DEPDIR)/x264enc.Tpo -c -o x264enc.obj `if test -f 'elements/x264enc.c'; then $(CYGPATH_W) 'elements/x264enc.c'; else $(CYGPATH_W) '$(srcdir)/elements/x264enc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/x264enc.Tpo $(DEPDIR)/x264enc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/x264enc.c' object='x264enc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o x264enc.obj `if test -f 'elements/x264enc.c'; then $(CYGPATH_W) 'elements/x264enc.c'; else $(CYGPATH_W) '$(srcdir)/elements/x264enc.c'; fi`
 
 xingmux.o: elements/xingmux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xingmux.o -MD -MP -MF $(DEPDIR)/xingmux.Tpo -c -o xingmux.o `test -f 'elements/xingmux.c' || echo '$(srcdir)/'`elements/xingmux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xingmux.Tpo $(DEPDIR)/xingmux.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xingmux.o -MD -MP -MF $(DEPDIR)/xingmux.Tpo -c -o xingmux.o `test -f 'elements/xingmux.c' || echo '$(srcdir)/'`elements/xingmux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xingmux.Tpo $(DEPDIR)/xingmux.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/xingmux.c' object='xingmux.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xingmux.o `test -f 'elements/xingmux.c' || echo '$(srcdir)/'`elements/xingmux.c
 
 xingmux.obj: elements/xingmux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xingmux.obj -MD -MP -MF $(DEPDIR)/xingmux.Tpo -c -o xingmux.obj `if test -f 'elements/xingmux.c'; then $(CYGPATH_W) 'elements/xingmux.c'; else $(CYGPATH_W) '$(srcdir)/elements/xingmux.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xingmux.Tpo $(DEPDIR)/xingmux.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xingmux.obj -MD -MP -MF $(DEPDIR)/xingmux.Tpo -c -o xingmux.obj `if test -f 'elements/xingmux.c'; then $(CYGPATH_W) 'elements/xingmux.c'; else $(CYGPATH_W) '$(srcdir)/elements/xingmux.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xingmux.Tpo $(DEPDIR)/xingmux.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/xingmux.c' object='xingmux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xingmux.obj `if test -f 'elements/xingmux.c'; then $(CYGPATH_W) 'elements/xingmux.c'; else $(CYGPATH_W) '$(srcdir)/elements/xingmux.c'; fi`
 
+index.o: generic/index.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT index.o -MD -MP -MF $(DEPDIR)/index.Tpo -c -o index.o `test -f 'generic/index.c' || echo '$(srcdir)/'`generic/index.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/index.Tpo $(DEPDIR)/index.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generic/index.c' object='index.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o index.o `test -f 'generic/index.c' || echo '$(srcdir)/'`generic/index.c
+
+index.obj: generic/index.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT index.obj -MD -MP -MF $(DEPDIR)/index.Tpo -c -o index.obj `if test -f 'generic/index.c'; then $(CYGPATH_W) 'generic/index.c'; else $(CYGPATH_W) '$(srcdir)/generic/index.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/index.Tpo $(DEPDIR)/index.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generic/index.c' object='index.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o index.obj `if test -f 'generic/index.c'; then $(CYGPATH_W) 'generic/index.c'; else $(CYGPATH_W) '$(srcdir)/generic/index.c'; fi`
+
 states.o: generic/states.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT states.o -MD -MP -MF $(DEPDIR)/states.Tpo -c -o states.o `test -f 'generic/states.c' || echo '$(srcdir)/'`generic/states.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/states.Tpo $(DEPDIR)/states.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT states.o -MD -MP -MF $(DEPDIR)/states.Tpo -c -o states.o `test -f 'generic/states.c' || echo '$(srcdir)/'`generic/states.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/states.Tpo $(DEPDIR)/states.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generic/states.c' object='states.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o states.o `test -f 'generic/states.c' || echo '$(srcdir)/'`generic/states.c
 
 states.obj: generic/states.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT states.obj -MD -MP -MF $(DEPDIR)/states.Tpo -c -o states.obj `if test -f 'generic/states.c'; then $(CYGPATH_W) 'generic/states.c'; else $(CYGPATH_W) '$(srcdir)/generic/states.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/states.Tpo $(DEPDIR)/states.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT states.obj -MD -MP -MF $(DEPDIR)/states.Tpo -c -o states.obj `if test -f 'generic/states.c'; then $(CYGPATH_W) 'generic/states.c'; else $(CYGPATH_W) '$(srcdir)/generic/states.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/states.Tpo $(DEPDIR)/states.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generic/states.c' object='states.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o states.obj `if test -f 'generic/states.c'; then $(CYGPATH_W) 'generic/states.c'; else $(CYGPATH_W) '$(srcdir)/generic/states.c'; fi`
 
 lame.o: pipelines/lame.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lame.o -MD -MP -MF $(DEPDIR)/lame.Tpo -c -o lame.o `test -f 'pipelines/lame.c' || echo '$(srcdir)/'`pipelines/lame.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lame.Tpo $(DEPDIR)/lame.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lame.o -MD -MP -MF $(DEPDIR)/lame.Tpo -c -o lame.o `test -f 'pipelines/lame.c' || echo '$(srcdir)/'`pipelines/lame.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lame.Tpo $(DEPDIR)/lame.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pipelines/lame.c' object='lame.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lame.o `test -f 'pipelines/lame.c' || echo '$(srcdir)/'`pipelines/lame.c
 
 lame.obj: pipelines/lame.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lame.obj -MD -MP -MF $(DEPDIR)/lame.Tpo -c -o lame.obj `if test -f 'pipelines/lame.c'; then $(CYGPATH_W) 'pipelines/lame.c'; else $(CYGPATH_W) '$(srcdir)/pipelines/lame.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lame.Tpo $(DEPDIR)/lame.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lame.obj -MD -MP -MF $(DEPDIR)/lame.Tpo -c -o lame.obj `if test -f 'pipelines/lame.c'; then $(CYGPATH_W) 'pipelines/lame.c'; else $(CYGPATH_W) '$(srcdir)/pipelines/lame.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lame.Tpo $(DEPDIR)/lame.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pipelines/lame.c' object='lame.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lame.obj `if test -f 'pipelines/lame.c'; then $(CYGPATH_W) 'pipelines/lame.c'; else $(CYGPATH_W) '$(srcdir)/pipelines/lame.c'; fi`
@@ -957,10 +1018,10 @@ clean-local-check:
 
 # valgrind any given test by running make test.valgrind
 %.valgrind: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_DEFAULT_TIMEOUT=360					\
 	G_SLICE=always-malloc					\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	$(VALGRIND_PATH) -q					\
 	$(foreach s,$(SUPPRESSIONS),--suppressions=$(s))	\
 	--tool=memcheck --leak-check=full --trace-children=yes	\
@@ -974,10 +1035,10 @@ clean-local-check:
 
 # valgrind any given test and generate suppressions for it
 %.valgrind.gen-suppressions: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_DEFAULT_TIMEOUT=360					\
 	G_SLICE=always-malloc					\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	$(VALGRIND_PATH) -q 					\
 	$(foreach s,$(SUPPRESSIONS),--suppressions=$(s))	\
 	--tool=memcheck --leak-check=full --trace-children=yes	\
@@ -992,17 +1053,17 @@ clean-local-check:
 
 # gdb any given test by running make test.gdb
 %.gdb: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_FORK=no						\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	gdb $*
 
 # torture tests
 torture: $(TESTS)
 	-rm test-registry.xml
 	@echo "Torturing tests ..."
-	for i in `seq 1 $(LOOPS)`; do				\
-		$(MAKE) check ||					\
+	@for i in `seq 1 $(LOOPS)`; do				\
+		$(MAKE) check ||				\
 		(echo "Failure after $$i runs"; exit 1) ||	\
 		exit 1;						\
 	done
@@ -1014,8 +1075,8 @@ torture: $(TESTS)
 forever: $(TESTS)
 	-rm test-registry.xml
 	@echo "Forever tests ..."
-	while true; do						\
-		$(MAKE) check ||					\
+	@while true; do						\
+		$(MAKE) check ||				\
 		(echo "Failure"; exit 1) ||			\
 		exit 1;						\
 	done
@@ -1027,10 +1088,28 @@ valgrind: $(TESTS)
 	for t in $(filter-out $(VALGRIND_TESTS_DISABLE),$(TESTS)); do	\
 		$(MAKE) $$t.valgrind;					\
 		if test "$$?" -ne 0; then                               \
-                        echo "Valgrind error for test $$t";		\
+			echo "Valgrind error for test $$t";		\
 			failed=`expr $$failed + 1`;			\
 			whicht="$$whicht $$t";				\
-                fi;							\
+		fi;							\
+	done;								\
+	if test "$$failed" -ne 0; then					\
+		echo "$$failed tests had leaks or errors under valgrind:";	\
+		echo "$$whicht";					\
+		false;							\
+	fi
+
+# valgrind all tests and generate suppressions
+valgrind.gen-suppressions: $(TESTS)
+	@echo "Valgrinding tests ..."
+	@failed=0;							\
+	for t in $(filter-out $(VALGRIND_TESTS_DISABLE),$(TESTS)); do	\
+		$(MAKE) $$t.valgrind.gen-suppressions;			\
+		if test "$$?" -ne 0; then                               \
+			echo "Valgrind error for test $$t";		\
+			failed=`expr $$failed + 1`;			\
+			whicht="$$whicht $$t";				\
+		fi;							\
 	done;								\
 	if test "$$failed" -ne 0; then					\
 		echo "$$failed tests had leaks or errors under valgrind:";	\
@@ -1039,7 +1118,7 @@ valgrind: $(TESTS)
 	fi
 inspect:
 	@echo "Inspecting features ..."
-	for e in `$(TESTS_ENVIRONMENT) $(GST_INSPECT) | head -n -2 	\
+	@for e in `$(TESTS_ENVIRONMENT) $(GST_INSPECT) | head -n -2 	\
 	  | cut -d: -f2`;						\
 	  do echo Inspecting $$e;					\
 	     $(GST_INSPECT) $$e > /dev/null 2>&1; done
@@ -1055,6 +1134,8 @@ help:
 	@echo "make (dir)/(test).gdb              -- start up gdb for the given test"
 	@echo
 	@echo "make valgrind                      -- valgrind all tests"
+	@echo "make valgrind.gen-suppressions     -- generate suppressions for all tests"
+	@echo "                                      and save to suppressions.log"
 	@echo "make (dir)/(test).valgrind         -- valgrind the given test"
 	@echo "make (dir)/(test).valgrind-forever -- valgrind the given test forever"
 	@echo "make (dir)/(test).valgrind.gen-suppressions -- generate suppressions"

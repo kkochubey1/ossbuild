@@ -636,8 +636,7 @@ gst_mpeg_demux_parse_packet (GstMPEGParse * mpeg_parse, GstBuffer * buffer)
   guint16 headerlen;
 
   guint16 packet_length;
-  gboolean STD_buffer_bound_scale;
-  guint16 STD_buffer_size_bound;
+  guint16 STD_buffer_size_bound G_GNUC_UNUSED;
   guint64 dts;
   gint64 pts = -1;
 
@@ -677,7 +676,7 @@ gst_mpeg_demux_parse_packet (GstMPEGParse * mpeg_parse, GstBuffer * buffer)
       case 0x40:
         GST_DEBUG_OBJECT (mpeg_demux, "have STD");
 
-        STD_buffer_bound_scale = bits & 0x20;
+        /* STD_buffer_bound_scale = ((bits & 0x20) == 0x20); */
         STD_buffer_size_bound = ((guint16) (bits & 0x1F)) << 8;
         STD_buffer_size_bound |= *buf++;
 
@@ -1030,9 +1029,11 @@ gst_mpeg_demux_send_subbuffer (GstMPEGDemux * mpeg_demux,
       outstream->scr_offs = 0;
 
     if (mpeg_demux->index != NULL) {
-      /* Register a new index position. */
+      /* Register a new index position.
+       * FIXME: check for keyframes
+       */
       gst_index_add_association (mpeg_demux->index,
-          outstream->index_id, 0,
+          outstream->index_id, GST_ASSOCIATION_FLAG_DELTA_UNIT,
           GST_FORMAT_BYTES,
           GST_BUFFER_OFFSET (buffer), GST_FORMAT_TIME, timestamp, 0);
     }

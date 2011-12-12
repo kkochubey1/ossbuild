@@ -40,6 +40,10 @@
 #include "gstmad.h"
 #include <gst/audio/audio.h>
 
+#ifdef HAVE_ID3TAG
+#include <id3tag.h>
+#endif
+
 enum
 {
   ARG_0,
@@ -100,12 +104,12 @@ static GstFlowReturn gst_mad_chain_reverse (GstMad * mad, GstBuffer * buf);
 static GstStateChangeReturn gst_mad_change_state (GstElement * element,
     GstStateChange transition);
 
-#ifndef GST_DISABLE_INDEX
 static void gst_mad_set_index (GstElement * element, GstIndex * index);
 static GstIndex *gst_mad_get_index (GstElement * element);
-#endif
 
+#ifdef HAVE_ID3TAG
 static GstTagList *gst_mad_id3_to_tag_list (const struct id3_tag *tag);
+#endif
 
 GST_BOILERPLATE (GstMad, gst_mad, GstElement, GST_TYPE_ELEMENT);
 
@@ -200,10 +204,8 @@ gst_mad_class_init (GstMadClass * klass)
   gobject_class->dispose = gst_mad_dispose;
 
   gstelement_class->change_state = gst_mad_change_state;
-#ifndef GST_DISABLE_INDEX
   gstelement_class->set_index = gst_mad_set_index;
   gstelement_class->get_index = gst_mad_get_index;
-#endif
 
   /* init properties */
   /* currently, string representations are used, we might want to change that */
@@ -287,9 +289,7 @@ gst_mad_dispose (GObject * object)
 {
   GstMad *mad = GST_MAD (object);
 
-#ifndef GST_DISABLE_INDEX
   gst_mad_set_index (GST_ELEMENT (object), NULL);
-#endif
 
   g_free (mad->tempbuffer);
   mad->tempbuffer = NULL;
@@ -301,7 +301,6 @@ gst_mad_dispose (GObject * object)
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-#ifndef GST_DISABLE_INDEX
 static void
 gst_mad_set_index (GstElement * element, GstIndex * index)
 {
@@ -320,7 +319,6 @@ gst_mad_get_index (GstElement * element)
 
   return mad->index;
 }
-#endif
 
 static gboolean
 gst_mad_convert_sink (GstPad * pad, GstFormat src_format, gint64 src_value,
@@ -604,7 +602,6 @@ error:
   return FALSE;
 }
 
-#ifndef GST_DISABLE_INDEX
 static gboolean
 index_seek (GstMad * mad, GstPad * pad, GstEvent * event)
 {
@@ -681,7 +678,6 @@ index_seek (GstMad * mad, GstPad * pad, GstEvent * event)
 
   return FALSE;
 }
-#endif
 
 static gboolean
 normal_seek (GstMad * mad, GstPad * pad, GstEvent * event)
@@ -807,11 +803,9 @@ gst_mad_src_event (GstPad * pad, GstEvent * event)
       /* the all-formats seek logic, ref the event, we need it later */
       gst_event_ref (event);
       if (!(res = gst_pad_push_event (mad->sinkpad, event))) {
-#ifndef GST_DISABLE_INDEX
         if (mad->index)
           res = index_seek (mad, pad, event);
         else
-#endif
           res = normal_seek (mad, pad, event);
       }
       gst_event_unref (event);
@@ -1038,10 +1032,10 @@ gst_mad_check_restart (GstMad * mad)
 }
 
 
-/* The following code has been taken from 
+/* The following code has been taken from
  * rhythmbox/metadata/monkey-media/stream-info-impl/id3-vfs/mp3bitrate.c
  * which took it from xine-lib/src/demuxers/demux_mpgaudio.c
- * This code has been kindly relicensed to LGPL by Thibaut Mattern and 
+ * This code has been kindly relicensed to LGPL by Thibaut Mattern and
  * Bastien Nocera
  */
 #define BE_32(x) GST_READ_UINT32_BE(x)
@@ -1526,50 +1520,54 @@ gst_mad_chain (GstPad * pad, GstBuffer * buffer)
           goto end;
         } else if (mad->stream.error == MAD_ERROR_LOSTSYNC) {
           /* lost sync, force a resync */
-          signed long tagsize;
-
           GST_INFO ("recoverable lost sync error");
 
-          tagsize = id3_tag_query (mad->stream.this_frame,
-              mad->stream.bufend - mad->stream.this_frame);
+#ifdef HAVE_ID3TAG
+          {
+            signed long tagsize;
 
-          if (tagsize > mad->tempsize) {
-            GST_INFO ("mad: got partial id3 tag in buffer, skipping");
-          } else if (tagsize > 0) {
-            struct id3_tag *tag;
-            id3_byte_t const *data;
+            tagsize = id3_tag_query (mad->stream.this_frame,
+                mad->stream.bufend - mad->stream.this_frame);
 
-            GST_INFO ("mad: got ID3 tag size %ld", tagsize);
+            if (tagsize > mad->tempsize) {
+              GST_INFO ("mad: got partial id3 tag in buffer, skipping");
+            } else if (tagsize > 0) {
+              struct id3_tag *tag;
+              id3_byte_t const *data;
 
-            data = mad->stream.this_frame;
+              GST_INFO ("mad: got ID3 tag size %ld", tagsize);
 
-            /* mad has moved the pointer to the next frame over the start of the
-             * id3 tags, so we need to flush one byte less than the tagsize */
-            mad_stream_skip (&mad->stream, tagsize - 1);
+              data = mad->stream.this_frame;
 
-            tag = id3_tag_parse (data, tagsize);
-            if (tag) {
-              GstTagList *list;
+              /* mad has moved the pointer to the next frame over the start of the
+               * id3 tags, so we need to flush one byte less than the tagsize */
+              mad_stream_skip (&mad->stream, tagsize - 1);
 
-              list = gst_mad_id3_to_tag_list (tag);
-              id3_tag_delete (tag);
-              GST_DEBUG ("found tag");
-              gst_element_post_message (GST_ELEMENT (mad),
-                  gst_message_new_tag (GST_OBJECT (mad),
-                      gst_tag_list_copy (list)));
-              if (mad->tags) {
-                gst_tag_list_insert (mad->tags, list, GST_TAG_MERGE_PREPEND);
-              } else {
-                mad->tags = gst_tag_list_copy (list);
+              tag = id3_tag_parse (data, tagsize);
+              if (tag) {
+                GstTagList *list;
+
+                list = gst_mad_id3_to_tag_list (tag);
+                id3_tag_delete (tag);
+                GST_DEBUG ("found tag");
+                gst_element_post_message (GST_ELEMENT (mad),
+                    gst_message_new_tag (GST_OBJECT (mad),
+                        gst_tag_list_copy (list)));
+                if (mad->tags) {
+                  gst_tag_list_insert (mad->tags, list, GST_TAG_MERGE_PREPEND);
+                } else {
+                  mad->tags = gst_tag_list_copy (list);
+                }
+                if (mad->need_newsegment)
+                  mad->pending_events =
+                      g_list_append (mad->pending_events,
+                      gst_event_new_tag (list));
+                else
+                  gst_pad_push_event (mad->srcpad, gst_event_new_tag (list));
               }
-              if (mad->need_newsegment)
-                mad->pending_events =
-                    g_list_append (mad->pending_events,
-                    gst_event_new_tag (list));
-              else
-                gst_pad_push_event (mad->srcpad, gst_event_new_tag (list));
             }
           }
+#endif /* HAVE_ID3TAG */
         }
 
         mad_frame_mute (&mad->frame);
@@ -1642,11 +1640,11 @@ gst_mad_chain (GstPad * pad, GstBuffer * buffer)
 
           /* We are using the incoming timestamps to generate the outgoing ones
            * if available. However some muxing formats are not precise enough
-           * to allow us to generate a perfect stream. When converting the 
+           * to allow us to generate a perfect stream. When converting the
            * timestamp to a number of encoded samples so far we are introducing
-           * a lot of potential error compared to our accumulated number of 
-           * samples encoded. If the difference between those 2 numbers is 
-           * bigger than half a frame we then use the incoming timestamp 
+           * a lot of potential error compared to our accumulated number of
+           * samples encoded. If the difference between those 2 numbers is
+           * bigger than half a frame we then use the incoming timestamp
            * as a reference, otherwise we continue using our accumulated samples
            * counter */
           if (ABS (mad->total_samples - total) > nsamples / 2) {
@@ -1672,14 +1670,13 @@ gst_mad_chain (GstPad * pad, GstBuffer * buffer)
             GST_SECOND, mad->rate) - time_offset;
       }
 
-#ifndef GST_DISABLE_INDEX
       if (mad->index) {
         guint64 x_bytes = mad->base_byte_offset + mad->bytes_consumed;
 
-        gst_index_add_association (mad->index, mad->index_id, 0,
+        gst_index_add_association (mad->index, mad->index_id,
+            GST_ASSOCIATION_FLAG_DELTA_UNIT,
             GST_FORMAT_BYTES, x_bytes, GST_FORMAT_TIME, time_offset, NULL);
       }
-#endif
 
       if (mad->segment_start <= (time_offset ==
               GST_CLOCK_TIME_NONE ? 0 : time_offset)) {
@@ -1726,6 +1723,13 @@ gst_mad_chain (GstPad * pad, GstBuffer * buffer)
           GST_LOG ("Skipping frame synthesis due to pad_alloc return value");
           goto_exit = TRUE;
           goto skip_frame;
+        }
+
+        if (GST_BUFFER_SIZE (outbuffer) != nsamples * mad->channels * 4) {
+          gst_buffer_unref (outbuffer);
+
+          outbuffer = gst_buffer_new_and_alloc (nsamples * mad->channels * 4);
+          gst_buffer_set_caps (outbuffer, GST_PAD_CAPS (mad->srcpad));
         }
 
         mad_synth_frame (&mad->synth, &mad->frame);
@@ -1908,6 +1912,7 @@ gst_mad_change_state (GstElement * element, GstStateChange transition)
   return ret;
 }
 
+#ifdef HAVE_ID3TAG
 /* id3 tag helper (FIXME: why does mad parse id3 tags at all? It shouldn't) */
 static GstTagList *
 gst_mad_id3_to_tag_list (const struct id3_tag *tag)
@@ -2081,6 +2086,7 @@ gst_mad_id3_to_tag_list (const struct id3_tag *tag)
 
   return tag_list;
 }
+#endif /* HAVE_ID3TAG */
 
 /* plugin initialisation */
 
