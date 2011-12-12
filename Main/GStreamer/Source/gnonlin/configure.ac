@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GNonLin, 0.10.16.1,
+AC_INIT(GNonLin, 0.10.17,
     http://gnonlin.sourceforge.net/,
     gnonlin)
 
@@ -102,7 +102,7 @@ dnl *** checks for library functions ***
 dnl *** checks for dependancy libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.20])
+AG_GST_GLIB_CHECK([2.22])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)

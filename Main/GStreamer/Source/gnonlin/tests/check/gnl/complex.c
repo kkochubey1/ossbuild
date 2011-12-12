@@ -105,7 +105,7 @@ GST_START_TEST (test_one_space_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -157,7 +157,7 @@ GST_START_TEST (test_one_space_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -339,7 +339,7 @@ GST_START_TEST (test_one_default_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -401,7 +401,7 @@ GST_START_TEST (test_one_default_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -583,7 +583,7 @@ GST_START_TEST (test_one_expandable_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -645,7 +645,7 @@ GST_START_TEST (test_one_expandable_another)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -805,7 +805,7 @@ GST_START_TEST (test_renegotiation)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -861,7 +861,7 @@ GST_START_TEST (test_renegotiation)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -1002,7 +1002,7 @@ GST_START_TEST (test_one_bin_space_another)
           GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE);
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -1029,7 +1029,7 @@ GST_START_TEST (test_one_bin_space_another)
           GST_STATE_NULL) == GST_STATE_CHANGE_FAILURE);
 
   gst_object_unref (GST_OBJECT (sinkpad));
-  gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+  gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
   ASSERT_OBJECT_REFCOUNT_BETWEEN (pipeline, "main pipeline", 1, 2);
   gst_object_unref (pipeline);
   ASSERT_OBJECT_REFCOUNT_BETWEEN (bus, "main bus", 1, 2);
@@ -1132,7 +1132,7 @@ GST_START_TEST (test_one_above_another)
   gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_PLAYING);
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_EOS:
@@ -1171,7 +1171,7 @@ GST_END_TEST;
 Suite *
 gnonlin_suite (void)
 {
-  Suite *s = suite_create ("gnonlin");
+  Suite *s = suite_create ("gnonlin-complex");
   TCase *tc_chain = tcase_create ("complex");
 
   suite_add_tcase (s, tc_chain);
@@ -1185,19 +1185,4 @@ gnonlin_suite (void)
   return s;
 }
 
-int
-main (int argc, char **argv)
-{
-  int nf;
-
-  Suite *s = gnonlin_suite ();
-  SRunner *sr = srunner_create (s);
-
-  gst_check_init (&argc, &argv);
-
-  srunner_run_all (sr, CK_NORMAL);
-  nf = srunner_ntests_failed (sr);
-  srunner_free (sr);
-
-  return nf;
-}
+GST_CHECK_MAIN (gnonlin)

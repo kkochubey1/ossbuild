@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
-<book xmlns="http://www.devhelp.net/book" title="GNonLin 0.10.15 Reference Manual" link="index.html" author="" name="gnonlin">
+<book xmlns="http://www.devhelp.net/book" title="GNonLin 0.10.17 Reference Manual" link="index.html" author="" name="gnonlin">
   <chapters>
     <sub name="GNonLin Elements" link="ch01.html">
       <sub name="GnlComposition" link="GnlComposition.html"/>
@@ -21,11 +21,11 @@
     <function name="The &quot;location&quot; property" link="GnlFileSource.html#GnlFileSource--location"/>
     <function name="GnlURISource" link="GnlURISource.html#GnlURISource-struct"/>
     <function name="The &quot;uri&quot; property" link="GnlURISource.html#GnlURISource--uri"/>
-    <function name="" link="GnlOperation.html#id332384"/>
+    <function name="" link="GnlOperation.html#id623898"/>
     <function name="GnlOperation" link="GnlOperation.html#GnlOperation-struct"/>
     <function name="The &quot;sinks&quot; property" link="GnlOperation.html#GnlOperation--sinks"/>
     <function name="The &quot;input-priority-changed&quot; signal" link="GnlOperation.html#GnlOperation-input-priority-changed"/>
-    <function name="" link="GnlObject.html#id344321"/>
+    <function name="" link="GnlObject.html#id621797"/>
     <function name="GnlObject" link="GnlObject.html#GnlObject-struct"/>
     <function name="The &quot;active&quot; property" link="GnlObject.html#GnlObject--active"/>
     <function name="The &quot;caps&quot; property" link="GnlObject.html#GnlObject--caps"/>

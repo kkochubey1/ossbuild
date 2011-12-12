@@ -17,6 +17,12 @@
 
 # include this snippet to add a common release: target by using
 # include $(top_srcdir)/common/release.mak
+
+# checks for left-over files in the (usually uninstalled) tree, ie. for
+# stuff that best be deleted to avoid problems like having old plugin binaries
+# lying around.
+#
+# set CRUFT_FILES and/or CRUFT_DIRS in your Makefile.am when you include this
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -40,10 +46,10 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/gnonlin.spec.in \
 	$(top_srcdir)/common/coverage/lcov.mak \
-	$(top_srcdir)/common/po.mak $(top_srcdir)/common/release.mak \
-	$(top_srcdir)/configure AUTHORS COPYING COPYING.LIB ChangeLog \
-	INSTALL NEWS compile config.guess config.sub depcomp \
-	install-sh ltmain.sh missing
+	$(top_srcdir)/common/cruft.mak $(top_srcdir)/common/po.mak \
+	$(top_srcdir)/common/release.mak $(top_srcdir)/configure \
+	AUTHORS COPYING COPYING.LIB ChangeLog INSTALL NEWS compile \
+	config.guess config.sub depcomp install-sh ltmain.sh missing
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -62,12 +68,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -135,7 +139,7 @@ GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
-ACLOCAL_AMFLAGS = -I common/m4 -I m4
+ACLOCAL_AMFLAGS = -I m4 -I common/m4
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
@@ -198,8 +202,12 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
+GST_PLUGINS_GOOD_CFLAGS = @GST_PLUGINS_GOOD_CFLAGS@
+GST_PLUGINS_GOOD_DIR = @GST_PLUGINS_GOOD_DIR@
+GST_PLUGINS_GOOD_LIBS = @GST_PLUGINS_GOOD_LIBS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PREFIX = @GST_PREFIX@
 GST_TOOLS_DIR = @GST_TOOLS_DIR@
@@ -230,6 +238,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -267,6 +276,7 @@ VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 XML_CATALOG = @XML_CATALOG@
 XSLTPROC = @XSLTPROC@
 XSLTPROC_FLAGS = @XSLTPROC_FLAGS@
@@ -274,6 +284,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -306,7 +317,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -345,13 +355,22 @@ DISTCLEANFILES = _stdint.h
 
 # make bz2 as well
 AUTOMAKE_OPTIONS = dist-bzip2
+CRUFT_FILES = \
+	$(top_builddir)/common/shave \
+	$(top_builddir)/common/shave-libtool \
+	$(top_builddir)/common/m4/libtool.m4 \
+	$(top_builddir)/common/m4/ltoptions.m4 \
+	$(top_builddir)/common/m4/ltsugar.m4 \
+	$(top_builddir)/common/m4/ltversion.m4 \
+	$(top_builddir)/common/m4/lt~obsolete.m4
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(top_srcdir)/common/cruft.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -725,7 +744,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile config.h
+all-am: Makefile config.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -828,20 +847,21 @@ uninstall-am:
 	ctags-recursive install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-generic \
-	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
-	dist-gzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am
+	all all-am all-local am--refresh check check-am clean \
+	clean-generic clean-libtool ctags ctags-recursive dist \
+	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
+	dist-xz dist-zip distcheck distclean distclean-generic \
+	distclean-hdr distclean-libtool distclean-tags distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am
 
 
 release: dist
@@ -859,10 +879,10 @@ distcheck-hook:
 	@test "x" = "x`find $(distdir) -name \*-enumtypes.[ch] | grep -v win32`" && \
 	test "x" = "x`find $(distdir) -name \*-marshal.[ch]`" || \
 	( $(ECHO) "*** Leftover enumtypes or marshal files in the tarball." && \
-          $(ECHO) "*** Make sure the following files are not disted:" && \
-          find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
-          find $(distdir) -name \*-marshal.[ch] && \
-          false )
+	  $(ECHO) "*** Make sure the following files are not disted:" && \
+	  find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
+	  find $(distdir) -name \*-marshal.[ch] && \
+	  false )
 
 # rule to download the latest .po files
 download-po: $(top_srcdir)/common/download-translations
@@ -912,6 +932,58 @@ lcov:
 
 @GST_GCOV_ENABLED_FALSE@lcov-report:
 @GST_GCOV_ENABLED_FALSE@	echo "Need to reconfigure with --enable-gcov"
+
+check-cruft:
+	@cruft_files=""; cruft_dirs=""; \
+	for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    cruft_files="$$cruft_files $$f"; \
+	  fi \
+	done; \
+	for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    cruft_dirs="$$cruft_dirs $$d"; \
+	  fi \
+	done; \
+	if test "x$$cruft_files$$cruft_dirs" != x; then \
+	  echo; \
+	  echo "**** CRUFT ALERT *****"; \
+	  echo; \
+	  echo "The following files and directories may not be needed any "; \
+	  echo "longer (usually because a plugin has been merged into     "; \
+	  echo "another plugin, moved to a different module, or been      "; \
+	  echo "renamed), and you probably want to clean them up if you   "; \
+	  echo "don't have local changes:                                 "; \
+	  echo; \
+	  for f in $$cruft_files; do echo "file $$f"; done; \
+	  echo; \
+	  for d in $$cruft_dirs; do echo "directory $$d"; done; \
+	  echo; \
+	  echo "'make clean-cruft' will remove these for you."; \
+	  echo; \
+	fi
+
+clean-cruft-dirs:
+	@for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    rm -r "$$d" && echo "Removed directory $$d"; \
+	  fi \
+	done
+
+clean-cruft-files:
+	@for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    rm "$$f" && echo "Removed file $$f"; \
+	  fi \
+	done
+
+clean-cruft: clean-cruft-dirs clean-cruft-files
+
+# also might want to add this to your Makefile.am:
+#
+# all-local: check-cruft
+
+all-local: check-cruft
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

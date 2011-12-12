@@ -61,7 +61,7 @@ GST_START_TEST (test_simple_videotestsrc)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     GST_LOG ("poll");
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
@@ -166,7 +166,7 @@ GST_START_TEST (test_videotestsrc_in_bin)
   GST_DEBUG ("Let's poll the bus");
 
   while (carry_on) {
-    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 2);
+    message = gst_bus_poll (bus, GST_MESSAGE_ANY, GST_SECOND / 10);
     GST_LOG ("poll");
     if (message) {
       switch (GST_MESSAGE_TYPE (message)) {
@@ -214,7 +214,7 @@ GST_END_TEST;
 Suite *
 gnonlin_suite (void)
 {
-  Suite *s = suite_create ("gnonlin");
+  Suite *s = suite_create ("gnlsource");
   TCase *tc_chain = tcase_create ("gnlsource");
   guint major, minor, micro, nano;
 
@@ -227,19 +227,4 @@ gnonlin_suite (void)
   return s;
 }
 
-int
-main (int argc, char **argv)
-{
-  int nf;
-
-  Suite *s = gnonlin_suite ();
-  SRunner *sr = srunner_create (s);
-
-  gst_check_init (&argc, &argv);
-
-  srunner_run_all (sr, CK_NORMAL);
-  nf = srunner_ntests_failed (sr);
-  srunner_free (sr);
-
-  return nf;
-}
+GST_CHECK_MAIN (gnonlin)

@@ -37,9 +37,9 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/common/check.mak
-check_PROGRAMS = ./simple$(EXEEXT) ./complex$(EXEEXT) \
-	./gnlsource$(EXEEXT) ./gnloperation$(EXEEXT) \
-	./gnlcomposition$(EXEEXT)
+check_PROGRAMS = gnl/simple$(EXEEXT) gnl/complex$(EXEEXT) \
+	gnl/gnlsource$(EXEEXT) gnl/gnloperation$(EXEEXT) \
+	gnl/gnlcomposition$(EXEEXT)
 noinst_PROGRAMS =
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,12 +59,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -72,30 +70,31 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-__complex_SOURCES = ./complex.c
-__complex_OBJECTS = complex.$(OBJEXT)
-__complex_LDADD = $(LDADD)
+gnl_complex_SOURCES = gnl/complex.c
+gnl_complex_OBJECTS = complex.$(OBJEXT)
+gnl_complex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-__complex_DEPENDENCIES = $(am__DEPENDENCIES_1)
+gnl_complex_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
-__gnlcomposition_SOURCES = ./gnlcomposition.c
-__gnlcomposition_OBJECTS = gnlcomposition.$(OBJEXT)
-__gnlcomposition_LDADD = $(LDADD)
-__gnlcomposition_DEPENDENCIES = $(am__DEPENDENCIES_1)
-__gnloperation_SOURCES = ./gnloperation.c
-__gnloperation_OBJECTS = gnloperation.$(OBJEXT)
-__gnloperation_LDADD = $(LDADD)
-__gnloperation_DEPENDENCIES = $(am__DEPENDENCIES_1)
-__gnlsource_SOURCES = ./gnlsource.c
-__gnlsource_OBJECTS = gnlsource.$(OBJEXT)
-__gnlsource_LDADD = $(LDADD)
-__gnlsource_DEPENDENCIES = $(am__DEPENDENCIES_1)
-__simple_SOURCES = ./simple.c
-__simple_OBJECTS = simple.$(OBJEXT)
-__simple_LDADD = $(LDADD)
-__simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__dirstamp = $(am__leading_dot)dirstamp
+gnl_gnlcomposition_SOURCES = gnl/gnlcomposition.c
+gnl_gnlcomposition_OBJECTS = gnlcomposition.$(OBJEXT)
+gnl_gnlcomposition_LDADD = $(LDADD)
+gnl_gnlcomposition_DEPENDENCIES = $(am__DEPENDENCIES_1)
+gnl_gnloperation_SOURCES = gnl/gnloperation.c
+gnl_gnloperation_OBJECTS = gnloperation.$(OBJEXT)
+gnl_gnloperation_LDADD = $(LDADD)
+gnl_gnloperation_DEPENDENCIES = $(am__DEPENDENCIES_1)
+gnl_gnlsource_SOURCES = gnl/gnlsource.c
+gnl_gnlsource_OBJECTS = gnlsource.$(OBJEXT)
+gnl_gnlsource_LDADD = $(LDADD)
+gnl_gnlsource_DEPENDENCIES = $(am__DEPENDENCIES_1)
+gnl_simple_SOURCES = gnl/simple.c
+gnl_simple_OBJECTS = simple.$(OBJEXT)
+gnl_simple_LDADD = $(LDADD)
+gnl_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -122,10 +121,10 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = ./complex.c ./gnlcomposition.c ./gnloperation.c \
-	./gnlsource.c ./simple.c
-DIST_SOURCES = ./complex.c ./gnlcomposition.c ./gnloperation.c \
-	./gnlsource.c ./simple.c
+SOURCES = gnl/complex.c gnl/gnlcomposition.c gnl/gnloperation.c \
+	gnl/gnlsource.c gnl/simple.c
+DIST_SOURCES = gnl/complex.c gnl/gnlcomposition.c gnl/gnloperation.c \
+	gnl/gnlsource.c gnl/simple.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -196,8 +195,12 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
+GST_PLUGINS_GOOD_CFLAGS = @GST_PLUGINS_GOOD_CFLAGS@
+GST_PLUGINS_GOOD_DIR = @GST_PLUGINS_GOOD_DIR@
+GST_PLUGINS_GOOD_LIBS = @GST_PLUGINS_GOOD_LIBS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PREFIX = @GST_PREFIX@
 GST_TOOLS_DIR = @GST_TOOLS_DIR@
@@ -228,6 +231,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -265,6 +269,7 @@ VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 XML_CATALOG = @XML_CATALOG@
 XSLTPROC = @XSLTPROC@
 XSLTPROC_FLAGS = @XSLTPROC_FLAGS@
@@ -272,6 +277,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -304,7 +310,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -333,20 +338,22 @@ CHECK_REGISTRY = $(top_builddir)/tests/check/test-registry.xml
 REGISTRY_ENVIRONMENT = \
 	GST_REGISTRY=$(CHECK_REGISTRY)
 
+
+# Note: GST_PLUGINS_GOOD_DIR is only set in an uninstalled setup
 TESTS_ENVIRONMENT = \
-        CK_DEFAULT_TIMEOUT=60                                   \
+        CK_DEFAULT_TIMEOUT=120                                   \
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
-	GST_PLUGIN_PATH=$(top_builddir)/gnl:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR):$(GST_PLUGINS_DIR)
+	GST_PLUGIN_PATH=$(top_builddir)/gnl:$(GST_PLUGINS_GOOD_DIR):$(GST_PLUGINS_BASE_DIR):$(GST_PLUGINS_DIR)
 
 
 # ths core dumps of some machines have PIDs appended
 CLEANFILES = core.* test-registry.xml
 TESTS = $(check_PROGRAMS)
 noinst_HEADERS = \
-	common.h
+	gnl/common.h
 
-AM_CFLAGS = -I./ $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS)
+AM_CFLAGS = $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS)
 LDADD = $(GST_OBJ_LIBS) $(GST_CHECK_LIBS) $(CHECK_LIBS)
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 all: all-am
@@ -401,21 +408,24 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-./complex$(EXEEXT): $(__complex_OBJECTS) $(__complex_DEPENDENCIES) 
-	@rm -f ./complex$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(__complex_OBJECTS) $(__complex_LDADD) $(LIBS)
-./gnlcomposition$(EXEEXT): $(__gnlcomposition_OBJECTS) $(__gnlcomposition_DEPENDENCIES) 
-	@rm -f ./gnlcomposition$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(__gnlcomposition_OBJECTS) $(__gnlcomposition_LDADD) $(LIBS)
-./gnloperation$(EXEEXT): $(__gnloperation_OBJECTS) $(__gnloperation_DEPENDENCIES) 
-	@rm -f ./gnloperation$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(__gnloperation_OBJECTS) $(__gnloperation_LDADD) $(LIBS)
-./gnlsource$(EXEEXT): $(__gnlsource_OBJECTS) $(__gnlsource_DEPENDENCIES) 
-	@rm -f ./gnlsource$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(__gnlsource_OBJECTS) $(__gnlsource_LDADD) $(LIBS)
-./simple$(EXEEXT): $(__simple_OBJECTS) $(__simple_DEPENDENCIES) 
-	@rm -f ./simple$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(__simple_OBJECTS) $(__simple_LDADD) $(LIBS)
+gnl/$(am__dirstamp):
+	@$(MKDIR_P) gnl
+	@: > gnl/$(am__dirstamp)
+gnl/complex$(EXEEXT): $(gnl_complex_OBJECTS) $(gnl_complex_DEPENDENCIES) gnl/$(am__dirstamp)
+	@rm -f gnl/complex$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gnl_complex_OBJECTS) $(gnl_complex_LDADD) $(LIBS)
+gnl/gnlcomposition$(EXEEXT): $(gnl_gnlcomposition_OBJECTS) $(gnl_gnlcomposition_DEPENDENCIES) gnl/$(am__dirstamp)
+	@rm -f gnl/gnlcomposition$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gnl_gnlcomposition_OBJECTS) $(gnl_gnlcomposition_LDADD) $(LIBS)
+gnl/gnloperation$(EXEEXT): $(gnl_gnloperation_OBJECTS) $(gnl_gnloperation_DEPENDENCIES) gnl/$(am__dirstamp)
+	@rm -f gnl/gnloperation$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gnl_gnloperation_OBJECTS) $(gnl_gnloperation_LDADD) $(LIBS)
+gnl/gnlsource$(EXEEXT): $(gnl_gnlsource_OBJECTS) $(gnl_gnlsource_DEPENDENCIES) gnl/$(am__dirstamp)
+	@rm -f gnl/gnlsource$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gnl_gnlsource_OBJECTS) $(gnl_gnlsource_LDADD) $(LIBS)
+gnl/simple$(EXEEXT): $(gnl_simple_OBJECTS) $(gnl_simple_DEPENDENCIES) gnl/$(am__dirstamp)
+	@rm -f gnl/simple$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gnl_simple_OBJECTS) $(gnl_simple_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -453,91 +463,92 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-complex.o: ./complex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT complex.o -MD -MP -MF $(DEPDIR)/complex.Tpo -c -o complex.o `test -f './complex.c' || echo '$(srcdir)/'`./complex.c
+complex.o: gnl/complex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT complex.o -MD -MP -MF $(DEPDIR)/complex.Tpo -c -o complex.o `test -f 'gnl/complex.c' || echo '$(srcdir)/'`gnl/complex.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complex.Tpo $(DEPDIR)/complex.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./complex.c' object='complex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/complex.c' object='complex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o complex.o `test -f './complex.c' || echo '$(srcdir)/'`./complex.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o complex.o `test -f 'gnl/complex.c' || echo '$(srcdir)/'`gnl/complex.c
 
-complex.obj: ./complex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT complex.obj -MD -MP -MF $(DEPDIR)/complex.Tpo -c -o complex.obj `if test -f './complex.c'; then $(CYGPATH_W) './complex.c'; else $(CYGPATH_W) '$(srcdir)/./complex.c'; fi`
+complex.obj: gnl/complex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT complex.obj -MD -MP -MF $(DEPDIR)/complex.Tpo -c -o complex.obj `if test -f 'gnl/complex.c'; then $(CYGPATH_W) 'gnl/complex.c'; else $(CYGPATH_W) '$(srcdir)/gnl/complex.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complex.Tpo $(DEPDIR)/complex.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./complex.c' object='complex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/complex.c' object='complex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o complex.obj `if test -f './complex.c'; then $(CYGPATH_W) './complex.c'; else $(CYGPATH_W) '$(srcdir)/./complex.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o complex.obj `if test -f 'gnl/complex.c'; then $(CYGPATH_W) 'gnl/complex.c'; else $(CYGPATH_W) '$(srcdir)/gnl/complex.c'; fi`
 
-gnlcomposition.o: ./gnlcomposition.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlcomposition.o -MD -MP -MF $(DEPDIR)/gnlcomposition.Tpo -c -o gnlcomposition.o `test -f './gnlcomposition.c' || echo '$(srcdir)/'`./gnlcomposition.c
+gnlcomposition.o: gnl/gnlcomposition.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlcomposition.o -MD -MP -MF $(DEPDIR)/gnlcomposition.Tpo -c -o gnlcomposition.o `test -f 'gnl/gnlcomposition.c' || echo '$(srcdir)/'`gnl/gnlcomposition.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnlcomposition.Tpo $(DEPDIR)/gnlcomposition.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnlcomposition.c' object='gnlcomposition.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnlcomposition.c' object='gnlcomposition.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlcomposition.o `test -f './gnlcomposition.c' || echo '$(srcdir)/'`./gnlcomposition.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlcomposition.o `test -f 'gnl/gnlcomposition.c' || echo '$(srcdir)/'`gnl/gnlcomposition.c
 
-gnlcomposition.obj: ./gnlcomposition.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlcomposition.obj -MD -MP -MF $(DEPDIR)/gnlcomposition.Tpo -c -o gnlcomposition.obj `if test -f './gnlcomposition.c'; then $(CYGPATH_W) './gnlcomposition.c'; else $(CYGPATH_W) '$(srcdir)/./gnlcomposition.c'; fi`
+gnlcomposition.obj: gnl/gnlcomposition.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlcomposition.obj -MD -MP -MF $(DEPDIR)/gnlcomposition.Tpo -c -o gnlcomposition.obj `if test -f 'gnl/gnlcomposition.c'; then $(CYGPATH_W) 'gnl/gnlcomposition.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnlcomposition.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnlcomposition.Tpo $(DEPDIR)/gnlcomposition.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnlcomposition.c' object='gnlcomposition.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnlcomposition.c' object='gnlcomposition.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlcomposition.obj `if test -f './gnlcomposition.c'; then $(CYGPATH_W) './gnlcomposition.c'; else $(CYGPATH_W) '$(srcdir)/./gnlcomposition.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlcomposition.obj `if test -f 'gnl/gnlcomposition.c'; then $(CYGPATH_W) 'gnl/gnlcomposition.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnlcomposition.c'; fi`
 
-gnloperation.o: ./gnloperation.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnloperation.o -MD -MP -MF $(DEPDIR)/gnloperation.Tpo -c -o gnloperation.o `test -f './gnloperation.c' || echo '$(srcdir)/'`./gnloperation.c
+gnloperation.o: gnl/gnloperation.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnloperation.o -MD -MP -MF $(DEPDIR)/gnloperation.Tpo -c -o gnloperation.o `test -f 'gnl/gnloperation.c' || echo '$(srcdir)/'`gnl/gnloperation.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnloperation.Tpo $(DEPDIR)/gnloperation.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnloperation.c' object='gnloperation.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnloperation.c' object='gnloperation.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnloperation.o `test -f './gnloperation.c' || echo '$(srcdir)/'`./gnloperation.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnloperation.o `test -f 'gnl/gnloperation.c' || echo '$(srcdir)/'`gnl/gnloperation.c
 
-gnloperation.obj: ./gnloperation.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnloperation.obj -MD -MP -MF $(DEPDIR)/gnloperation.Tpo -c -o gnloperation.obj `if test -f './gnloperation.c'; then $(CYGPATH_W) './gnloperation.c'; else $(CYGPATH_W) '$(srcdir)/./gnloperation.c'; fi`
+gnloperation.obj: gnl/gnloperation.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnloperation.obj -MD -MP -MF $(DEPDIR)/gnloperation.Tpo -c -o gnloperation.obj `if test -f 'gnl/gnloperation.c'; then $(CYGPATH_W) 'gnl/gnloperation.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnloperation.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnloperation.Tpo $(DEPDIR)/gnloperation.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnloperation.c' object='gnloperation.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnloperation.c' object='gnloperation.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnloperation.obj `if test -f './gnloperation.c'; then $(CYGPATH_W) './gnloperation.c'; else $(CYGPATH_W) '$(srcdir)/./gnloperation.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnloperation.obj `if test -f 'gnl/gnloperation.c'; then $(CYGPATH_W) 'gnl/gnloperation.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnloperation.c'; fi`
 
-gnlsource.o: ./gnlsource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlsource.o -MD -MP -MF $(DEPDIR)/gnlsource.Tpo -c -o gnlsource.o `test -f './gnlsource.c' || echo '$(srcdir)/'`./gnlsource.c
+gnlsource.o: gnl/gnlsource.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlsource.o -MD -MP -MF $(DEPDIR)/gnlsource.Tpo -c -o gnlsource.o `test -f 'gnl/gnlsource.c' || echo '$(srcdir)/'`gnl/gnlsource.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnlsource.Tpo $(DEPDIR)/gnlsource.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnlsource.c' object='gnlsource.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnlsource.c' object='gnlsource.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlsource.o `test -f './gnlsource.c' || echo '$(srcdir)/'`./gnlsource.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlsource.o `test -f 'gnl/gnlsource.c' || echo '$(srcdir)/'`gnl/gnlsource.c
 
-gnlsource.obj: ./gnlsource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlsource.obj -MD -MP -MF $(DEPDIR)/gnlsource.Tpo -c -o gnlsource.obj `if test -f './gnlsource.c'; then $(CYGPATH_W) './gnlsource.c'; else $(CYGPATH_W) '$(srcdir)/./gnlsource.c'; fi`
+gnlsource.obj: gnl/gnlsource.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnlsource.obj -MD -MP -MF $(DEPDIR)/gnlsource.Tpo -c -o gnlsource.obj `if test -f 'gnl/gnlsource.c'; then $(CYGPATH_W) 'gnl/gnlsource.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnlsource.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gnlsource.Tpo $(DEPDIR)/gnlsource.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./gnlsource.c' object='gnlsource.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/gnlsource.c' object='gnlsource.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlsource.obj `if test -f './gnlsource.c'; then $(CYGPATH_W) './gnlsource.c'; else $(CYGPATH_W) '$(srcdir)/./gnlsource.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnlsource.obj `if test -f 'gnl/gnlsource.c'; then $(CYGPATH_W) 'gnl/gnlsource.c'; else $(CYGPATH_W) '$(srcdir)/gnl/gnlsource.c'; fi`
 
-simple.o: ./simple.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simple.o -MD -MP -MF $(DEPDIR)/simple.Tpo -c -o simple.o `test -f './simple.c' || echo '$(srcdir)/'`./simple.c
+simple.o: gnl/simple.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simple.o -MD -MP -MF $(DEPDIR)/simple.Tpo -c -o simple.o `test -f 'gnl/simple.c' || echo '$(srcdir)/'`gnl/simple.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simple.Tpo $(DEPDIR)/simple.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./simple.c' object='simple.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/simple.c' object='simple.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simple.o `test -f './simple.c' || echo '$(srcdir)/'`./simple.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simple.o `test -f 'gnl/simple.c' || echo '$(srcdir)/'`gnl/simple.c
 
-simple.obj: ./simple.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simple.obj -MD -MP -MF $(DEPDIR)/simple.Tpo -c -o simple.obj `if test -f './simple.c'; then $(CYGPATH_W) './simple.c'; else $(CYGPATH_W) '$(srcdir)/./simple.c'; fi`
+simple.obj: gnl/simple.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simple.obj -MD -MP -MF $(DEPDIR)/simple.Tpo -c -o simple.obj `if test -f 'gnl/simple.c'; then $(CYGPATH_W) 'gnl/simple.c'; else $(CYGPATH_W) '$(srcdir)/gnl/simple.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simple.Tpo $(DEPDIR)/simple.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./simple.c' object='simple.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gnl/simple.c' object='simple.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simple.obj `if test -f './simple.c'; then $(CYGPATH_W) './simple.c'; else $(CYGPATH_W) '$(srcdir)/./simple.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simple.obj `if test -f 'gnl/simple.c'; then $(CYGPATH_W) 'gnl/simple.c'; else $(CYGPATH_W) '$(srcdir)/gnl/simple.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf gnl/.libs gnl/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -741,6 +752,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gnl/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -870,10 +882,10 @@ clean-local-check:
 
 # valgrind any given test by running make test.valgrind
 %.valgrind: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_DEFAULT_TIMEOUT=360					\
 	G_SLICE=always-malloc					\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	$(VALGRIND_PATH) -q					\
 	$(foreach s,$(SUPPRESSIONS),--suppressions=$(s))	\
 	--tool=memcheck --leak-check=full --trace-children=yes	\
@@ -887,10 +899,10 @@ clean-local-check:
 
 # valgrind any given test and generate suppressions for it
 %.valgrind.gen-suppressions: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_DEFAULT_TIMEOUT=360					\
 	G_SLICE=always-malloc					\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	$(VALGRIND_PATH) -q 					\
 	$(foreach s,$(SUPPRESSIONS),--suppressions=$(s))	\
 	--tool=memcheck --leak-check=full --trace-children=yes	\
@@ -905,17 +917,17 @@ clean-local-check:
 
 # gdb any given test by running make test.gdb
 %.gdb: %
-	$(TESTS_ENVIRONMENT)					\
+	@$(TESTS_ENVIRONMENT)					\
 	CK_FORK=no						\
-	$(LIBTOOL) --mode=execute					\
+	$(LIBTOOL) --mode=execute				\
 	gdb $*
 
 # torture tests
 torture: $(TESTS)
 	-rm test-registry.xml
 	@echo "Torturing tests ..."
-	for i in `seq 1 $(LOOPS)`; do				\
-		$(MAKE) check ||					\
+	@for i in `seq 1 $(LOOPS)`; do				\
+		$(MAKE) check ||				\
 		(echo "Failure after $$i runs"; exit 1) ||	\
 		exit 1;						\
 	done
@@ -927,8 +939,8 @@ torture: $(TESTS)
 forever: $(TESTS)
 	-rm test-registry.xml
 	@echo "Forever tests ..."
-	while true; do						\
-		$(MAKE) check ||					\
+	@while true; do						\
+		$(MAKE) check ||				\
 		(echo "Failure"; exit 1) ||			\
 		exit 1;						\
 	done
@@ -940,10 +952,28 @@ valgrind: $(TESTS)
 	for t in $(filter-out $(VALGRIND_TESTS_DISABLE),$(TESTS)); do	\
 		$(MAKE) $$t.valgrind;					\
 		if test "$$?" -ne 0; then                               \
-                        echo "Valgrind error for test $$t";		\
+			echo "Valgrind error for test $$t";		\
 			failed=`expr $$failed + 1`;			\
 			whicht="$$whicht $$t";				\
-                fi;							\
+		fi;							\
+	done;								\
+	if test "$$failed" -ne 0; then					\
+		echo "$$failed tests had leaks or errors under valgrind:";	\
+		echo "$$whicht";					\
+		false;							\
+	fi
+
+# valgrind all tests and generate suppressions
+valgrind.gen-suppressions: $(TESTS)
+	@echo "Valgrinding tests ..."
+	@failed=0;							\
+	for t in $(filter-out $(VALGRIND_TESTS_DISABLE),$(TESTS)); do	\
+		$(MAKE) $$t.valgrind.gen-suppressions;			\
+		if test "$$?" -ne 0; then                               \
+			echo "Valgrind error for test $$t";		\
+			failed=`expr $$failed + 1`;			\
+			whicht="$$whicht $$t";				\
+		fi;							\
 	done;								\
 	if test "$$failed" -ne 0; then					\
 		echo "$$failed tests had leaks or errors under valgrind:";	\
@@ -952,7 +982,7 @@ valgrind: $(TESTS)
 	fi
 inspect:
 	@echo "Inspecting features ..."
-	for e in `$(TESTS_ENVIRONMENT) $(GST_INSPECT) | head -n -2 	\
+	@for e in `$(TESTS_ENVIRONMENT) $(GST_INSPECT) | head -n -2 	\
 	  | cut -d: -f2`;						\
 	  do echo Inspecting $$e;					\
 	     $(GST_INSPECT) $$e > /dev/null 2>&1; done
@@ -968,6 +998,8 @@ help:
 	@echo "make (dir)/(test).gdb              -- start up gdb for the given test"
 	@echo
 	@echo "make valgrind                      -- valgrind all tests"
+	@echo "make valgrind.gen-suppressions     -- generate suppressions for all tests"
+	@echo "                                      and save to suppressions.log"
 	@echo "make (dir)/(test).valgrind         -- valgrind the given test"
 	@echo "make (dir)/(test).valgrind-forever -- valgrind the given test forever"
 	@echo "make (dir)/(test).valgrind.gen-suppressions -- generate suppressions"
@@ -987,9 +1019,6 @@ help:
 	@echo
 
 clean-local: clean-local-check
-
-$(CHECK_REGISTRY):
-	$(TESTS_ENVIRONMENT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
