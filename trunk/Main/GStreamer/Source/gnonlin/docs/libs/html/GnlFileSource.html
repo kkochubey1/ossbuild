@@ -3,15 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GnlFileSource</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GNonLin 0.10.15 Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.0">
+<link rel="home" href="index.html" title="GNonLin 0.10.17 Reference Manual">
 <link rel="up" href="ch01.html" title="GNonLin Elements">
 <link rel="prev" href="GnlSource.html" title="GnlSource">
 <link rel="next" href="GnlURISource.html" title="GnlURISource">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="GNonLin Elements">
-<link rel="chapter" href="ch02.html" title="Base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -19,7 +17,7 @@
 <td><a accesskey="p" href="GnlSource.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GNonLin 0.10.15 Reference Manual</th>
+<th width="100%" align="center">GNonLin 0.10.17 Reference Manual</th>
 <td><a accesskey="n" href="GnlURISource.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
@@ -51,10 +49,10 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="GnlFileSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="../gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="../gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="../gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="../gstreamer-0.10/GstBin.html">GstBin</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBin.html">GstBin</a>
                      +----<a class="link" href="GnlObject.html" title="GnlObject">GnlObject</a>
                            +----<a class="link" href="GnlSource.html" title="GnlSource">GnlSource</a>
                                  +----<a class="link" href="GnlURISource.html" title="GnlURISource">GnlURISource</a>
@@ -65,12 +63,12 @@
 <a name="GnlFileSource.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GnlFileSource implements
- <a href="../gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="GnlFileSource.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="GnlFileSource.html#GnlFileSource--location" title='The "location" property'>location</a>"                 <a href="../glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="GnlFileSource.html#GnlFileSource--location" title='The "location" property'>location</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -78,7 +76,8 @@ GnlFileSource implements
 <p>
 GnlFileSource is a <a class="link" href="GnlURISource.html" title="GnlURISource"><span class="type">GnlURISource</span></a> which reads and decodes the contents
 of a given file. The data in the file is decoded using any available
-GStreamer plugins.</p>
+GStreamer plugins.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GnlFileSource.details"></a><h2>Details</h2>
@@ -93,7 +92,7 @@ GStreamer plugins.</p>
 <a name="GnlFileSource.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "location" property'>
 <a name="GnlFileSource--location"></a><h3>The <code class="literal">"location"</code> property</h3>
-<pre class="programlisting">  "location"                 <a href="../glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "location"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Location of the file to use.</p>
 <p>Default value: NULL</p>
 </div>
@@ -101,6 +100,6 @@ GStreamer plugins.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>
