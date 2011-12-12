@@ -327,69 +327,77 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Generated"
 			>
 			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabingeneral.c"
+				RelativePath="..\..\..\..\Generated\gst-plugins-bad\gst\camerabin\gstcamerabin-marshal.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabingeneral.h"
+				RelativePath="..\..\..\..\Generated\gst-plugins-bad\gst\camerabin\gstcamerabin-marshal.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinimage.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinimage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinpreview.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinpreview.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinvideo.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinvideo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin-enum.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabincolorbalance.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabincolorbalance.h"
-				>
-			</File>
-			<Filter
-				Name="Generated"
-				>
-				<File
-					RelativePath="..\..\..\..\Generated\gst-plugins-bad\gst\camerabin\gstcamerabin-marshal.c"
-					>
-				</File>
-			</Filter>
 		</Filter>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabingeneral.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabingeneral.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinimage.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinimage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinpreview.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinpreview.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinvideo.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinvideo.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin-enum.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabincolorbalance.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabincolorbalance.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstinputselector.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstinputselector.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

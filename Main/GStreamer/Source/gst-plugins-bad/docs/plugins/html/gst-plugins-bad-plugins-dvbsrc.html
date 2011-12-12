@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-dtsdec.html" title="dtsdec">
 <link rel="next" href="gst-plugins-bad-plugins-dvdspu.html" title="dvdspu">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-bad-plugins-dvbsrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="dvbsrc">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-dvbsrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,62 +39,64 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-dvbsrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstDvbSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc-struct" title="GstDvbSrc">GstDvbSrc</a>;
+<a name="GstDvbSrc"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc-struct" title="struct GstDvbSrc">GstDvbSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dvbsrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
-                     +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstPushSrc.html">GstPushSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstPushSrc.html">GstPushSrc</a>
                            +----GstDvbSrc
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dvbsrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--bandwidth" title='The "bandwidth" property'>bandwidth</a>"                <span class="type">GstDvbSrcBandwidth</span>    : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--code-rate-hp" title='The "code-rate-hp" property'>code-rate-hp</a>"             <span class="type">GstDvbSrcCode_Rate</span>    : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--code-rate-lp" title='The "code-rate-lp" property'>code-rate-lp</a>"             <span class="type">GstDvbSrcCode_Rate</span>    : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--device" title='The "device" property'>device</a>"                   <a href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--diseqc-src" title='The "diseqc-src" property'>diseqc-src</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--freq" title='The "freq" property'>freq</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--device" title='The "device" property'>device</a>"                   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--diseqc-src" title='The "diseqc-src" property'>diseqc-src</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--freq" title='The "freq" property'>freq</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--guard" title='The "guard" property'>guard</a>"                    <span class="type">GstDvbSrcGuard</span>        : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--hierarchy" title='The "hierarchy" property'>hierarchy</a>"                <span class="type">GstDvbSrcHierarchy</span>    : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--inversion" title='The "inversion" property'>inversion</a>"                <span class="type">GstDvbSrcInversion</span>    : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--modulation" title='The "modulation" property'>modulation</a>"               <span class="type">GstDvbSrcModulation</span>   : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--pids" title='The "pids" property'>pids</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--pol" title='The "pol" property'>pol</a>"                      <a href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--srate" title='The "srate" property'>srate</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--pids" title='The "pids" property'>pids</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--pol" title='The "pol" property'>pol</a>"                      <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--srate" title='The "srate" property'>srate</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
   "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--trans-mode" title='The "trans-mode" property'>trans-mode</a>"               <span class="type">GstDvbSrcTransmission_Mode</span>  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--tune" title='The "tune" property'>tune</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--adapter" title='The "adapter" property'>adapter</a>"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--diseqc-source" title='The "diseqc-source" property'>diseqc-source</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--frequency" title='The "frequency" property'>frequency</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--frontend" title='The "frontend" property'>frontend</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--polarity" title='The "polarity" property'>polarity</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--symbol-rate" title='The "symbol-rate" property'>symbol-rate</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--stats-reporting-interval" title='The "stats-reporting-interval" property'>stats-reporting-interval</a>" <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--tune" title='The "tune" property'>tune</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--adapter" title='The "adapter" property'>adapter</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--diseqc-source" title='The "diseqc-source" property'>diseqc-source</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--frequency" title='The "frequency" property'>frequency</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--frontend" title='The "frontend" property'>frontend</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--polarity" title='The "polarity" property'>polarity</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write / Construct
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--symbol-rate" title='The "symbol-rate" property'>symbol-rate</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dvbsrc.html#GstDvbSrc--stats-reporting-interval" title='The "stats-reporting-interval" property'>stats-reporting-interval</a>" <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dvbsrc.description"></a><h2>Description</h2>
 <p>
 dvbsrc can be used to capture video from DVB cards, DVB-T, DVB-S or DVB-T.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id385352"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp12596832"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch dvbsrc modulation<span class="symbol">=</span><span class="string">&quot;QAM 64&quot;</span> trans<span class="symbol">-</span>mode<span class="symbol">=</span><span class="number">8</span>k bandwidth<span class="symbol">=</span><span class="number">8</span>MHz frequency<span class="symbol">=</span><span class="number">514000000</span> code<span class="symbol">-</span>rate<span class="symbol">-</span>lp<span class="symbol">=</span>AUTO code<span class="symbol">-</span>rate<span class="symbol">-</span>hp<span class="symbol">=</span><span class="number">2</span><span class="symbol">/</span><span class="number">3</span> guard<span class="symbol">=</span><span class="number">4</span>  hierarchy<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mpegtsdemux name<span class="symbol">=</span>demux <span class="symbol">!</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mpeg2dec <span class="symbol">!</span> xvimagesink demux<span class="symbol">. !</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mad <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch dvbsrc modulation<span class="gtkdoc opt">=</span><span class="string">&quot;QAM 64&quot;</span> trans<span class="gtkdoc opt">-</span>mode<span class="gtkdoc opt">=</span><span class="number">8</span>k bandwidth<span class="gtkdoc opt">=</span><span class="number">8</span> frequency<span class="gtkdoc opt">=</span><span class="number">514000000</span> code<span class="gtkdoc opt">-</span>rate<span class="gtkdoc opt">-</span>lp<span class="gtkdoc opt">=</span>AUTO code<span class="gtkdoc opt">-</span>rate<span class="gtkdoc opt">-</span>hp<span class="gtkdoc opt">=</span><span class="number">2</span><span class="gtkdoc opt">/</span><span class="number">3</span> guard<span class="gtkdoc opt">=</span><span class="number">4</span>  hierarchy<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mpegtsdemux name<span class="gtkdoc opt">=</span>demux <span class="gtkdoc opt">!</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mpeg2dec <span class="gtkdoc opt">!</span> xvimagesink demux<span class="gtkdoc opt">. !</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mad <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
@@ -105,7 +107,7 @@ dvbsrc can be used to capture video from DVB cards, DVB-T, DVB-S or DVB-T.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch dvbsrc modulation<span class="symbol">=</span><span class="string">&quot;QAM 64&quot;</span> trans<span class="symbol">-</span>mode<span class="symbol">=</span><span class="number">8</span>k bandwidth<span class="symbol">=</span><span class="number">8</span> frequency<span class="symbol">=</span><span class="number">514000000</span> code<span class="symbol">-</span>rate<span class="symbol">-</span>lp<span class="symbol">=</span>AUTO code<span class="symbol">-</span>rate<span class="symbol">-</span>hp<span class="symbol">=</span><span class="number">2</span><span class="symbol">/</span><span class="number">3</span> guard<span class="symbol">=</span><span class="number">4</span>  hierarchy<span class="symbol">=</span><span class="number">0</span> pids<span class="symbol">=</span><span class="number">100</span><span class="symbol">:</span><span class="number">256</span><span class="symbol">:</span><span class="number">257</span> <span class="symbol">!</span> mpegtsdemux name<span class="symbol">=</span>demux <span class="symbol">!</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mpeg2dec <span class="symbol">!</span> xvimagesink demux<span class="symbol">. !</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mad <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch dvbsrc modulation<span class="gtkdoc opt">=</span><span class="string">&quot;QAM 64&quot;</span> trans<span class="gtkdoc opt">-</span>mode<span class="gtkdoc opt">=</span><span class="number">8</span>k bandwidth<span class="gtkdoc opt">=</span><span class="number">8</span> frequency<span class="gtkdoc opt">=</span><span class="number">514000000</span> code<span class="gtkdoc opt">-</span>rate<span class="gtkdoc opt">-</span>lp<span class="gtkdoc opt">=</span>AUTO code<span class="gtkdoc opt">-</span>rate<span class="gtkdoc opt">-</span>hp<span class="gtkdoc opt">=</span><span class="number">2</span><span class="gtkdoc opt">/</span><span class="number">3</span> guard<span class="gtkdoc opt">=</span><span class="number">4</span>  hierarchy<span class="gtkdoc opt">=</span><span class="number">0</span> pids<span class="gtkdoc opt">=</span><span class="number">100</span><span class="gtkdoc opt">:</span><span class="number">256</span><span class="gtkdoc opt">:</span><span class="number">257</span> <span class="gtkdoc opt">!</span> mpegtsdemux name<span class="gtkdoc opt">=</span>demux <span class="gtkdoc opt">!</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mpeg2dec <span class="gtkdoc opt">!</span> xvimagesink demux<span class="gtkdoc opt">. !</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mad <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
@@ -116,180 +118,234 @@ dvbsrc can be used to capture video from DVB cards, DVB-T, DVB-S or DVB-T.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch dvbsrc polarity<span class="symbol">=</span><span class="string">&quot;h&quot;</span> frequency<span class="symbol">=</span><span class="number">11302000</span> symbol<span class="symbol">-</span>rate<span class="symbol">=</span><span class="number">27500</span> diseqc<span class="symbol">-</span>src<span class="symbol">=</span><span class="number">0</span> pids<span class="symbol">=</span><span class="number">50</span><span class="symbol">:</span><span class="number">102</span><span class="symbol">:</span><span class="number">103</span> <span class="symbol">!</span> mpegtsdemux name<span class="symbol">=</span>demux <span class="symbol">!</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mpeg2dec <span class="symbol">!</span> xvimagesink demux<span class="symbol">. !</span> queue max<span class="symbol">-</span>size<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">0</span> max<span class="symbol">-</span>size<span class="symbol">-</span>time<span class="symbol">=</span><span class="number">0</span> <span class="symbol">!</span> mad <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch dvbsrc polarity<span class="gtkdoc opt">=</span><span class="string">&quot;h&quot;</span> frequency<span class="gtkdoc opt">=</span><span class="number">11302000</span> symbol<span class="gtkdoc opt">-</span>rate<span class="gtkdoc opt">=</span><span class="number">27500</span> diseqc<span class="gtkdoc opt">-</span>src<span class="gtkdoc opt">=</span><span class="number">0</span> pids<span class="gtkdoc opt">=</span><span class="number">50</span><span class="gtkdoc opt">:</span><span class="number">102</span><span class="gtkdoc opt">:</span><span class="number">103</span> <span class="gtkdoc opt">!</span> mpegtsdemux name<span class="gtkdoc opt">=</span>demux <span class="gtkdoc opt">!</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mpeg2dec <span class="gtkdoc opt">!</span> xvimagesink demux<span class="gtkdoc opt">. !</span> queue max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">0</span> max<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">-</span>time<span class="gtkdoc opt">=</span><span class="number">0</span> <span class="gtkdoc opt">!</span> mad <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  Captures and renders a transport stream from dvb card 0 that is a DVB-S card for a program at tuned frequency 11302000 Hz, symbol rate of 27500 kHz with PMT pid of 50 and elementary stream pids of 102 and 103.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp12602624"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-dvb.html#plugin-dvb">dvb</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>P2P-VCR, C-Lab, University of Paderborn,Zaheer Abbas Merali &lt;zaheerabbas at merali dot org&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/Video</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp12610144"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/mpegts, mpegversion=(int)2, systemstream=(boolean)true</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dvbsrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstDvbSrc">
-<a name="GstDvbSrc-struct"></a><h3>GstDvbSrc</h3>
-<pre class="programlisting">typedef struct _GstDvbSrc GstDvbSrc;</pre>
+<div class="refsect2">
+<a name="GstDvbSrc-struct"></a><h3>struct GstDvbSrc</h3>
+<pre class="programlisting">struct GstDvbSrc;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dvbsrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "bandwidth" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--bandwidth"></a><h3>The <code class="literal">"bandwidth"</code> property</h3>
 <pre class="programlisting">  "bandwidth"                <span class="type">GstDvbSrcBandwidth</span>    : Read / Write</pre>
 <p>Bandwidth (DVB-T).</p>
 <p>Default value: 7</p>
 </div>
 <hr>
-<div class="refsect2" title='The "code-rate-hp" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--code-rate-hp"></a><h3>The <code class="literal">"code-rate-hp"</code> property</h3>
 <pre class="programlisting">  "code-rate-hp"             <span class="type">GstDvbSrcCode_Rate</span>    : Read / Write</pre>
 <p>High Priority Code Rate (DVB-T, DVB-S and DVB-C).</p>
 <p>Default value: AUTO</p>
 </div>
 <hr>
-<div class="refsect2" title='The "code-rate-lp" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--code-rate-lp"></a><h3>The <code class="literal">"code-rate-lp"</code> property</h3>
 <pre class="programlisting">  "code-rate-lp"             <span class="type">GstDvbSrcCode_Rate</span>    : Read / Write</pre>
 <p>Low Priority Code Rate (DVB-T).</p>
 <p>Default value: 1/2</p>
 </div>
 <hr>
-<div class="refsect2" title='The "device" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--device"></a><h3>The <code class="literal">"device"</code> property</h3>
-<pre class="programlisting">  "device"                   <a href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write</pre>
+<pre class="programlisting">  "device"                   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write</pre>
 <p>The device directory.</p>
 <p>Default value: "/dev/dvb/adapter0"</p>
 </div>
 <hr>
-<div class="refsect2" title='The "diseqc-src" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--diseqc-src"></a><h3>The <code class="literal">"diseqc-src"</code> property</h3>
-<pre class="programlisting">  "diseqc-src"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "diseqc-src"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>DISEqC selected source (-1 disabled) (DVB-S).</p>
 <p>Allowed values: [-1,7]</p>
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "freq" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--freq"></a><h3>The <code class="literal">"freq"</code> property</h3>
-<pre class="programlisting">  "freq"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "freq"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Frequency.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "guard" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--guard"></a><h3>The <code class="literal">"guard"</code> property</h3>
 <pre class="programlisting">  "guard"                    <span class="type">GstDvbSrcGuard</span>        : Read / Write</pre>
 <p>Guard Interval (DVB-T).</p>
 <p>Default value: 16</p>
 </div>
 <hr>
-<div class="refsect2" title='The "hierarchy" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--hierarchy"></a><h3>The <code class="literal">"hierarchy"</code> property</h3>
 <pre class="programlisting">  "hierarchy"                <span class="type">GstDvbSrcHierarchy</span>    : Read / Write</pre>
 <p>Hierarchy Information (DVB-T).</p>
 <p>Default value: 1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "inversion" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--inversion"></a><h3>The <code class="literal">"inversion"</code> property</h3>
 <pre class="programlisting">  "inversion"                <span class="type">GstDvbSrcInversion</span>    : Read / Write</pre>
 <p>Inversion Information (DVB-T and DVB-C).</p>
 <p>Default value: ON</p>
 </div>
 <hr>
-<div class="refsect2" title='The "modulation" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--modulation"></a><h3>The <code class="literal">"modulation"</code> property</h3>
 <pre class="programlisting">  "modulation"               <span class="type">GstDvbSrcModulation</span>   : Read / Write</pre>
 <p>Modulation (DVB-T and DVB-C).</p>
 <p>Default value: QAM 16</p>
 </div>
 <hr>
-<div class="refsect2" title='The "pids" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--pids"></a><h3>The <code class="literal">"pids"</code> property</h3>
-<pre class="programlisting">  "pids"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Write</pre>
+<pre class="programlisting">  "pids"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Write</pre>
 <p>Colon seperated list of pids (eg. 110:120).</p>
 <p>Default value: "8192"</p>
 </div>
 <hr>
-<div class="refsect2" title='The "pol" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--pol"></a><h3>The <code class="literal">"pol"</code> property</h3>
-<pre class="programlisting">  "pol"                      <a href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write</pre>
+<pre class="programlisting">  "pol"                      <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Standard-Parameter-and-Value-Types.html#gchararray"><span class="type">gchararray</span></a>            : Read / Write</pre>
 <p>Polarity [vhHV] (DVB-S).</p>
 <p>Default value: "h"</p>
 </div>
 <hr>
-<div class="refsect2" title='The "srate" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--srate"></a><h3>The <code class="literal">"srate"</code> property</h3>
-<pre class="programlisting">  "srate"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "srate"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Symbol Rate (DVB-S, DVB-C).</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "trans-mode" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--trans-mode"></a><h3>The <code class="literal">"trans-mode"</code> property</h3>
 <pre class="programlisting">  "trans-mode"               <span class="type">GstDvbSrcTransmission_Mode</span>  : Read / Write</pre>
 <p>Transmission Mode (DVB-T).</p>
-<p>Default value: 8k</p>
+<p>Default value: 8K</p>
 </div>
 <hr>
-<div class="refsect2" title='The "tune" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--tune"></a><h3>The <code class="literal">"tune"</code> property</h3>
-<pre class="programlisting">  "tune"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Write</pre>
+<pre class="programlisting">  "tune"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Write</pre>
 <p>Atomically tune to channel. (For Apps).</p>
 </div>
 <hr>
-<div class="refsect2" title='The "adapter" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--adapter"></a><h3>The <code class="literal">"adapter"</code> property</h3>
-<pre class="programlisting">  "adapter"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "adapter"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The adapter device number (eg. 0 for adapter0).</p>
 <p>Allowed values: [0,16]</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "diseqc-source" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--diseqc-source"></a><h3>The <code class="literal">"diseqc-source"</code> property</h3>
-<pre class="programlisting">  "diseqc-source"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "diseqc-source"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>DISEqC selected source (-1 disabled) (DVB-S).</p>
 <p>Allowed values: [G_MAXULONG,7]</p>
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "frequency" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--frequency"></a><h3>The <code class="literal">"frequency"</code> property</h3>
-<pre class="programlisting">  "frequency"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "frequency"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Frequency.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "frontend" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--frontend"></a><h3>The <code class="literal">"frontend"</code> property</h3>
-<pre class="programlisting">  "frontend"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "frontend"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The frontend device number (eg. 0 for frontend0).</p>
 <p>Allowed values: [0,16]</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "polarity" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--polarity"></a><h3>The <code class="literal">"polarity"</code> property</h3>
-<pre class="programlisting">  "polarity"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "polarity"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write / Construct</pre>
 <p>Polarity [vhHV] (DVB-S).</p>
-<p>Default value: "h"</p>
+<p>Default value: "H"</p>
 </div>
 <hr>
-<div class="refsect2" title='The "symbol-rate" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--symbol-rate"></a><h3>The <code class="literal">"symbol-rate"</code> property</h3>
-<pre class="programlisting">  "symbol-rate"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "symbol-rate"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Symbol Rate (DVB-S, DVB-C).</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "stats-reporting-interval" property'>
+<div class="refsect2">
 <a name="GstDvbSrc--stats-reporting-interval"></a><h3>The <code class="literal">"stats-reporting-interval"</code> property</h3>
-<pre class="programlisting">  "stats-reporting-interval" <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "stats-reporting-interval" <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The number of reads before reporting frontend stats.</p>
 <p>Default value: 100</p>
 </div>
@@ -297,6 +353,6 @@ dvbsrc can be used to capture video from DVB cards, DVB-T, DVB-S or DVB-T.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

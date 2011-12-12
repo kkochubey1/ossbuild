@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-dccpserversink.html" title="dccpserversink">
 <link rel="next" href="gst-plugins-bad-plugins-dfbvideosink.html" title="dfbvideosink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-bad-plugins-dccpserversrc.signals" class="shortcut">Signals</a>
 </td></tr>
 </table>
-<div class="refentry" title="dccpserversrc">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-dccpserversrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,40 +41,40 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-dccpserversrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstDCCPServerSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc-struct" title="GstDCCPServerSrc">GstDCCPServerSrc</a>;
+<a name="GstDCCPServerSrc"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc-struct" title="struct GstDCCPServerSrc">GstDCCPServerSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
-                     +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstPushSrc.html">GstPushSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstPushSrc.html">GstPushSrc</a>
                            +----GstDCCPServerSrc
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--caps" title='The "caps" property'>caps</a>"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--ccid" title='The "ccid" property'>ccid</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--close-socket" title='The "close-socket" property'>close-socket</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--host" title='The "host" property'>host</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--port" title='The "port" property'>port</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--sockfd" title='The "sockfd" property'>sockfd</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--caps" title='The "caps" property'>caps</a>"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--ccid" title='The "ccid" property'>ccid</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--close-socket" title='The "close-socket" property'>close-socket</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--host" title='The "host" property'>host</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--port" title='The "port" property'>port</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc--sockfd" title='The "sockfd" property'>sockfd</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Signals">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.signals"></a><h2>Signals</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc-connected" title='The "connected" signal'>connected</a>"                                      : Run First
+  "<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc-connected" title='The "connected" signal'>connected</a>"                                      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-FIRST:CAPS"><code class="literal">Run First</code></a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.description"></a><h2>Description</h2>
 <p>
 This element wait for connection from a client and receive data.
@@ -82,8 +82,10 @@ This element wait for connection from a client and receive data.
 Congestion Control Protocol) is a Transport Layer protocol like
 TCP and UDP.
 </p>
-<div class="refsect2" title="Example pipeline">
-<a name="id383598"></a><h3>Example pipeline</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp11757088"></a><h3>Example pipeline</h3>
 <p>
 </p>
 <div class="informalexample">
@@ -91,7 +93,7 @@ TCP and UDP.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v filesrc location<span class="symbol">=</span>music<span class="symbol">.</span>mp3 <span class="symbol">!</span> mp3parse <span class="symbol">!</span> dccpclientsink host<span class="symbol">=</span>localhost port<span class="symbol">=</span><span class="number">9011</span> ccid<span class="symbol">=</span><span class="number">2</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v filesrc location<span class="gtkdoc opt">=</span>music<span class="gtkdoc opt">.</span>mp3 <span class="gtkdoc opt">!</span> mp3parse <span class="gtkdoc opt">!</span> dccpclientsink host<span class="gtkdoc opt">=</span>localhost port<span class="gtkdoc opt">=</span><span class="number">9011</span> ccid<span class="gtkdoc opt">=</span><span class="number">2</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -104,7 +106,7 @@ TCP and UDP.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v dccpserversrc port<span class="symbol">=</span><span class="number">9011</span> ccid<span class="symbol">=</span><span class="number">2</span> <span class="symbol">!</span> decodebin <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v dccpserversrc port<span class="gtkdoc opt">=</span><span class="number">9011</span> ccid<span class="gtkdoc opt">=</span><span class="number">2</span> <span class="gtkdoc opt">!</span> decodebin <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
@@ -118,69 +120,123 @@ The server will decode the MP3 and play it.
 Run the server pipeline first than the client pipeline.
 </p>
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp11761712"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-dccp.html#plugin-dccp">dccp</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>E-Phone Team at Federal University of Campina Grande &lt;leandroal@gmail.com&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/Network</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp11769120"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstDCCPServerSrc">
-<a name="GstDCCPServerSrc-struct"></a><h3>GstDCCPServerSrc</h3>
-<pre class="programlisting">typedef struct _GstDCCPServerSrc GstDCCPServerSrc;</pre>
+<div class="refsect2">
+<a name="GstDCCPServerSrc-struct"></a><h3>struct GstDCCPServerSrc</h3>
+<pre class="programlisting">struct GstDCCPServerSrc;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "caps" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--caps"></a><h3>The <code class="literal">"caps"</code> property</h3>
-<pre class="programlisting">  "caps"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
+<pre class="programlisting">  "caps"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
 <p>The caps of the source pad.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "ccid" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--ccid"></a><h3>The <code class="literal">"ccid"</code> property</h3>
-<pre class="programlisting">  "ccid"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "ccid"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The Congestion Control IDentified to be used.</p>
 <p>Allowed values: &gt;= 2</p>
 <p>Default value: 2</p>
 </div>
 <hr>
-<div class="refsect2" title='The "close-socket" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--close-socket"></a><h3>The <code class="literal">"close-socket"</code> property</h3>
-<pre class="programlisting">  "close-socket"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "close-socket"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Close client socket at the end of stream.</p>
 <p>Default value: TRUE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "host" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--host"></a><h3>The <code class="literal">"host"</code> property</h3>
-<pre class="programlisting">  "host"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "host"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>The hostname to listen as.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "port" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--port"></a><h3>The <code class="literal">"port"</code> property</h3>
-<pre class="programlisting">  "port"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "port"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The port to listen to.</p>
 <p>Allowed values: [0,65535]</p>
 <p>Default value: 5001</p>
 </div>
 <hr>
-<div class="refsect2" title='The "sockfd" property'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc--sockfd"></a><h3>The <code class="literal">"sockfd"</code> property</h3>
-<pre class="programlisting">  "sockfd"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "sockfd"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The client socket file descriptor.</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
 </div>
-<div class="refsect1" title="Signal Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.signal-details"></a><h2>Signal Details</h2>
-<div class="refsect2" title='The "connected" signal'>
+<div class="refsect2">
 <a name="GstDCCPServerSrc-connected"></a><h3>The <code class="literal">"connected"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-bad-plugins-dccpserversrc.html#GstDCCPServerSrc"><span class="type">GstDCCPServerSrc</span></a> *gstdccpserversrc,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>              arg1,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>          user_data)             : Run First</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>              arg1,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>          user_data)             : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-FIRST:CAPS"><code class="literal">Run First</code></a></pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -188,13 +244,7 @@ Run the server pipeline first than the client pipeline.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gstdccpserversrc</code></em> :</span></p></td>
-<td>the object which received the signal.
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>arg1</code></em> :</span></p></td>
-<td>
-</td>
+<td>the object which received the signal.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -204,13 +254,13 @@ Run the server pipeline first than the client pipeline.
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dccpserversrc.see-also"></a><h2>See Also</h2>
 dccpclientsink, dccpclientsrc, dccpserversink
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

@@ -64,6 +64,12 @@ else
 COG_DIR=
 endif
 
+if USE_CURL
+CURL_DIR=curl
+else
+CURL_DIR=
+endif
+
 if USE_DC1394
 DC1394_DIR=dc1394
 else
@@ -135,12 +141,6 @@ endif
 # else
 HERMES_DIR=
 # endif
-
-if USE_JACK
-JACK_DIR=jack
-else
-JACK_DIR=
-endif
 
 if USE_JP2K
 JP2K_DIR = jp2k
@@ -324,18 +324,6 @@ else
 SWFDEC_DIR=
 endif
 
-if USE_THEORADEC
-#THEORA_DIR = theora
-else
-THEORA_DIR =
-endif
-
-# if USE_TARKIN
-# TARKIN_DIR=tarkin
-# else
-TARKIN_DIR=
-# endif
-
 if USE_VP8
 VP8_DIR=vp8
 else
@@ -347,12 +335,6 @@ GSETTINGS_DIR=gsettings
 else
 GSETTINGS_DIR=
 endif
-
-# if USE_XINE
-# XINE_DIR=xine
-# else
-XINE_DIR=
-# endif
 
 if USE_XVID
 XVID_DIR=xvid
@@ -385,6 +367,7 @@ SUBDIRS=\
 	$(CDAUDIO_DIR) \
 	$(CELT_DIR) \
 	$(COG_DIR) \
+	$(CURL_DIR) \
 	$(DC1394_DIR) \
 	$(DIRAC_DIR) \
 	$(DIRECTFB_DIR) \
@@ -398,7 +381,6 @@ SUBDIRS=\
 	$(GSM_DIR) \
 	$(G729_DIR) \
 	$(HERMES_DIR) \
-	$(JACK_DIR) \
 	$(JP2K_DIR) \
 	$(KATE_DIR) \
 	$(LADSPA_DIR) \
@@ -427,11 +409,8 @@ SUBDIRS=\
 	$(GME_DIR) \
 	$(SPC_DIR) \
 	$(SWFDEC_DIR) \
-	$(TARKIN_DIR) \
-	$(THEORA_DIR) \
 	$(TIMIDITY_DIR) \
 	$(VP8_DIR) \
-	$(XINE_DIR) \
 	$(XVID_DIR) \
 	$(ZBAR_DIR) \
 	$(RTMP_DIR)
@@ -444,6 +423,7 @@ DIST_SUBDIRS = \
 	cdaudio \
 	celt \
 	cog \
+	curl \
 	dc1394 \
 	dirac \
 	directfb \
@@ -453,7 +433,6 @@ DIST_SUBDIRS = \
 	gsettings \
 	gsm \
 	ladspa \
-	jack \
 	jp2k \
 	kate \
 	libmms \
@@ -480,7 +459,6 @@ DIST_SUBDIRS = \
 	spc \
 	gme \
 	swfdec \
-	theora \
 	timidity \
 	vp8 \
 	xvid \

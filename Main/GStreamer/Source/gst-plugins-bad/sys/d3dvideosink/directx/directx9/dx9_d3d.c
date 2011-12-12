@@ -22,14 +22,14 @@
 
 #include "dx9_d3d.h"
 
-void 
-dx9_d3d_init(DirectXAPIComponent* component, gpointer data) 
+void
+dx9_d3d_init (DirectXAPIComponent * component, gpointer data)
 {
-  DIRECTX_DEBUG("Initializing Direct3D");
-  DIRECTX_OPEN_COMPONENT_MODULE(component, "d3d9");
+  DIRECTX_DEBUG ("Initializing Direct3D");
+  DIRECTX_OPEN_COMPONENT_MODULE (component, "d3d9");
 
-  DIRECTX_DEBUG("Setting Direct3D dispatch table");
-  DIRECTX_OPEN_COMPONENT_SYMBOL(component, D3D9DispatchTable, Direct3DCreate9);
+  DIRECTX_DEBUG ("Setting Direct3D dispatch table");
+  DIRECTX_OPEN_COMPONENT_SYMBOL (component, D3D9DispatchTable, Direct3DCreate9);
 
   //{
   //  IDirect3D9* blah;
@@ -42,32 +42,32 @@ dx9_d3d_init(DirectXAPIComponent* component, gpointer data)
   //}
 }
 
-DirectXD3D* 
-dx9_d3d_create(const DirectXAPI* api) 
+DirectXD3D *
+dx9_d3d_create (const DirectXAPI * api)
 {
   return NULL;
 }
 
-gboolean 
-dx9_d3d_resize(const DirectXD3D* d3d) 
+gboolean
+dx9_d3d_resize (const DirectXD3D * d3d)
 {
   return TRUE;
 }
 
-gboolean 
-dx9_d3d_device_lost(const DirectXD3D* d3d) 
+gboolean
+dx9_d3d_device_lost (const DirectXD3D * d3d)
 {
   return TRUE;
 }
 
-gboolean 
-dx9_d3d_notify_device_reset(const DirectXD3D* d3d) 
+gboolean
+dx9_d3d_notify_device_reset (const DirectXD3D * d3d)
 {
   return TRUE;
 }
 
-gboolean 
-dx9_d3d_release(const DirectXD3D* d3d) 
+gboolean
+dx9_d3d_release (const DirectXD3D * d3d)
 {
   return TRUE;
 }

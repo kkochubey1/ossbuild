@@ -62,6 +62,14 @@
       <Project>{f987873b-2b88-4b1b-b627-f70df4f91e50}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Build\Libraries\libgstbasecamerabinsrc.vcproj">
+      <Name>gstbasecamerabinsrc</Name>
+      <Project>{81598793-31a3-4d73-bddc-0b2d9dd6f229}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Build\Libraries\libgstcontroller.vcproj">
       <Name>gstcontroller</Name>
       <Project>{f987873b-2b88-4b1b-b627-f70df4f91e52}</Project>

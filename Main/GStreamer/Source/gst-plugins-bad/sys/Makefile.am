@@ -22,6 +22,12 @@ endif
 # CDROM_DIR=
 # endif
 
+if USE_DECKLINK
+DECKLINK_DIR=decklink
+else
+DECKLINK_DIR=
+endif
+
 if USE_DIRECTDRAW
 DIRECTDRAW_DIR=directdraw
 else
@@ -45,6 +51,13 @@ DVB_DIR=dvb
 else
 DVB_DIR=
 endif
+
+if USE_LINSYS
+LINSYS_DIR=linsys
+else
+LINSYS_DIR=
+endif
+
 
 if USE_APPLE_MEDIA
 APPLE_MEDIA_DIR=applemedia
@@ -88,9 +101,9 @@ else
 SHM_DIR=
 endif
 
-SUBDIRS = $(ACM_DIR) $(APPLE_MEDIA_DIR) $(DIRECTDRAW_DIR) $(DIRECTSOUND_DIR) $(DVB_DIR) $(FBDEV_DIR) $(OSX_VIDEO_DIR) $(QT_DIR) $(SHM_DIR) $(VCD_DIR) $(VDPAU_DIR) $(WININET_DIR)
+SUBDIRS = $(ACM_DIR) $(APPLE_MEDIA_DIR) $(DECKLINK_DIR) $(DIRECTDRAW_DIR) $(DIRECTSOUND_DIR) $(DVB_DIR) $(FBDEV_DIR) $(LINSYS_DIR) $(OSX_VIDEO_DIR) $(QT_DIR) $(SHM_DIR) $(VCD_DIR) $(VDPAU_DIR) $(WININET_DIR)
 
-DIST_SUBDIRS = acmenc acmmp3dec applemedia directdraw directsound dvb fbdev dshowdecwrapper dshowsrcwrapper dshowvideosink \
+DIST_SUBDIRS = acmenc acmmp3dec applemedia decklink directdraw directsound dvb linsys fbdev dshowdecwrapper dshowsrcwrapper dshowvideosink \
 		osxvideo qtwrapper shm vcd vdpau wasapi wininet winks winscreencap
 
 include $(top_srcdir)/common/parallel-subdirs.mak

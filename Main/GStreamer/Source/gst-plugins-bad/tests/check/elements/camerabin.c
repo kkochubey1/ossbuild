@@ -47,6 +47,7 @@
 #define PHOTO_SETTING_DELAY_US 0
 
 static GstElement *camera;
+static guint bus_source;
 static GMainLoop *main_loop;
 static guint cycle_count = 0;
 static gboolean received_preview_msg = FALSE;
@@ -290,7 +291,7 @@ setup (void)
   g_signal_connect (camera, "image-done", G_CALLBACK (capture_done), main_loop);
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (camera));
-  gst_bus_add_watch (bus, (GstBusFunc) capture_bus_cb, main_loop);
+  bus_source = gst_bus_add_watch (bus, (GstBusFunc) capture_bus_cb, main_loop);
   gst_bus_set_sync_handler (bus, bus_sync_callback, main_loop);
   gst_object_unref (bus);
 
@@ -334,6 +335,8 @@ static void
 teardown (void)
 {
   gint i;
+
+  g_source_remove (bus_source);
 
   if (camera)
     gst_check_teardown_element (camera);
@@ -417,6 +420,7 @@ validate_taglist_foreach (const GstTagList * list, const gchar * tag,
 static void
 extract_jpeg_tags (const gchar * filename, gint num)
 {
+  guint source;
   GstBus *bus;
   GMainLoop *loop = g_main_loop_new (NULL, FALSE);
   const gchar *filepath = make_test_file_name (filename, num);
@@ -429,12 +433,14 @@ extract_jpeg_tags (const gchar * filename, gint num)
   g_free (pipeline_str);
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
-  gst_bus_add_watch (bus, (GstBusFunc) validity_bus_cb, loop);
+  source = gst_bus_add_watch (bus, (GstBusFunc) validity_bus_cb, loop);
 
   gst_element_set_state (pipeline, GST_STATE_PLAYING);
   g_main_loop_run (loop);
   gst_element_set_state (pipeline, GST_STATE_NULL);
 
+  g_main_loop_unref (loop);
+  g_source_remove (source);
   gst_object_unref (bus);
   gst_object_unref (pipeline);
 }
@@ -444,6 +450,7 @@ extract_jpeg_tags (const gchar * filename, gint num)
 static gboolean
 check_file_validity (const gchar * filename, gint num, GstTagList * taglist)
 {
+  guint source;
   GstBus *bus;
   GMainLoop *loop = g_main_loop_new (NULL, FALSE);
   GstElement *playbin = gst_element_factory_make ("playbin2", NULL);
@@ -458,7 +465,7 @@ check_file_validity (const gchar * filename, gint num, GstTagList * taglist)
 
   validation_taglist = NULL;
   bus = gst_pipeline_get_bus (GST_PIPELINE (playbin));
-  gst_bus_add_watch (bus, (GstBusFunc) validity_bus_cb, loop);
+  source = gst_bus_add_watch (bus, (GstBusFunc) validity_bus_cb, loop);
 
   gst_element_set_state (playbin, GST_STATE_PLAYING);
   g_main_loop_run (loop);
@@ -484,8 +491,10 @@ check_file_validity (const gchar * filename, gint num, GstTagList * taglist)
     gst_tag_list_free (validation_taglist);
 
   g_free (uri);
+  g_source_remove (source);
   gst_object_unref (bus);
   gst_object_unref (playbin);
+  g_main_loop_unref (loop);
 
   return TRUE;
 }
@@ -579,6 +588,7 @@ GST_START_TEST (test_video_recording)
 
   /* Set preview-caps */
   g_object_set (camera, "preview-caps", preview_caps, NULL);
+  gst_caps_unref (preview_caps);
 
   /* check that the camera is idle */
   g_object_get (camera, "idle", &idle, NULL);
@@ -626,6 +636,7 @@ GST_START_TEST (test_video_recording_with_flags)
 
   /* Set preview-caps */
   g_object_set (camera, "preview-caps", preview_caps, NULL);
+  gst_caps_unref (preview_caps);
 
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
@@ -712,6 +723,7 @@ GST_START_TEST (test_video_recording_no_audio)
 
   /* Set preview-caps */
   g_object_set (camera, "preview-caps", preview_caps, NULL);
+  gst_caps_unref (preview_caps);
 
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);

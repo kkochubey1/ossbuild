@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.65],,
-[m4_warning([this file was generated for autoconf 2.65.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68],,
+[m4_warning([this file was generated for autoconf 2.68.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -1080,15 +1080,17 @@ m4_include([common/m4/gst-error.m4])
 m4_include([common/m4/gst-feature.m4])
 m4_include([common/m4/gst-gettext.m4])
 m4_include([common/m4/gst-glib2.m4])
+m4_include([common/m4/gst-package-release-datetime.m4])
 m4_include([common/m4/gst-platform.m4])
 m4_include([common/m4/gst-plugin-docs.m4])
 m4_include([common/m4/gst-plugindir.m4])
 m4_include([common/m4/gst-x11.m4])
 m4_include([common/m4/gst.m4])
 m4_include([common/m4/gtk-doc.m4])
+m4_include([common/m4/orc.m4])
 m4_include([common/m4/pkg.m4])
 m4_include([m4/gettext.m4])
-m4_include([m4/gst-alsa.m4])
+m4_include([m4/gsettings.m4])
 m4_include([m4/gst-fionread.m4])
 m4_include([m4/gst-sdl.m4])
 m4_include([m4/iconv.m4])

@@ -7,8 +7,8 @@
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-timidity.html" title="timidity">
-<link rel="next" href="gst-plugins-bad-plugins-valve.html" title="valve">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="next" href="gst-plugins-bad-plugins-tunnel.html" title="tunnel">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -18,7 +18,7 @@
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Bad Plugins 0.10 Plugins Reference Manual</th>
-<td><a accesskey="n" href="gst-plugins-bad-plugins-valve.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+<td><a accesskey="n" href="gst-plugins-bad-plugins-tunnel.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-bad-plugins-trm.synopsis" class="shortcut">Top</a>
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-bad-plugins-trm.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="trm">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-trm"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,28 +39,28 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-trm.synopsis"></a><h2>Synopsis</h2>
-<a name="GstTRM"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM-struct" title="GstTRM">GstTRM</a>;
+<a name="GstTRM"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM-struct" title="struct GstTRM">GstTRM</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-trm.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----GstTRM
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-trm.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM--proxy-address" title='The "proxy-address" property'>proxy-address</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM--proxy-port" title='The "proxy-port" property'>proxy-port</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM--proxy-address" title='The "proxy-address" property'>proxy-address</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-trm.html#GstTRM--proxy-port" title='The "proxy-port" property'>proxy-port</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-trm.description"></a><h2>Description</h2>
 <p>
 GstTRM computes <a class="ulink" href="http://www.musicbrainz.org/" target="_top">MusicBrainz</a>
@@ -78,47 +78,124 @@ signature will then be sent over the internet to a musicbrainz.org server
 which will calculate the TRM for that signature.
 </p>
 <p>
-The TRM element will post a tag message with a <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#GST-TAG-MUSICBRAINZ-TRMID:CAPS"><span class="type">GST_TAG_MUSICBRAINZ_TRMID</span></a>
+The TRM element will post a tag message with a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gsttag.html#GST-TAG-MUSICBRAINZ-TRMID:CAPS"><span class="type">GST_TAG_MUSICBRAINZ_TRMID</span></a>
 tag on the bus once the TRM has been calculated (and also send a tag event
 with that information downstream).
 </p>
-<div class="refsect2" title="Example pipeline">
-<a name="id407588"></a><h3>Example pipeline</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp6034688"></a><h3>Example pipeline</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>m filesrc location<span class="symbol">=</span>somefile<span class="symbol">.</span>ogg <span class="symbol">!</span> decodebin <span class="symbol">!</span> audioconvert <span class="symbol">!</span> trm <span class="symbol">!</span> fakesink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>m filesrc location<span class="gtkdoc opt">=</span>somefile<span class="gtkdoc opt">.</span>ogg <span class="gtkdoc opt">!</span> decodebin <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> trm <span class="gtkdoc opt">!</span> fakesink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  calculate the TRM and print the tag message with the TRM ID.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp5807424"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-musicbrainz.html#plugin-musicbrainz">musicbrainz</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Jeremy Simon &lt;jsimon13@yahoo.fr&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Analyzer/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp17897344"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-int, endianness=(int)1234, signed=(boolean)true, width=(int){ 8, 16 }, depth=(int){ 8, 16 }, rate=(int)[ 8000, 96000 ], channels=(int)[ 1, 2 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-int, endianness=(int)1234, signed=(boolean)true, width=(int){ 8, 16 }, depth=(int){ 8, 16 }, rate=(int)[ 8000, 96000 ], channels=(int)[ 1, 2 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-trm.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstTRM">
-<a name="GstTRM-struct"></a><h3>GstTRM</h3>
-<pre class="programlisting">typedef struct _GstTRM GstTRM;</pre>
+<div class="refsect2">
+<a name="GstTRM-struct"></a><h3>struct GstTRM</h3>
+<pre class="programlisting">struct GstTRM;</pre>
 <p>
 GStreamer TRM element. This structure is opaque (private).
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-trm.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "proxy-address" property'>
+<div class="refsect2">
 <a name="GstTRM--proxy-address"></a><h3>The <code class="literal">"proxy-address"</code> property</h3>
-<pre class="programlisting">  "proxy-address"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "proxy-address"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>proxy address.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "proxy-port" property'>
+<div class="refsect2">
 <a name="GstTRM--proxy-port"></a><h3>The <code class="literal">"proxy-port"</code> property</h3>
-<pre class="programlisting">  "proxy-port"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "proxy-port"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>proxy port.</p>
 <p>Allowed values: [1,65535]</p>
 <p>Default value: 8080</p>
@@ -127,6 +204,6 @@ GStreamer TRM element. This structure is opaque (private).
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

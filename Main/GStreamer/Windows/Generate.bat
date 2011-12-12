@@ -159,9 +159,15 @@ rem gst-plugins-bad/gst-libs/gst/interfaces
 rem gst-plugins-bad/gst/camerabin
 %GEN_MARSHAL_BAT% __gst_camerabin_marshal "%SRC_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.list" "%GEN_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.c"
 
-rem gst-plugins-bad/gst/selector
-%GEN_MARSHAL_BAT% gst_selector_marshal "%SRC_GST_PLUGINS_BAD_DIR%\gst\selector\gstselector-marshal.list" "%GEN_GST_PLUGINS_BAD_DIR%\gst\selector\gstselector-marshal.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst\selector\gstselector-marshal.c"
+rem gst-plugins-bad/gst/colorspace
+%GEN_ORC_BAT% gstcolorspaceorc  %SRC_GST_PLUGINS_BAD_DIR%\gst\colorspace %GEN_GST_PLUGINS_BAD_DIR%\gst\colorspace
 
+rem gst-plugins-bad/gst/debugutils
+%GEN_MARSHAL_BAT% __gst_debugutils_marshal "%SRC_GST_PLUGINS_BAD_DIR%\gst\debugutils\debugutils-marshal.list" "%GEN_GST_PLUGINS_BAD_DIR%\gst\debugutils\debugutils-marshal.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst\debugutils\debugutils-marshal.c"
+
+rem gst-plugins-bad/gst/fieldanalysis
+%GEN_ORC_BAT% gstfieldanalysisorc  %SRC_GST_PLUGINS_BAD_DIR%\gst\fieldanalysis %GEN_GST_PLUGINS_BAD_DIR%\gst\fieldanalysis
+goto exit
 
 rem farsight2/gst/fsrtpconference
 %GEN_MARSHAL_BAT% _fs_rtp_marshal "%PLUGINS_FARSIGHT2_DIR%\gst\fs-rtp-marshal.list" "%GEN_FARSIGHT2_DIR%\gst\fsrtpconference\fs-rtp-marshal.h" "%GEN_FARSIGHT2_DIR%\gst\fsrtpconference\fs-rtp-marshal.c"

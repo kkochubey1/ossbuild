@@ -19,9 +19,9 @@
 
 #include "dx9.h"
 
-void 
-dx9_init(const DirectXAPI* api) 
+void
+dx9_init (const DirectXAPI * api)
 {
-  DIRECTX_DEBUG("Initializing DirectX9 API");
-  INITIALIZE_DIRECTX_D3D_API(DIRECTX_9, api);
+  DIRECTX_DEBUG ("Initializing DirectX9 API");
+  INITIALIZE_DIRECTX_D3D_API (DIRECTX_9, api);
 }

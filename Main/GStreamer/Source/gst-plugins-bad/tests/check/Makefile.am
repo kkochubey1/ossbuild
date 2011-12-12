@@ -14,7 +14,7 @@ TESTS_ENVIRONMENT = \
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_FFMPEG_DIR):$(GST_PLUGINS_UGLY_DIR):$(GST_PLUGINS_GOOD_DIR):$(GST_PLUGINS_BASE_DIR):$(GST_PLUGINS_DIR) \
 	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good:gst-plugins-ugly:gst-ffmpeg:gst-plugins-bad@$(top_builddir)" \
-	GST_STATE_IGNORE_ELEMENTS="apexsink camerabin cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival gsettingsvideosrc gsettingsvideosink gsettingsaudiosrc gsettingsaudiosink nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec neonhttpsrc"
+	GST_STATE_IGNORE_ELEMENTS="apexsink camerabin camerabin2 cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival gsettingsvideosrc gsettingsvideosink gsettingsaudiosrc gsettingsaudiosink nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec vdpaumpeg4dec vdpauh264dec vdpauvideopostprocess vdpausink neonhttpsrc"
 
 plugindir = $(libdir)/gstreamer-@GST_MAJORMINOR@
 
@@ -50,6 +50,12 @@ if USE_EXIF
 check_jifmux = elements/jifmux
 else
 check_jifmux =
+endif
+
+if USE_COG
+check_logoinsert = elements/logoinsert
+else
+check_logoinsert =
 endif
 
 if USE_MPEG2ENC
@@ -127,10 +133,13 @@ VALGRIND_TO_FIX = \
 VALGRIND_TESTS_DISABLE = \
 	$(VALGRIND_TO_FIX)
 
+if BUILD_EXPERIMENTAL
+EXPERIMENTAL_CHECKS=elements/camerabin2 \
+		elements/imagecapturebin \
+		elements/viewfinderbin
+endif
+
 # these tests don't even pass
-# camerabin: temporarily disabled because it fails with current core -git
-# (which will be release before the next -bad release though, and chances are
-# changes to fix this are needed in the camerabin test)
 # neon: too flaky (almost always fails 'the first time')
 noinst_PROGRAMS = \
 	$(check_neon)
@@ -145,55 +154,68 @@ check_PROGRAMS = \
 	$(check_ofa)        \
 	$(check_timidity)  \
 	$(check_kate)  \
-	elements/aacparse \
-	elements/ac3parse \
-	elements/amrparse \
 	elements/autoconvert \
+	elements/autovideoconvert \
 	elements/asfmux \
 	elements/camerabin \
 	elements/dataurisrc \
-	elements/flacparse \
 	elements/legacyresample \
         $(check_jifmux) \
 	elements/jpegparse \
-	elements/qtmux \
-	elements/selector \
+	$(check_logoinsert) \
 	elements/mxfdemux \
 	elements/mxfmux \
 	elements/id3mux \
-	elements/mpegaudioparse \
 	pipelines/mxf \
 	$(check_mimic) \
 	elements/rtpmux \
 	$(check_schro) \
-	elements/valve \
 	$(check_vp8) \
 	$(check_zbar) \
 	$(check_orc) \
-        pipelines/tagschecking
+	$(EXPERIMENTAL_CHECKS)
 
 noinst_HEADERS = elements/mxfdemux.h
 
 TESTS = $(check_PROGRAMS)
 
 AM_CFLAGS = $(GST_CHECK_CFLAGS) $(GST_OPTION_CFLAGS) \
-		-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\""
+		-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\"" \
+		-UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
 LDADD = $(GST_CHECK_LIBS)
 
 elements_camerabin_CFLAGS = \
-        -I$(top_builddir)/gst-libs \
-        $(GST_CFLAGS) $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
-        $(GST_PLUGINS_BAD_CFLAGS) $(GST_CHECK_CFLAGS) \
-        -DGST_USE_UNSTABLE_API
+	$(GST_PLUGINS_BAD_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) $(GST_CFLAGS) $(AM_CFLAGS) -DGST_USE_UNSTABLE_API
 elements_camerabin_LDADD = \
-        $(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la \
-        $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) \
-        $(GST_CHECK_LIBS) \
-         -lgstinterfaces-@GST_MAJORMINOR@
+	$(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la \
+	$(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-@GST_MAJORMINOR@ \
+	$(GST_BASE_LIBS) $(GST_LIBS) $(LDADD)
+
 elements_camerabin_SOURCES = elements/camerabin.c
 
-elements_jifmux_CFLAGS = $(GST_CHECK_CFLAGS) $(GST_OPTION_CFLAGS) $(AM_CFLAGS) $(EXIF_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS)
-elements_jifmux_LDADD = $(GST_CHECK_LIBS) $(EXIF_LIBS) $(LDADD) $(GST_PLUGINS_BASE_LIBS) -lgsttag-$(GST_MAJORMINOR)
+if BUILD_EXPERIMENTAL
+elements_camerabin2_CFLAGS = \
+	$(GST_PLUGINS_BAD_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) $(GST_CFLAGS) $(AM_CFLAGS) -DGST_USE_UNSTABLE_API
+elements_camerabin2_LDADD = \
+        $(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la \
+        $(top_builddir)/gst-libs/gst/basecamerabinsrc/libgstbasecamerabinsrc-@GST_MAJORMINOR@.la \
+        -lgstpbutils-$(GST_MAJORMINOR) \
+        $(GST_PLUGINS_BASE_LIBS) $(GST_BASE_LIBS) $(GST_LIBS) $(LDADD)
+elements_camerabin2_SOURCES = elements/camerabin2.c
+
+elements_imagecapturebin_CFLAGS = \
+	$(GST_PLUGINS_BAD_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) $(GST_CFLAGS) $(AM_CFLAGS) -DGST_USE_UNSTABLE_API
+elements_imagecapturebin_LDADD = \
+	$(GST_PLUGINS_BASE_LIBS) -lgstapp-@GST_MAJORMINOR@ \
+	$(GST_BASE_LIBS) $(GST_LIBS) $(LDADD)
+elements_imagecapturebin_SOURCES = elements/imagecapturebin.c
+endif
+
+elements_jifmux_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(EXIF_CFLAGS) $(AM_CFLAGS)
+elements_jifmux_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgsttag-$(GST_MAJORMINOR) $(GST_CHECK_LIBS) $(EXIF_LIBS) $(LDADD)
 elements_jifmux_SOURCES = elements/jifmux.c
 
 elements_timidity_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
@@ -203,27 +225,10 @@ elements_kate_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_kate_LDADD = $(GST_BASE_LIBS) $(LDADD)
 
 elements_rtpmux_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
-elements_rtpmux_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstrtp-0.10
-
-elements_valve_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
-elements_valve_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstrtp-0.10
+elements_rtpmux_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstrtp-0.10 $(GST_BASE_LIBS) $(LDADD)
 
 elements_assrender_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
-elements_assrender_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10 -lgstapp-0.10
-
-# parser unit test convenience lib
-noinst_LTLIBRARIES = libparser.la
-libparser_la_SOURCES = elements/parser.c elements/parser.h
-
-elements_aacparse_LDADD = libparser.la $(LDADD)
-
-elements_ac3parse_LDADD = libparser.la $(LDADD)
-
-elements_amrparse_LDADD = libparser.la $(LDADD)
-
-elements_flacparse_LDADD = libparser.la $(LDADD)
-
-elements_mpegaudioparse_LDADD = libparser.la $(LDADD)
+elements_assrender_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstapp-0.10 $(GST_BASE_LIBS) $(LDADD)
 
 EXTRA_DIST = gst-plugins-bad.supp
 

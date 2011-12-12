@@ -19,9 +19,9 @@
 
 #include "dx11.h"
 
-void 
-dx11_init(const DirectXAPI* api) 
+void
+dx11_init (const DirectXAPI * api)
 {
-  DIRECTX_DEBUG("Initializing DirectX11 API");
-  INITIALIZE_DIRECTX_D3D_API(DIRECTX_11, api);
+  DIRECTX_DEBUG ("Initializing DirectX11 API");
+  INITIALIZE_DIRECTX_D3D_API (DIRECTX_11, api);
 }

@@ -34,8 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	equalizer-test$(EXEEXT) output-selector-test$(EXEEXT)
+noinst_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2)
 subdir = tests/icles
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -56,22 +55,23 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
-	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gsettings.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/gst-sdl.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -79,52 +79,17 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @USE_SOUNDTOUCH_TRUE@am__EXEEXT_1 = pitch-test$(EXEEXT)
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@am__EXEEXT_2 =  \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	metadata_editor$(EXEEXT)
-@USE_COG_TRUE@am__EXEEXT_3 = cog-test$(EXEEXT)
+am__EXEEXT_2 =
 PROGRAMS = $(noinst_PROGRAMS)
-@USE_COG_TRUE@nodist_cog_test_OBJECTS = cog_test-cog-test.$(OBJEXT)
-cog_test_OBJECTS = $(nodist_cog_test_OBJECTS)
-am__DEPENDENCIES_1 =
-@USE_COG_TRUE@cog_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
-cog_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(cog_test_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_equalizer_test_OBJECTS = equalizer_test-equalizer-test.$(OBJEXT)
-equalizer_test_OBJECTS = $(am_equalizer_test_OBJECTS)
-equalizer_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-equalizer_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(equalizer_test_CFLAGS) $(CFLAGS) $(equalizer_test_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am__metadata_editor_SOURCES_DIST = metadata_editor.h metadata_editor.c
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@am_metadata_editor_OBJECTS = metadata_editor-metadata_editor.$(OBJEXT)
-metadata_editor_OBJECTS = $(am_metadata_editor_OBJECTS)
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@metadata_editor_DEPENDENCIES =  \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(am__DEPENDENCIES_1) \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(am__DEPENDENCIES_1) \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(am__DEPENDENCIES_1) \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(am__DEPENDENCIES_1)
-metadata_editor_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(metadata_editor_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
-	-o $@
-am_output_selector_test_OBJECTS =  \
-	output_selector_test-output-selector-test.$(OBJEXT)
-output_selector_test_OBJECTS = $(am_output_selector_test_OBJECTS)
-output_selector_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-output_selector_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(output_selector_test_CFLAGS) $(CFLAGS) \
-	$(output_selector_test_LDFLAGS) $(LDFLAGS) -o $@
 am__pitch_test_SOURCES_DIST = pitch-test.c
 @USE_SOUNDTOUCH_TRUE@am_pitch_test_OBJECTS =  \
 @USE_SOUNDTOUCH_TRUE@	pitch_test-pitch-test.$(OBJEXT)
 pitch_test_OBJECTS = $(am_pitch_test_OBJECTS)
+am__DEPENDENCIES_1 =
 @USE_SOUNDTOUCH_TRUE@pitch_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
 pitch_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(pitch_test_CFLAGS) \
 	$(CFLAGS) $(pitch_test_LDFLAGS) $(LDFLAGS) -o $@
@@ -154,12 +119,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(nodist_cog_test_SOURCES) $(equalizer_test_SOURCES) \
-	$(metadata_editor_SOURCES) $(output_selector_test_SOURCES) \
-	$(pitch_test_SOURCES)
-DIST_SOURCES = $(equalizer_test_SOURCES) \
-	$(am__metadata_editor_SOURCES_DIST) \
-	$(output_selector_test_SOURCES) $(am__pitch_test_SOURCES_DIST)
+SOURCES = $(pitch_test_SOURCES)
+DIST_SOURCES = $(am__pitch_test_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -167,8 +128,6 @@ ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ACMENC_CFLAGS = @ACMENC_CFLAGS@
 ACMMP3DEC_CFLAGS = @ACMMP3DEC_CFLAGS@
-ALSA_CFLAGS = @ALSA_CFLAGS@
-ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -189,10 +148,12 @@ CCDEPMODE = @CCDEPMODE@
 CDAUDIO_CFLAGS = @CDAUDIO_CFLAGS@
 CDAUDIO_CONFIG = @CDAUDIO_CONFIG@
 CDAUDIO_LIBS = @CDAUDIO_LIBS@
-CELT_0_5_CFLAGS = @CELT_0_5_CFLAGS@
-CELT_0_5_LIBS = @CELT_0_5_LIBS@
+CELT_0_11_CFLAGS = @CELT_0_11_CFLAGS@
+CELT_0_11_LIBS = @CELT_0_11_LIBS@
 CELT_0_7_CFLAGS = @CELT_0_7_CFLAGS@
 CELT_0_7_LIBS = @CELT_0_7_LIBS@
+CELT_0_8_CFLAGS = @CELT_0_8_CFLAGS@
+CELT_0_8_LIBS = @CELT_0_8_LIBS@
 CELT_CFLAGS = @CELT_CFLAGS@
 CELT_LIBS = @CELT_LIBS@
 CFLAGS = @CFLAGS@
@@ -200,12 +161,16 @@ COG_CFLAGS = @COG_CFLAGS@
 COG_LIBS = @COG_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DCCP_LIBS = @DCCP_LIBS@
+DECKLINK_CXXFLAGS = @DECKLINK_CXXFLAGS@
+DECKLINK_LIBS = @DECKLINK_LIBS@
 DEFAULT_AUDIOSINK = @DEFAULT_AUDIOSINK@
 DEFAULT_AUDIOSRC = @DEFAULT_AUDIOSRC@
 DEFAULT_VIDEOSINK = @DEFAULT_VIDEOSINK@
@@ -254,6 +219,7 @@ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GIO_CFLAGS = @GIO_CFLAGS@
 GIO_LIBS = @GIO_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_LIBS = @GLIB_LIBS@
 GLIB_PREFIX = @GLIB_PREFIX@
 GLIB_REQ = @GLIB_REQ@
@@ -265,6 +231,9 @@ GMSGFMT_015 = @GMSGFMT_015@
 GMYTH_CFLAGS = @GMYTH_CFLAGS@
 GMYTH_LIBS = @GMYTH_LIBS@
 GREP = @GREP@
+GSETTINGS_CFLAGS = @GSETTINGS_CFLAGS@
+GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
+GSETTINGS_LIBS = @GSETTINGS_LIBS@
 GSM_LIBS = @GSM_LIBS@
 GSTPB_PLUGINS_DIR = @GSTPB_PLUGINS_DIR@
 GSTPB_PREFIX = @GSTPB_PREFIX@
@@ -281,6 +250,7 @@ GST_GDP_CFLAGS = @GST_GDP_CFLAGS@
 GST_GDP_LIBS = @GST_GDP_LIBS@
 GST_LEVEL_DEFAULT = @GST_LEVEL_DEFAULT@
 GST_LIBS = @GST_LIBS@
+GST_LIB_LDFLAGS = @GST_LIB_LDFLAGS@
 GST_LICENSE = @GST_LICENSE@
 GST_MAJORMINOR = @GST_MAJORMINOR@
 GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
@@ -291,9 +261,19 @@ GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
 GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
+GST_PLUGINS_FFMPEG_CFLAGS = @GST_PLUGINS_FFMPEG_CFLAGS@
+GST_PLUGINS_FFMPEG_DIR = @GST_PLUGINS_FFMPEG_DIR@
+GST_PLUGINS_FFMPEG_LIBS = @GST_PLUGINS_FFMPEG_LIBS@
+GST_PLUGINS_GOOD_CFLAGS = @GST_PLUGINS_GOOD_CFLAGS@
+GST_PLUGINS_GOOD_DIR = @GST_PLUGINS_GOOD_DIR@
+GST_PLUGINS_GOOD_LIBS = @GST_PLUGINS_GOOD_LIBS@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
+GST_PLUGINS_UGLY_CFLAGS = @GST_PLUGINS_UGLY_CFLAGS@
+GST_PLUGINS_UGLY_DIR = @GST_PLUGINS_UGLY_DIR@
+GST_PLUGINS_UGLY_LIBS = @GST_PLUGINS_UGLY_LIBS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PREFIX = @GST_PREFIX@
 GST_TOOLS_DIR = @GST_TOOLS_DIR@
@@ -313,6 +293,7 @@ HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
 HAVE_VPX = @HAVE_VPX@
+HAVE_WILDMIDI = @HAVE_WILDMIDI@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -323,10 +304,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
-IPTC_CFLAGS = @IPTC_CFLAGS@
-IPTC_LIBS = @IPTC_LIBS@
-JACK_CFLAGS = @JACK_CFLAGS@
-JACK_LIBS = @JACK_LIBS@
 JP2K_LIBS = @JP2K_LIBS@
 KATE_CFLAGS = @KATE_CFLAGS@
 KATE_LIBS = @KATE_LIBS@
@@ -341,8 +318,6 @@ LIBM = @LIBM@
 LIBMMS_CFLAGS = @LIBMMS_CFLAGS@
 LIBMMS_LIBS = @LIBMMS_LIBS@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -355,8 +330,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-METADATA_CFLAGS = @METADATA_CFLAGS@
-METADATA_LIBS = @METADATA_LIBS@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MIMIC_CFLAGS = @MIMIC_CFLAGS@
 MIMIC_LIBS = @MIMIC_LIBS@
 MJPEG_CFLAGS = @MJPEG_CFLAGS@
@@ -388,7 +362,12 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OFA_CFLAGS = @OFA_CFLAGS@
 OFA_LIBS = @OFA_LIBS@
+OPENCV_CFLAGS = @OPENCV_CFLAGS@
+OPENCV_LIBS = @OPENCV_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -416,6 +395,8 @@ PYTHON_VERSION = @PYTHON_VERSION@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
+RTMP_CFLAGS = @RTMP_CFLAGS@
+RTMP_LIBS = @RTMP_LIBS@
 SCHRO_CFLAGS = @SCHRO_CFLAGS@
 SCHRO_LIBS = @SCHRO_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -434,8 +415,6 @@ SPC_LIBS = @SPC_LIBS@
 STRIP = @STRIP@
 SWFDEC_CFLAGS = @SWFDEC_CFLAGS@
 SWFDEC_LIBS = @SWFDEC_LIBS@
-THEORADEC_CFLAGS = @THEORADEC_CFLAGS@
-THEORADEC_LIBS = @THEORADEC_LIBS@
 TIGER_CFLAGS = @TIGER_CFLAGS@
 TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
@@ -460,10 +439,6 @@ XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XMKMF = @XMKMF@
-XMP_1_99_5_CFLAGS = @XMP_1_99_5_CFLAGS@
-XMP_1_99_5_LIBS = @XMP_1_99_5_LIBS@
-XMP_CFLAGS = @XMP_CFLAGS@
-XMP_LIBS = @XMP_LIBS@
 XVID_LIBS = @XVID_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -475,6 +450,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -496,6 +472,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gsettingsschemadir = @gsettingsschemadir@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -509,7 +486,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -536,30 +512,19 @@ top_srcdir = @top_srcdir@
 @USE_SOUNDTOUCH_TRUE@pitch_test_CFLAGS = $(GST_CONTROLLER_CFLAGS)
 @USE_SOUNDTOUCH_TRUE@pitch_test_LDADD = $(GST_CONTROLLER_LIBS)
 @USE_SOUNDTOUCH_TRUE@pitch_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
-@HAVE_GTK_FALSE@@USE_METADATA_TRUE@GST_METADATA_TESTS = 
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@GST_METADATA_TESTS = metadata_editor
-@USE_METADATA_FALSE@GST_METADATA_TESTS = 
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@metadata_editor_SOURCES = metadata_editor.h metadata_editor.c
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@metadata_editor_CFLAGS = \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(GTK_CFLAGS) $(GMODULE_EXPORT_CFLAGS)
 
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@metadata_editor_LDADD = \
-@HAVE_GTK_TRUE@@USE_METADATA_TRUE@	$(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-0.10 $(GST_LIBS) $(GTK_LIBS) $(GMODULE_EXPORT_LIBS)
-
-@USE_COG_FALSE@COG_TESTS = 
-@USE_COG_TRUE@COG_TESTS = cog-test
-@USE_COG_TRUE@CLEANFILES = cog-test.c
-@USE_COG_TRUE@nodist_cog_test_SOURCES = cog-test.c
-@USE_COG_TRUE@cog_test_CFLAGS = $(COG_CFLAGS)
-@USE_COG_TRUE@cog_test_LDADD = -lorc-test-0.4 $(COG_LIBS)
-equalizer_test_SOURCES = equalizer-test.c
-equalizer_test_CFLAGS = $(GST_CFLAGS)
-equalizer_test_LDADD = $(GST_LIBS)
-equalizer_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
-output_selector_test_SOURCES = output-selector-test.c
-output_selector_test_CFLAGS = $(GST_CFLAGS)
-output_selector_test_LDADD = $(GST_LIBS)
-output_selector_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
+# needs porting
+#if HAVE_GTK
+#
+#GST_METADATA_TESTS = metadata_editor
+#
+#metadata_editor_SOURCES = metadata_editor.h metadata_editor.c
+#metadata_editor_CFLAGS  = \
+#	$(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(GTK_CFLAGS) $(GMODULE_EXPORT_CFLAGS)
+#metadata_editor_LDADD   = \
+#	$(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-0.10 $(GST_LIBS) $(GTK_LIBS) $(GMODULE_EXPORT_LIBS)
+#else
+GST_METADATA_TESTS = 
 all: all-am
 
 .SUFFIXES:
@@ -603,18 +568,6 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-cog-test$(EXEEXT): $(cog_test_OBJECTS) $(cog_test_DEPENDENCIES) 
-	@rm -f cog-test$(EXEEXT)
-	$(AM_V_CCLD)$(cog_test_LINK) $(cog_test_OBJECTS) $(cog_test_LDADD) $(LIBS)
-equalizer-test$(EXEEXT): $(equalizer_test_OBJECTS) $(equalizer_test_DEPENDENCIES) 
-	@rm -f equalizer-test$(EXEEXT)
-	$(AM_V_CCLD)$(equalizer_test_LINK) $(equalizer_test_OBJECTS) $(equalizer_test_LDADD) $(LIBS)
-metadata_editor$(EXEEXT): $(metadata_editor_OBJECTS) $(metadata_editor_DEPENDENCIES) 
-	@rm -f metadata_editor$(EXEEXT)
-	$(AM_V_CCLD)$(metadata_editor_LINK) $(metadata_editor_OBJECTS) $(metadata_editor_LDADD) $(LIBS)
-output-selector-test$(EXEEXT): $(output_selector_test_OBJECTS) $(output_selector_test_DEPENDENCIES) 
-	@rm -f output-selector-test$(EXEEXT)
-	$(AM_V_CCLD)$(output_selector_test_LINK) $(output_selector_test_OBJECTS) $(output_selector_test_LDADD) $(LIBS)
 pitch-test$(EXEEXT): $(pitch_test_OBJECTS) $(pitch_test_DEPENDENCIES) 
 	@rm -f pitch-test$(EXEEXT)
 	$(AM_V_CCLD)$(pitch_test_LINK) $(pitch_test_OBJECTS) $(pitch_test_LDADD) $(LIBS)
@@ -625,10 +578,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cog_test-cog-test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/equalizer_test-equalizer-test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/metadata_editor-metadata_editor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/output_selector_test-output-selector-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pitch_test-pitch-test.Po@am__quote@
 
 .c.o:
@@ -654,70 +603,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-cog_test-cog-test.o: cog-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cog_test_CFLAGS) $(CFLAGS) -MT cog_test-cog-test.o -MD -MP -MF $(DEPDIR)/cog_test-cog-test.Tpo -c -o cog_test-cog-test.o `test -f 'cog-test.c' || echo '$(srcdir)/'`cog-test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cog_test-cog-test.Tpo $(DEPDIR)/cog_test-cog-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cog-test.c' object='cog_test-cog-test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cog_test_CFLAGS) $(CFLAGS) -c -o cog_test-cog-test.o `test -f 'cog-test.c' || echo '$(srcdir)/'`cog-test.c
-
-cog_test-cog-test.obj: cog-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cog_test_CFLAGS) $(CFLAGS) -MT cog_test-cog-test.obj -MD -MP -MF $(DEPDIR)/cog_test-cog-test.Tpo -c -o cog_test-cog-test.obj `if test -f 'cog-test.c'; then $(CYGPATH_W) 'cog-test.c'; else $(CYGPATH_W) '$(srcdir)/cog-test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cog_test-cog-test.Tpo $(DEPDIR)/cog_test-cog-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cog-test.c' object='cog_test-cog-test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cog_test_CFLAGS) $(CFLAGS) -c -o cog_test-cog-test.obj `if test -f 'cog-test.c'; then $(CYGPATH_W) 'cog-test.c'; else $(CYGPATH_W) '$(srcdir)/cog-test.c'; fi`
-
-equalizer_test-equalizer-test.o: equalizer-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -MT equalizer_test-equalizer-test.o -MD -MP -MF $(DEPDIR)/equalizer_test-equalizer-test.Tpo -c -o equalizer_test-equalizer-test.o `test -f 'equalizer-test.c' || echo '$(srcdir)/'`equalizer-test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/equalizer_test-equalizer-test.Tpo $(DEPDIR)/equalizer_test-equalizer-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='equalizer-test.c' object='equalizer_test-equalizer-test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -c -o equalizer_test-equalizer-test.o `test -f 'equalizer-test.c' || echo '$(srcdir)/'`equalizer-test.c
-
-equalizer_test-equalizer-test.obj: equalizer-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -MT equalizer_test-equalizer-test.obj -MD -MP -MF $(DEPDIR)/equalizer_test-equalizer-test.Tpo -c -o equalizer_test-equalizer-test.obj `if test -f 'equalizer-test.c'; then $(CYGPATH_W) 'equalizer-test.c'; else $(CYGPATH_W) '$(srcdir)/equalizer-test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/equalizer_test-equalizer-test.Tpo $(DEPDIR)/equalizer_test-equalizer-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='equalizer-test.c' object='equalizer_test-equalizer-test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(equalizer_test_CFLAGS) $(CFLAGS) -c -o equalizer_test-equalizer-test.obj `if test -f 'equalizer-test.c'; then $(CYGPATH_W) 'equalizer-test.c'; else $(CYGPATH_W) '$(srcdir)/equalizer-test.c'; fi`
-
-metadata_editor-metadata_editor.o: metadata_editor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(metadata_editor_CFLAGS) $(CFLAGS) -MT metadata_editor-metadata_editor.o -MD -MP -MF $(DEPDIR)/metadata_editor-metadata_editor.Tpo -c -o metadata_editor-metadata_editor.o `test -f 'metadata_editor.c' || echo '$(srcdir)/'`metadata_editor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/metadata_editor-metadata_editor.Tpo $(DEPDIR)/metadata_editor-metadata_editor.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadata_editor.c' object='metadata_editor-metadata_editor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(metadata_editor_CFLAGS) $(CFLAGS) -c -o metadata_editor-metadata_editor.o `test -f 'metadata_editor.c' || echo '$(srcdir)/'`metadata_editor.c
-
-metadata_editor-metadata_editor.obj: metadata_editor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(metadata_editor_CFLAGS) $(CFLAGS) -MT metadata_editor-metadata_editor.obj -MD -MP -MF $(DEPDIR)/metadata_editor-metadata_editor.Tpo -c -o metadata_editor-metadata_editor.obj `if test -f 'metadata_editor.c'; then $(CYGPATH_W) 'metadata_editor.c'; else $(CYGPATH_W) '$(srcdir)/metadata_editor.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/metadata_editor-metadata_editor.Tpo $(DEPDIR)/metadata_editor-metadata_editor.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadata_editor.c' object='metadata_editor-metadata_editor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(metadata_editor_CFLAGS) $(CFLAGS) -c -o metadata_editor-metadata_editor.obj `if test -f 'metadata_editor.c'; then $(CYGPATH_W) 'metadata_editor.c'; else $(CYGPATH_W) '$(srcdir)/metadata_editor.c'; fi`
-
-output_selector_test-output-selector-test.o: output-selector-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -MT output_selector_test-output-selector-test.o -MD -MP -MF $(DEPDIR)/output_selector_test-output-selector-test.Tpo -c -o output_selector_test-output-selector-test.o `test -f 'output-selector-test.c' || echo '$(srcdir)/'`output-selector-test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/output_selector_test-output-selector-test.Tpo $(DEPDIR)/output_selector_test-output-selector-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-selector-test.c' object='output_selector_test-output-selector-test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -c -o output_selector_test-output-selector-test.o `test -f 'output-selector-test.c' || echo '$(srcdir)/'`output-selector-test.c
-
-output_selector_test-output-selector-test.obj: output-selector-test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -MT output_selector_test-output-selector-test.obj -MD -MP -MF $(DEPDIR)/output_selector_test-output-selector-test.Tpo -c -o output_selector_test-output-selector-test.obj `if test -f 'output-selector-test.c'; then $(CYGPATH_W) 'output-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/output-selector-test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/output_selector_test-output-selector-test.Tpo $(DEPDIR)/output_selector_test-output-selector-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-selector-test.c' object='output_selector_test-output-selector-test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -c -o output_selector_test-output-selector-test.obj `if test -f 'output-selector-test.c'; then $(CYGPATH_W) 'output-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/output-selector-test.c'; fi`
 
 pitch_test-pitch-test.o: pitch-test.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pitch_test_CFLAGS) $(CFLAGS) -MT pitch_test-pitch-test.o -MD -MP -MF $(DEPDIR)/pitch_test-pitch-test.Tpo -c -o pitch_test-pitch-test.o `test -f 'pitch-test.c' || echo '$(srcdir)/'`pitch-test.c
@@ -844,7 +729,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -939,9 +823,6 @@ uninstall-am:
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
-
-@USE_COG_TRUE@cog-test.c: $(srcdir)/../../ext/cog/cog.orc
-@USE_COG_TRUE@	$(AM_V_GEN)$(ORCC) --test -o cog-test.c $(srcdir)/../../ext/cog/cog.orc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

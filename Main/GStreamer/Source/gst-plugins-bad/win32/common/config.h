@@ -178,7 +178,7 @@
 #undef PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
-#undef PACKAGE_NAME
+#define PACKAGE_NAME GST_PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
 #undef PACKAGE_STRING
@@ -187,7 +187,7 @@
 #undef PACKAGE_TARNAME
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.21"
+#define PACKAGE_VERSION VERSION
 
 /* directory where plugins are located */
 #define PLUGINDIR PREFIX "\\lib\\gstreamer-0.10"
@@ -199,7 +199,7 @@
 #undef USE_POISONING
 
 /* Version number of package */
-#define VERSION "0.10.21"
+#define VERSION "0.10.22"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

@@ -289,9 +289,10 @@ gst_jpeg_parse_parse_tag_has_entropy_segment (guint8 tag)
   return FALSE;
 }
 
-/* returns image length in bytes if parsed
- * successfully, otherwise 0 if not enough data */
-static guint
+/* returns image length in bytes if parsed successfully,
+ * otherwise 0 if more data needed,
+ * if < 0 the absolute value needs to be flushed */
+static gint
 gst_jpeg_parse_get_image_length (GstJpegParse * parse)
 {
   guint size;
@@ -353,6 +354,13 @@ gst_jpeg_parse_get_image_length (GstJpegParse * parse)
       parse->priv->last_resync = FALSE;
       parse->priv->last_offset = 0;
       return (offset + 4);
+    } else if (value == 0xd8) {
+      /* Skip this frame if we found another SOI marker */
+      GST_DEBUG ("0x%08x: SOI marker before EOI, skipping", offset + 2);
+      /* clear parse state */
+      parse->priv->last_resync = FALSE;
+      parse->priv->last_offset = 0;
+      return -(offset + 2);
     }
 
     if (value >= 0xd0 && value <= 0xd7)
@@ -406,6 +414,7 @@ gst_jpeg_parse_get_image_length (GstJpegParse * parse)
       if (noffset < 0) {
         /* ignore and continue resyncing until we hit the end
          * of our data or find a sync point that looks okay */
+        offset++;
         continue;
       }
       GST_DEBUG ("found sync at 0x%x", offset + 2);
@@ -503,18 +512,189 @@ gst_jpeg_parse_sof (GstJpegParse * parse, GstByteReader * reader)
 }
 
 static inline gboolean
+gst_jpeg_parse_remove_marker (GstJpegParse * parse,
+    GstByteReader * reader, guint8 marker, GstBuffer * buffer)
+{
+  guint16 size = 0;
+  guint pos = gst_byte_reader_get_pos (reader);
+  guint8 *data = GST_BUFFER_DATA (buffer);
+
+  if (!gst_byte_reader_peek_uint16_be (reader, &size))
+    return FALSE;
+  if (gst_byte_reader_get_remaining (reader) < size)
+    return FALSE;
+
+  GST_LOG_OBJECT (parse, "unhandled marker %x removing %u bytes", marker, size);
+
+  memmove (&data[pos], &data[pos + size],
+      GST_BUFFER_SIZE (buffer) - (pos + size));
+  GST_BUFFER_SIZE (buffer) -= size;
+
+  if (!gst_byte_reader_set_pos (reader, pos - size))
+    return FALSE;
+
+  return TRUE;
+}
+
+static inline gboolean
 gst_jpeg_parse_skip_marker (GstJpegParse * parse,
     GstByteReader * reader, guint8 marker)
 {
-  guint16 size;
+  guint16 size = 0;
 
   if (!gst_byte_reader_get_uint16_be (reader, &size))
     return FALSE;
 
+#ifndef GST_DISABLE_DEBUG
+  /* We'd pry the id of the skipped application segment */
+  if (marker >= APP0 && marker <= APP15) {
+    const gchar *id_str = NULL;
+
+    if (gst_byte_reader_peek_string_utf8 (reader, &id_str)) {
+      GST_DEBUG_OBJECT (parse, "unhandled marker %x: '%s' skiping %u bytes",
+          marker, id_str ? id_str : "(NULL)", size);
+    } else {
+      GST_DEBUG_OBJECT (parse, "unhandled marker %x skiping %u bytes", marker,
+          size);
+    }
+  }
+#else
+  GST_DEBUG_OBJECT (parse, "unhandled marker %x skiping %u bytes", marker,
+      size);
+#endif // GST_DISABLE_DEBUG
+
   if (!gst_byte_reader_skip (reader, size - 2))
     return FALSE;
 
-  GST_LOG_OBJECT (parse, "unhandled marker %x skiping %u bytes", marker, size);
+  return TRUE;
+}
+
+static inline GstTagList *
+get_tag_list (GstJpegParse * parse)
+{
+  if (!parse->priv->tags)
+    parse->priv->tags = gst_tag_list_new ();
+  return parse->priv->tags;
+}
+
+static inline void
+extract_and_queue_tags (GstJpegParse * parse, guint size, guint8 * data,
+    GstTagList * (*tag_func) (const GstBuffer * buff))
+{
+  GstTagList *tags;
+  GstBuffer *buf;
+
+  buf = gst_buffer_new ();
+  GST_BUFFER_DATA (buf) = data;
+  GST_BUFFER_SIZE (buf) = size;
+
+  tags = tag_func (buf);
+  gst_buffer_unref (buf);
+
+  if (tags) {
+    GstTagList *taglist = parse->priv->tags;
+    if (taglist) {
+      gst_tag_list_insert (taglist, tags, GST_TAG_MERGE_REPLACE);
+      gst_tag_list_free (tags);
+    } else {
+      parse->priv->tags = tags;
+    }
+    GST_DEBUG_OBJECT (parse, "collected tags: %" GST_PTR_FORMAT,
+        parse->priv->tags);
+  }
+}
+
+static inline gboolean
+gst_jpeg_parse_app1 (GstJpegParse * parse, GstByteReader * reader)
+{
+  guint16 size = 0;
+  const gchar *id_str;
+  const guint8 *data = NULL;
+
+  if (!gst_byte_reader_get_uint16_be (reader, &size))
+    return FALSE;
+
+  size -= 2;                    /* 2 bytes for the mark */
+  if (!gst_byte_reader_peek_string_utf8 (reader, &id_str))
+    return FALSE;
+
+  if (!strncmp (id_str, "Exif", 4)) {
+
+    /* skip id + NUL + padding */
+    if (!gst_byte_reader_skip (reader, 6))
+      return FALSE;
+    size -= 6;
+
+    /* handle exif metadata */
+    if (!gst_byte_reader_get_data (reader, size, &data))
+      return FALSE;
+
+    extract_and_queue_tags (parse, size, (guint8 *) data,
+        gst_tag_list_from_exif_buffer_with_tiff_header);
+
+    GST_LOG_OBJECT (parse, "parsed marker %x: '%s' %u bytes",
+        APP1, id_str, size);
+
+  } else if (!strncmp (id_str, "http://ns.adobe.com/xap/1.0/", 28)) {
+
+    /* skip the id + NUL */
+    if (!gst_byte_reader_skip (reader, 29))
+      return FALSE;
+    size -= 29;
+
+    /* handle xmp metadata */
+    if (!gst_byte_reader_get_data (reader, size, &data))
+      return FALSE;
+
+    extract_and_queue_tags (parse, size, (guint8 *) data,
+        gst_tag_list_from_xmp_buffer);
+
+    GST_LOG_OBJECT (parse, "parsed marker %x: '%s' %u bytes",
+        APP1, id_str, size);
+
+  } else {
+    if (!gst_jpeg_parse_skip_marker (parse, reader, APP1))
+      return FALSE;
+  }
+
+  return TRUE;
+}
+
+static inline gchar *
+get_utf8_from_data (const guint8 * data, guint16 size)
+{
+  const gchar *env_vars[] = { "GST_JPEG_TAG_ENCODING",
+    "GST_TAG_ENCODING", NULL
+  };
+  const char *str = (gchar *) data;
+
+  return gst_tag_freeform_string_to_utf8 (str, size, env_vars);
+}
+
+/* read comment and post as tag */
+static inline gboolean
+gst_jpeg_parse_com (GstJpegParse * parse, GstByteReader * reader)
+{
+  const guint8 *data = NULL;
+  guint16 size = 0;
+  gchar *comment;
+
+  if (!gst_byte_reader_get_uint16_be (reader, &size))
+    return FALSE;
+
+  size -= 2;
+  if (!gst_byte_reader_get_data (reader, size, &data))
+    return FALSE;
+
+  comment = get_utf8_from_data (data, size);
+
+  if (comment) {
+    GstTagList *taglist = get_tag_list (parse);
+    gst_tag_list_add (taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_COMMENT, comment, NULL);
+    GST_DEBUG_OBJECT (parse, "collected tags: %" GST_PTR_FORMAT, taglist);
+    g_free (comment);
+  }
 
   return TRUE;
 }
@@ -524,7 +704,6 @@ gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
 {
   GstByteReader reader = GST_BYTE_READER_INIT_FROM_BUFFER (buffer);
   guint8 marker = 0;
-  guint16 size = 0;
   gboolean foundSOF = FALSE;
 
   if (!gst_byte_reader_peek_uint8 (&reader, &marker))
@@ -551,113 +730,16 @@ gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
           goto error;
         break;
 
-      case COM:{               /* read comment and post as tag */
-        const guint8 *comment = NULL;
-
-        if (!gst_byte_reader_get_uint16_be (&reader, &size))
+      case COM:
+        if (!gst_jpeg_parse_com (parse, &reader))
           goto error;
-        if (!gst_byte_reader_get_data (&reader, size - 2, &comment))
-          goto error;
-
-        if (!parse->priv->tags)
-          parse->priv->tags = gst_tag_list_new ();
-        gst_tag_list_add (parse->priv->tags, GST_TAG_MERGE_REPLACE,
-            GST_TAG_COMMENT, comment, NULL);
         break;
-      }
 
-      case APP1:{
-        const gchar *id_str;
-        if (!gst_byte_reader_get_uint16_be (&reader, &size))
+      case APP1:
+        if (!gst_jpeg_parse_app1 (parse, &reader))
           goto error;
-        if (!gst_byte_reader_get_string_utf8 (&reader, &id_str))
-          goto error;
-
-        if (!strcmp (id_str, "Exif")) {
-          const guint8 *exif_data = NULL;
-          guint exif_size = size - 2 - 6;       /* 6 bytes for "Exif\0\0 id" */
-          GstTagList *tags;
-          GstBuffer *buf;
-
-          /* skip padding */
-          gst_byte_reader_skip (&reader, 1);
-
-          /* handle exif metadata */
-          if (!gst_byte_reader_get_data (&reader, exif_size, &exif_data))
-            goto error;
-
-          buf = gst_buffer_new ();
-          GST_BUFFER_DATA (buf) = (guint8 *) exif_data;
-          GST_BUFFER_SIZE (buf) = exif_size;
-          tags = gst_tag_list_from_exif_buffer_with_tiff_header (buf);
-          gst_buffer_unref (buf);
-
-          if (tags) {
-            GST_INFO_OBJECT (parse, "got exif metadata");
-            if (parse->priv->tags) {
-              gst_tag_list_insert (parse->priv->tags, tags,
-                  GST_TAG_MERGE_REPLACE);
-              gst_tag_list_free (tags);
-            } else {
-              parse->priv->tags = tags;
-            }
-          }
-
-          GST_LOG_OBJECT (parse, "parsed marker %x: '%s' %u bytes",
-              marker, id_str, size - 2);
-        } else if (!strcmp (id_str, "http://ns.adobe.com/xap/1.0/")) {
-          const guint8 *xmp_data = NULL;
-          guint xmp_size = size - 2 - 29;       /* 29 bytes for the id */
-          GstTagList *tags;
-          GstBuffer *buf;
-
-          /* handle xmp metadata */
-          if (!gst_byte_reader_get_data (&reader, xmp_size, &xmp_data))
-            goto error;
-
-          buf = gst_buffer_new ();
-          GST_BUFFER_DATA (buf) = (guint8 *) xmp_data;
-          GST_BUFFER_SIZE (buf) = xmp_size;
-          tags = gst_tag_list_from_xmp_buffer (buf);
-          gst_buffer_unref (buf);
-
-          if (tags) {
-            GST_INFO_OBJECT (parse, "got xmp metadata");
-            if (parse->priv->tags) {
-              gst_tag_list_insert (parse->priv->tags, tags,
-                  GST_TAG_MERGE_REPLACE);
-              gst_tag_list_free (tags);
-            } else {
-              parse->priv->tags = tags;
-            }
-          }
-
-          GST_LOG_OBJECT (parse, "parsed marker %x: '%s' %u bytes",
-              marker, id_str, size - 2);
-        } else {
-          if (!gst_byte_reader_skip (&reader, size - 3 - strlen (id_str)))
-            goto error;
-          GST_LOG_OBJECT (parse, "unhandled marker %x: '%s' skiping %u bytes",
-              marker, id_str, size - 2);
-        }
         break;
-      }
-      case APP0:
-      case APP2:
-      case APP13:
-      case APP14:
-      case APP15:{
-        const gchar *id_str;
-        if (!gst_byte_reader_get_uint16_be (&reader, &size))
-          goto error;
-        if (!gst_byte_reader_get_string_utf8 (&reader, &id_str))
-          goto error;
-        if (!gst_byte_reader_skip (&reader, size - 3 - strlen (id_str)))
-          goto error;
-        GST_LOG_OBJECT (parse, "unhandled marker %x: '%s' skiping %u bytes",
-            marker, id_str, size - 2);
-        break;
-      }
+
       case DHT:
       case DQT:
         /* Ignore these codes */
@@ -679,28 +761,11 @@ gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
       default:
         if (marker == JPG || (marker >= JPG0 && marker <= JPG13)) {
           /* we'd like to remove them from the buffer */
-#if 1
-          guint pos = gst_byte_reader_get_pos (&reader);
-          guint8 *data = GST_BUFFER_DATA (buffer);
-
-          if (!gst_byte_reader_peek_uint16_be (&reader, &size))
+          if (!gst_jpeg_parse_remove_marker (parse, &reader, marker, buffer))
             goto error;
-          if (gst_byte_reader_get_remaining (&reader) < size)
-            goto error;
-
-          GST_LOG_OBJECT (parse, "unhandled marker %x removing %u bytes",
-              marker, size);
-
-          memmove (&data[pos], &data[pos + size],
-              GST_BUFFER_SIZE (buffer) - (pos + size));
-          GST_BUFFER_SIZE (buffer) -= size;
-
-          if (!gst_byte_reader_set_pos (&reader, pos - size))
-            goto error;
-#else
+        } else if (marker >= APP0 && marker <= APP15) {
           if (!gst_jpeg_parse_skip_marker (parse, &reader, marker))
             goto error;
-#endif
         } else {
           GST_WARNING_OBJECT (parse, "unhandled marker %x, leaving", marker);
           /* Not SOF or SOI.  Must not be a JPEG file (or file pointer
@@ -804,7 +869,8 @@ gst_jpeg_parse_push_buffer (GstJpegParse * parse, guint len)
     }
 
     if (parse->priv->tags) {
-      GST_DEBUG_OBJECT (parse, "Pushing tags");
+      GST_DEBUG_OBJECT (parse, "Pushing tags: %" GST_PTR_FORMAT,
+          parse->priv->tags);
       gst_element_found_tags_for_pad (GST_ELEMENT_CAST (parse),
           parse->priv->srcpad, parse->priv->tags);
       parse->priv->tags = NULL;
@@ -816,7 +882,6 @@ gst_jpeg_parse_push_buffer (GstJpegParse * parse, guint len)
     parse->priv->caps_framerate_numerator = parse->priv->framerate_numerator;
     parse->priv->caps_framerate_denominator =
         parse->priv->framerate_denominator;
-    parse->priv->tags = NULL;
   }
 
   GST_BUFFER_TIMESTAMP (outbuf) = parse->priv->next_ts;
@@ -845,7 +910,7 @@ static GstFlowReturn
 gst_jpeg_parse_chain (GstPad * pad, GstBuffer * buf)
 {
   GstJpegParse *parse;
-  guint len;
+  gint len;
   GstClockTime timestamp, duration;
   GstFlowReturn ret = GST_FLOW_OK;
 
@@ -864,8 +929,12 @@ gst_jpeg_parse_chain (GstPad * pad, GstBuffer * buf)
 
     /* check if we already have a EOI */
     len = gst_jpeg_parse_get_image_length (parse);
-    if (len == 0)
+    if (len == 0) {
       return GST_FLOW_OK;
+    } else if (len < 0) {
+      gst_adapter_flush (parse->priv->adapter, -len);
+      continue;
+    }
 
     GST_LOG_OBJECT (parse, "parsed image of size %d", len);
 
@@ -911,15 +980,17 @@ gst_jpeg_parse_sink_event (GstPad * pad, GstEvent * event)
       parse->priv->new_segment = TRUE;
       break;
     case GST_EVENT_TAG:{
-      GstTagList *taglist = NULL;
-      gst_event_parse_tag (event, &taglist);
       if (!parse->priv->new_segment)
         res = gst_pad_event_default (pad, event);
       else {
+        GstTagList *taglist = NULL;
+
+        gst_event_parse_tag (event, &taglist);
         /* Hold on to the tags till the srcpad caps are definitely set */
-        if (!parse->priv->tags)
-          parse->priv->tags = gst_tag_list_new ();
-        gst_tag_list_insert (parse->priv->tags, taglist, GST_TAG_MERGE_REPLACE);
+        gst_tag_list_insert (get_tag_list (parse), taglist,
+            GST_TAG_MERGE_REPLACE);
+        GST_DEBUG ("collected tags: %" GST_PTR_FORMAT, parse->priv->tags);
+        gst_event_unref (event);
       }
       break;
     }
@@ -973,8 +1044,10 @@ gst_jpeg_parse_change_state (GstElement * element, GstStateChange transition)
   switch (transition) {
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_adapter_clear (parse->priv->adapter);
-      if (parse->priv->tags)
+      if (parse->priv->tags) {
         gst_tag_list_free (parse->priv->tags);
+        parse->priv->tags = NULL;
+      }
       break;
     default:
       break;

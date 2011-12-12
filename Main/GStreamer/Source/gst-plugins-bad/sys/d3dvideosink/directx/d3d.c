@@ -19,47 +19,47 @@
 
 #include "directx.h"
 
-const DirectXD3D* 
-directx_d3d_create(const DirectXAPI* api) 
+const DirectXD3D *
+directx_d3d_create (const DirectXAPI * api)
 {
   if (!api)
     return NULL;
 
-  return DIRECTX_D3D_CALL_API_FUNCTION(api, create, api);
+  return DIRECTX_D3D_CALL_API_FUNCTION (api, create, api);
 }
 
-gboolean 
-directx_d3d_resize(const DirectXD3D* d3d) 
+gboolean
+directx_d3d_resize (const DirectXD3D * d3d)
 {
   if (!d3d)
     return FALSE;
 
-  return DIRECTX_D3D_CALL_FUNCTION(d3d, resize, d3d);
+  return DIRECTX_D3D_CALL_FUNCTION (d3d, resize, d3d);
 }
 
-gboolean 
-directx_d3d_device_lost(const DirectXD3D* d3d) 
+gboolean
+directx_d3d_device_lost (const DirectXD3D * d3d)
 {
   if (!d3d)
     return FALSE;
 
-  return DIRECTX_D3D_CALL_FUNCTION(d3d, device_lost, d3d);
+  return DIRECTX_D3D_CALL_FUNCTION (d3d, device_lost, d3d);
 }
 
-gboolean 
-directx_d3d_notify_device_reset(const DirectXD3D* d3d) 
+gboolean
+directx_d3d_notify_device_reset (const DirectXD3D * d3d)
 {
   if (!d3d)
     return FALSE;
 
-  return DIRECTX_D3D_CALL_FUNCTION(d3d, notify_device_reset, d3d);
+  return DIRECTX_D3D_CALL_FUNCTION (d3d, notify_device_reset, d3d);
 }
 
-gboolean 
-directx_d3d_release(const DirectXD3D* d3d) 
+gboolean
+directx_d3d_release (const DirectXD3D * d3d)
 {
   if (!d3d)
     return FALSE;
 
-  return DIRECTX_D3D_CALL_FUNCTION(d3d, release, d3d);
+  return DIRECTX_D3D_CALL_FUNCTION (d3d, release, d3d);
 }

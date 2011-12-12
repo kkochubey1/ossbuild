@@ -600,6 +600,7 @@ gst_schro_enc_get_caps (GstBaseVideoEncoder * base_video_encoder)
         state->par_d, NULL);
   } else {
     g_assert_not_reached ();
+    caps = NULL;
   }
 
   return caps;
@@ -781,7 +782,7 @@ gst_schro_enc_process (GstSchroEnc * schro_enc)
           buf = gst_buffer_new_and_alloc (sizeof (double) * 21);
           schro_encoder_get_frame_stats (schro_enc->encoder,
               (double *) GST_BUFFER_DATA (buf), 21);
-          structure = gst_structure_new ("schroenc",
+          structure = gst_structure_new ("GstSchroEnc",
               "frame-stats", GST_TYPE_BUFFER, buf, NULL);
           gst_buffer_unref (buf);
           message = gst_message_new_element (GST_OBJECT (schro_enc), structure);

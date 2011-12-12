@@ -19,9 +19,9 @@
 
 #include "dx10.h"
 
-void 
-dx10_init(const DirectXAPI* api) 
+void
+dx10_init (const DirectXAPI * api)
 {
-  DIRECTX_DEBUG("Initializing DirectX10 API");
-  INITIALIZE_DIRECTX_D3D_API(DIRECTX_10, api);
+  DIRECTX_DEBUG ("Initializing DirectX10 API");
+  INITIALIZE_DIRECTX_D3D_API (DIRECTX_10, api);
 }

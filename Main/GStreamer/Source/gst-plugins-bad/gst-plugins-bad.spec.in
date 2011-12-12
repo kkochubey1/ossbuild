@@ -47,7 +47,7 @@ quality, even though they might work.
 %setup -q -n gst-plugins-bad-%{version}
 
 %build
-%configure --enable-experimental
+%configure --enable-experimental --disable-schemas-compile
 
 make %{?_smp_mflags}
 
@@ -70,8 +70,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -f gst-plugins-bad-%{majorminor}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING README REQUIREMENTS gst-plugins-bad.doap
-%{_bindir}/gst-camera
-%{_bindir}/gst-camera-perf
 
 # non-core plugins without external dependencies
 %{_libdir}/gstreamer-%{majorminor}/libgsttta.so
@@ -95,7 +93,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gstreamer-%{majorminor}/libgstmpeg4videoparse.so
 %{_libdir}/gstreamer-%{majorminor}/libgstfbdevsink.so
 %{_libdir}/gstreamer-%{majorminor}/libgstrawparse.so
-%{_libdir}/gstreamer-%{majorminor}/libgstselector.so
 %{_libdir}/gstreamer-%{majorminor}/libgstsubenc.so
 %{_libdir}/gstreamer-%{majorminor}/libresindvd.so
 %{_libdir}/gstreamer-%{majorminor}/libgstaiff.so
@@ -104,14 +101,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gstreamer-%{majorminor}/libgstmpegtsmux.so
 %{_libdir}/gstreamer-%{majorminor}/libgstscaletempoplugin.so
 %{_libdir}/gstreamer-%{majorminor}/libgstmpegdemux.so
+%{_libdir}/gstreamer-%{majorminor}/libgstmpegtsdemux.so
 %{_libdir}/gstreamer-%{majorminor}/libgstjp2k.so
 %{_libdir}/gstreamer-%{majorminor}/libgstapexsink.so
-%{_libdir}/gstreamer-%{majorminor}/libgstqtmux.so
 %{_libdir}/gstreamer-%{majorminor}/libgstlegacyresample.so
 %{_libdir}/gstreamer-%{majorminor}/libgstmxf.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvmnc.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideosignal.so
-%{_libdir}/gstreamer-%{majorminor}/libgstvalve.so
 %{_libdir}/gstreamer-%{majorminor}/libgstautoconvert.so
 %{_libdir}/gstreamer-%{majorminor}/libgstdtmf.so
 %{_libdir}/gstreamer-%{majorminor}/libgstliveadder.so
@@ -125,15 +121,52 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gstreamer-%{majorminor}/libgstasfmux.so
 %{_libdir}/gstreamer-%{majorminor}/libgstpnm.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideomeasure.so
-%{_libdir}/gstreamer-%{majorminor}/libgstaudioparsersbad.so
 %{_libdir}/gstreamer-%{majorminor}/libgstrsvg.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcamerabin2.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcdaudio.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcog.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcoloreffects.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcolorspace.so
+%{_libdir}/gstreamer-%{majorminor}/libgstcurl.so
+%{_libdir}/gstreamer-%{majorminor}/libgstdataurisrc.so
+%{_libdir}/gstreamer-%{majorminor}/libgstdirac.so
+%{_libdir}/gstreamer-%{majorminor}/libgstdvbsuboverlay.so
+%{_libdir}/gstreamer-%{majorminor}/libgstfieldanalysis.so
+%{_libdir}/gstreamer-%{majorminor}/libgstfragmented.so
+%{_libdir}/gstreamer-%{majorminor}/libgstgaudieffects.so
+%{_libdir}/gstreamer-%{majorminor}/libgstgeometrictransform.so
+%{_libdir}/gstreamer-%{majorminor}/libgstinterlace.so
+%{_libdir}/gstreamer-%{majorminor}/libgstinvtelecine.so
+%{_libdir}/gstreamer-%{majorminor}/libgstivfparse.so
+%{_libdir}/gstreamer-%{majorminor}/libgstjp2kdecimator.so
+%{_libdir}/gstreamer-%{majorminor}/libgstjpegformat.so
+%{_libdir}/gstreamer-%{majorminor}/libgstlv2.so
+%{_libdir}/gstreamer-%{majorminor}/libgstmodplug.so
+%{_libdir}/gstreamer-%{majorminor}/libgstopencv.so
+%{_libdir}/gstreamer-%{majorminor}/libgstpatchdetect.so
+%{_libdir}/gstreamer-%{majorminor}/libgstrtpvp8.so
+%{_libdir}/gstreamer-%{majorminor}/libgstsdi.so
+%{_libdir}/gstreamer-%{majorminor}/libgstsegmentclip.so
+%{_libdir}/gstreamer-%{majorminor}/libgstshm.so
+%{_libdir}/gstreamer-%{majorminor}/libgstsoundtouch.so
+%{_libdir}/gstreamer-%{majorminor}/libgstvideofiltersbad.so
+%{_libdir}/gstreamer-%{majorminor}/libgstvideomaxrate.so
+%{_libdir}/gstreamer-%{majorminor}/libgstvideoparsersbad.so
+%{_libdir}/gstreamer-%{majorminor}/libgstvp8.so
+%{_libdir}/gstreamer-%{majorminor}/libgsty4mdec.so
+%{_libdir}/gstreamer-%{majorminor}/libgstzbar.so
+%{_libdir}/gstreamer-%{majorminor}/libgstgsettingselements.so
+%{_libdir}/gstreamer-%{majorminor}/libgstlinsys.so
+%{_libdir}/libgstbasecamerabinsrc-0.10.so
+%{_libdir}/libgstbasecamerabinsrc-0.10.so.0
+%{_libdir}/libgstbasecamerabinsrc-0.10.so.0.0.0
 
+%{_includedir}/gstreamer-%{majorminor}/gst/basecamerabinsrc/gstbasecamerasrc.h
+%{_includedir}/gstreamer-%{majorminor}/gst/basecamerabinsrc/gstcamerabin-enum.h
+%{_includedir}/gstreamer-%{majorminor}/gst/basecamerabinsrc/gstcamerabinpreview.h
 %{_includedir}/gstreamer-%{majorminor}/gst/video/gstbasevideocodec.h
 %{_includedir}/gstreamer-%{majorminor}/gst/video/gstbasevideodecoder.h
 %{_includedir}/gstreamer-%{majorminor}/gst/video/gstbasevideoencoder.h
-%{_includedir}/gstreamer-%{majorminor}/gst/video/gstbasevideoparse.h
-%{_includedir}/gstreamer-%{majorminor}/gst/video/gstbasevideoutils.h
-%{_datadir}/gstreamer-%{majorminor}/camera-apps/gst-camera.ui
 %{_includedir}/gstreamer-%{majorminor}/gst/signalprocessor/gstsignalprocessor.h
 
 %{_includedir}/gstreamer-%{majorminor}/gst/interfaces/photography-enumtypes.h
@@ -167,7 +200,6 @@ rm -rf $RPM_BUILD_ROOT
 @USE_DC1394_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstdc1394.so
 @USE_TIMIDITY_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgsttimidity.so
 @USE_WILDMIDI_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstwildmidi.so
-@USE_JACK_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstjack.so
 @USE_SNDFILE_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstsndfile.so
 @USE_CELT_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstcelt.so
 @USE_MPEG2ENC_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstmpeg2enc.so
@@ -177,7 +209,6 @@ rm -rf $RPM_BUILD_ROOT
 @USE_PLUGIN_FREI0R_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstfrei0r.so
 @USE_SCHRO_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstschro.so
 @USE_OFA_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstofa.so
-@USE_METADATA_TRUE@%{_libdir}/gstreamer-%{majorminor}/libgstmetadata.so
 
 %changelog
 * Thu Mar 12 2009 Christian Schaller <chrisian.schaller at collabora dot co uk>
