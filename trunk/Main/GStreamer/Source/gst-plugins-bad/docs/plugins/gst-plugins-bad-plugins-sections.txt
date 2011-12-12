@@ -1,32 +1,4 @@
 <SECTION>
-<FILE>element-aacparse</FILE>
-<TITLE>aacparse</TITLE>
-GstAacParse
-<SUBSECTION Standard>
-GstAacParseClass
-GST_AACPARSE
-GST_AACPARSE_CLASS
-GST_IS_AACPARSE
-GST_IS_AACPARSE_CLASS
-GST_TYPE_AACPARSE
-gst_aacparse_get_type
-</SECTION>
-
-<SECTION>
-<FILE>element-ac3parse</FILE>
-<TITLE>ac3parse</TITLE>
-GstAc3Parse
-<SUBSECTION Standard>
-GstAc3ParseClass
-GST_AC3_PARSE
-GST_AC3_PARSE_CLASS
-GST_IS_AC3_PARSE
-GST_IS_AC3_PARSE_CLASS
-GST_TYPE_AC3_PARSE
-gst_ac3_parse_get_type
-</SECTION>
-
-<SECTION>
 <FILE>element-aiffmux</FILE>
 <TITLE>aiffmux</TITLE>
 GstAiffMux
@@ -53,20 +25,6 @@ GST_TYPE_AIFF_PARSE
 GstAiffParseClass
 GstAiffParseState
 gst_aiff_parse_get_type
-</SECTION>
-
-<SECTION>
-<FILE>element-amrparse</FILE>
-<TITLE>amrparse</TITLE>
-GstAmrParse
-<SUBSECTION Standard>
-GstAmrParseClass
-GST_AMRPARSE
-GST_AMRPARSE_CLASS
-GST_IS_AMRPARSE
-GST_IS_AMRPARSE_CLASS
-GST_TYPE_AMRPARSE
-gst_amrparse_get_type
 </SECTION>
 
 <SECTION>
@@ -242,6 +200,20 @@ GST_IS_COLOR_EFFECTS
 GST_IS_COLOR_EFFECTS_CLASS
 GST_TYPE_COLOR_EFFECTS
 gst_color_effects_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-curlsink</FILE>
+<TITLE>curlsink</TITLE>
+GstCurlSink
+<SUBSECTION Standard>
+GstCurlSinkClass
+GST_CURL_SINK
+GST_CURL_SINK_CLASS
+GST_IS_CURL_SINK
+GST_IS_CURL_SINK_CLASS
+GST_TYPE_CURL_SINK
+gst_curl_sink_get_type
 </SECTION>
 
 <SECTION>
@@ -724,20 +696,6 @@ gst_fisheye_plugin_init
 </SECTION>
 
 <SECTION>
-<FILE>element-flacparse</FILE>
-<TITLE>flacparse</TITLE>
-GstFlacParse
-<SUBSECTION Standard>
-GstFlacParseClass
-GST_FLAC_PARSE
-GST_FLAC_PARSE_CLASS
-GST_IS_FLAC_PARSE
-GST_IS_FLAC_PARSE_CLASS
-GST_TYPE_FLAC_PARSE
-gst_flac_parse_get_type
-</SECTION>
-
-<SECTION>
 <FILE>element-fpsdisplaysink</FILE>
 <TITLE>fpsdisplaysink</TITLE>
 GstFPSDisplaySink
@@ -778,26 +736,6 @@ gst_gauss_blur_plugin_init
 </SECTION>
 
 <SECTION>
-<FILE>element-input-selector</FILE>
-<TITLE>input-selector</TITLE>
-GstInputSelector
-<SUBSECTION Standard>
-GstInputSelectorClass
-GST_INPUT_SELECTOR
-GST_INPUT_SELECTOR_CLASS
-GST_IS_INPUT_SELECTOR
-GST_IS_INPUT_SELECTOR_CLASS
-GST_TYPE_INPUT_SELECTOR
-gst_input_selector_get_type
-GST_INPUT_SELECTOR_BROADCAST
-GST_INPUT_SELECTOR_GET_COND
-GST_INPUT_SELECTOR_GET_LOCK
-GST_INPUT_SELECTOR_LOCK
-GST_INPUT_SELECTOR_UNLOCK
-GST_INPUT_SELECTOR_WAIT
-</SECTION>
-
-<SECTION>
 <FILE>element-ivfparse</FILE>
 <TITLE>ivfparse</TITLE>
 GstIvfParse
@@ -810,36 +748,6 @@ GST_IS_IVF_PARSE
 GST_IS_IVF_PARSE_CLASS
 GST_TYPE_IVF_PARSE
 gst_ivf_parse_get_type
-</SECTION>
-
-<SECTION>
-<FILE>element-jackaudiosrc</FILE>
-<TITLE>jackaudiosrc</TITLE>
-GstJackAudioSrc
-<SUBSECTION Standard>
-GstJackAudioSrcClass
-GST_JACK_AUDIO_SRC
-GST_JACK_AUDIO_SRC_CLASS
-GST_JACK_AUDIO_SRC_GET_CLASS
-GST_IS_JACK_AUDIO_SRC
-GST_IS_JACK_AUDIO_SRC_CLASS
-GST_TYPE_JACK_AUDIO_SRC
-gst_jack_audio_src_get_type
-</SECTION>
-
-<SECTION>
-<FILE>element-jackaudiosink</FILE>
-<TITLE>jackaudiosink</TITLE>
-GstJackAudioSink
-<SUBSECTION Standard>
-GstJackAudioSinkClass
-GST_JACK_AUDIO_SINK
-GST_JACK_AUDIO_SINK_CLASS
-GST_JACK_AUDIO_SINK_GET_CLASS
-GST_IS_JACK_AUDIO_SINK
-GST_IS_JACK_AUDIO_SINK_CLASS
-GST_TYPE_JACK_AUDIO_SINK
-gst_jack_audio_sink_get_type
 </SECTION>
 
 <SECTION>
@@ -1151,18 +1059,18 @@ GST_TYPE_NUV_DEMUX
 gst_nuv_demux_get_type
 </SECTION>
 
-<SECTION>
-<FILE>element-output-selector</FILE>
-<TITLE>output-selector</TITLE>
-GstOutputSelector
+<FILE>element-opencvtextoverlay</FILE>
+<TITLE>opencvtextoverlay</TITLE>
+GstOpencvTextOverlay
 <SUBSECTION Standard>
-GstOutputSelectorClass
-GST_OUTPUT_SELECTOR
-GST_OUTPUT_SELECTOR_CLASS
-GST_IS_OUTPUT_SELECTOR
-GST_IS_OUTPUT_SELECTOR_CLASS
-GST_TYPE_OUTPUT_SELECTOR
-gst_output_selector_get_type
+GstOpencvTextOverlayClass
+GST_OPENCV_TEXT_OVERLAY
+GST_OPENCV_TEXT_OVERLAY_CLASS
+GST_TYPE_OPENCV_TEXT_OVERLAY
+GST_IS_OPENCV_TEXT_OVERLAY
+GST_IS_OPENCV_TEXT_OVERLAY_CLASS
+gst_opencv_text_overlay_get_type
+gst_opencv_text_overlay_plugin_init
 </SECTION>
 
 <SECTION>
@@ -1208,6 +1116,34 @@ GST_IS_PYRAMIDSEGMENT
 GST_IS_PYRAMIDSEGMENT_CLASS
 gst_pyramidsegment_get_type
 gst_pyramidsegment_plugin_init
+</SECTION>
+
+<SECTION>
+<FILE>element-rsvgoverlay</FILE>
+<TITLE>rsvgoverlay</TITLE>
+GstRsvgOverlay
+<SUBSECTION Standard>
+GstRsvgOverlayClass
+GST_RSVG_OVERLAY
+GST_RSVG_OVERLAY_CLASS
+GST_IS_RSVG_OVERLAY
+GST_IS_RSVG_OVERLAY_CLASS
+GST_TYPE_RSVG_OVERLAY
+gst_rsvg_overlay_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-rsvgdec</FILE>
+<TITLE>rsvgdec</TITLE>
+GstRsvgDec
+<SUBSECTION Standard>
+GstRsvgDecClass
+GST_RSVG_DEC
+GST_RSVG_DEC_CLASS
+GST_IS_RSVG_DEC
+GST_IS_RSVG_DEC_CLASS
+GST_TYPE_RSVG_DEC
+gst_rsvg_dec_get_type
 </SECTION>
 
 <SECTION>
@@ -1473,33 +1409,6 @@ gst_templatematch_get_type
 gst_templatematch_plugin_init
 </SECTION>
 
-<FILE>element-textwrite</FILE>
-<TITLE>textwrite</TITLE>
-Gsttextwrite
-<SUBSECTION Standard>
-GsttextwriteClass
-GST_textwrite
-GST_textwrite_CLASS
-GST_TYPE_textwrite
-GST_IS_textwrite
-GST_IS_textwrite_CLASS
-gst_textwrite_get_type
-gst_textwrite_plugin_init
-</SECTION>
-
-<SECTION>
-<FILE>element-theoradecexp</FILE>
-<TITLE>theoradecexp</TITLE>
-GstTheoraExpDec
-<SUBSECTION Standard>
-GstTheoraExpDecClass
-GST_THEORA_DEC_EXP
-GST_THEORA_DEC_EXP_CLASS
-GST_IS_THEORA_DEC_EXP
-GST_IS_THEORA_DEC_EXP_CLASS
-GST_TYPE_THEORA_DEC_EXP
-</SECTION>
-
 <SECTION>
 <FILE>element-timidity</FILE>
 <TITLE>timidity</TITLE>
@@ -1558,21 +1467,6 @@ GST_IS_TWIRL_CLASS
 GST_TYPE_TWIRL
 gst_twirl_get_type
 gst_twirl_plugin_init
-</SECTION>
-
-<SECTION>
-<FILE>element-valve</FILE>
-<TITLE>valve</TITLE>
-GstValve
-<SUBSECTION Standard>
-GstValveClass
-GstValvePrivate
-gst_valve_get_type
-GST_IS_VALVE
-GST_IS_VALVE_CLASS
-GST_TYPE_VALVE
-GST_VALVE
-GST_VALVE_CLASS
 </SECTION>
 
 <SECTION>

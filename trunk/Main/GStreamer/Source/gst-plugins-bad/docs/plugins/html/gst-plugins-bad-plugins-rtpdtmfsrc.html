@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-rtpdtmfdepay.html" title="rtpdtmfdepay">
 <link rel="next" href="gst-plugins-bad-plugins-rtpdtmfmux.html" title="rtpdtmfmux">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-bad-plugins-rtpdtmfsrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="rtpdtmfsrc">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,36 +39,36 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstRTPDTMFSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc-struct" title="GstRTPDTMFSrc">GstRTPDTMFSrc</a>;
+<a name="GstRTPDTMFSrc"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc-struct" title="struct GstRTPDTMFSrc">GstRTPDTMFSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
                      +----GstRTPDTMFSrc
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--clock-rate" title='The "clock-rate" property'>clock-rate</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--interval" title='The "interval" property'>interval</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--packet-redundancy" title='The "packet-redundancy" property'>packet-redundancy</a>"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--pt" title='The "pt" property'>pt</a>"                       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--seqnum" title='The "seqnum" property'>seqnum</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--seqnum-offset" title='The "seqnum-offset" property'>seqnum-offset</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--ssrc" title='The "ssrc" property'>ssrc</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--timestamp" title='The "timestamp" property'>timestamp</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
-  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--timestamp-offset" title='The "timestamp-offset" property'>timestamp-offset</a>"         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--clock-rate" title='The "clock-rate" property'>clock-rate</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--interval" title='The "interval" property'>interval</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--packet-redundancy" title='The "packet-redundancy" property'>packet-redundancy</a>"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--pt" title='The "pt" property'>pt</a>"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--seqnum" title='The "seqnum" property'>seqnum</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--seqnum-offset" title='The "seqnum-offset" property'>seqnum-offset</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--ssrc" title='The "ssrc" property'>ssrc</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--timestamp" title='The "timestamp" property'>timestamp</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
+  "<a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc--timestamp-offset" title='The "timestamp-offset" property'>timestamp-offset</a>"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.description"></a><h2>Description</h2>
 <p>
 The RTPDTMFSrc element generates RTP DTMF (RFC 2833) event packets on request
@@ -157,12 +157,64 @@ gst_element_send_event (pipeline, event);
 </pre>
 <p>
 </p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp16517856"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-dtmf.html#plugin-dtmf">dtmf</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Zeeshan Ali &lt;zeeshan.ali@nokia.com&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/Network</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp16623712"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>application/x-rtp, media=(string)audio, payload=(int)[ 96, 127 ], clock-rate=(int)[ 0, 2147483647 ], ssrc=(int)[ 0, 2147483647 ], encoding-name=(string)TELEPHONE-EVENT</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstRTPDTMFSrc">
-<a name="GstRTPDTMFSrc-struct"></a><h3>GstRTPDTMFSrc</h3>
-<pre class="programlisting">typedef struct _GstRTPDTMFSrc GstRTPDTMFSrc;</pre>
+<div class="refsect2">
+<a name="GstRTPDTMFSrc-struct"></a><h3>struct GstRTPDTMFSrc</h3>
+<pre class="programlisting">struct GstRTPDTMFSrc;</pre>
 <p>
 The opaque <a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPDTMFSrc"><span class="type">GstRTPDTMFSrc</span></a> data structure.
 </p>
@@ -172,83 +224,83 @@ The opaque <a class="link" href="gst-plugins-bad-plugins-rtpdtmfsrc.html#GstRTPD
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "clock-rate" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--clock-rate"></a><h3>The <code class="literal">"clock-rate"</code> property</h3>
-<pre class="programlisting">  "clock-rate"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "clock-rate"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The clock-rate at which to generate the dtmf packets.</p>
 <p>Default value: 8000</p>
 </div>
 <hr>
-<div class="refsect2" title='The "interval" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--interval"></a><h3>The <code class="literal">"interval"</code> property</h3>
-<pre class="programlisting">  "interval"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "interval"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Interval in ms between two rtp packets.</p>
 <p>Allowed values: [10,50]</p>
 <p>Default value: 50</p>
 </div>
 <hr>
-<div class="refsect2" title='The "packet-redundancy" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--packet-redundancy"></a><h3>The <code class="literal">"packet-redundancy"</code> property</h3>
-<pre class="programlisting">  "packet-redundancy"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "packet-redundancy"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Number of packets to send to indicate start and stop dtmf events.</p>
 <p>Allowed values: [1,5]</p>
 <p>Default value: 1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "pt" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--pt"></a><h3>The <code class="literal">"pt"</code> property</h3>
-<pre class="programlisting">  "pt"                       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "pt"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The payload type of the packets.</p>
 <p>Allowed values: &lt;= 128</p>
 <p>Default value: 96</p>
 </div>
 <hr>
-<div class="refsect2" title='The "seqnum" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--seqnum"></a><h3>The <code class="literal">"seqnum"</code> property</h3>
-<pre class="programlisting">  "seqnum"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
+<pre class="programlisting">  "seqnum"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
 <p>The RTP sequence number of the last processed packet.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "seqnum-offset" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--seqnum-offset"></a><h3>The <code class="literal">"seqnum-offset"</code> property</h3>
-<pre class="programlisting">  "seqnum-offset"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "seqnum-offset"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Offset to add to all outgoing seqnum (-1 = random).</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "ssrc" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--ssrc"></a><h3>The <code class="literal">"ssrc"</code> property</h3>
-<pre class="programlisting">  "ssrc"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "ssrc"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The SSRC of the packets (-1 == random).</p>
 <p>Default value: 4294967295</p>
 </div>
 <hr>
-<div class="refsect2" title='The "timestamp" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--timestamp"></a><h3>The <code class="literal">"timestamp"</code> property</h3>
-<pre class="programlisting">  "timestamp"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
+<pre class="programlisting">  "timestamp"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
 <p>The RTP timestamp of the last processed packet.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "timestamp-offset" property'>
+<div class="refsect2">
 <a name="GstRTPDTMFSrc--timestamp-offset"></a><h3>The <code class="literal">"timestamp-offset"</code> property</h3>
-<pre class="programlisting">  "timestamp-offset"         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "timestamp-offset"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Offset to add to all outgoing timestamps (-1 = random).</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-rtpdtmfsrc.see-also"></a><h2>See Also</h2>
 dtmfsrc, rtpdtmfdepay, rtpdtmfmux
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

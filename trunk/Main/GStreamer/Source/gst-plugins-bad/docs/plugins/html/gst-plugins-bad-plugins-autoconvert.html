@@ -7,8 +7,8 @@
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-assrender.html" title="assrender">
-<link rel="next" href="gst-plugins-bad-plugins-camerabin.html" title="camerabin">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="next" href="gst-plugins-bad-plugins-bulge.html" title="bulge">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -18,7 +18,7 @@
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Bad Plugins 0.10 Plugins Reference Manual</th>
-<td><a accesskey="n" href="gst-plugins-bad-plugins-camerabin.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+<td><a accesskey="n" href="gst-plugins-bad-plugins-bulge.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-bad-plugins-autoconvert.synopsis" class="shortcut">Top</a>
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-bad-plugins-autoconvert.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="autoconvert">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-autoconvert"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,35 +41,35 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-autoconvert.synopsis"></a><h2>Synopsis</h2>
-<a name="GstAutoConvert"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert-struct" title="GstAutoConvert">GstAutoConvert</a>;
+<a name="GstAutoConvert"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert-struct" title="struct GstAutoConvert">GstAutoConvert</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstBin.html">GstBin</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstBin.html">GstBin</a>
                      +----GstAutoConvert
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstAutoConvert implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert--factories" title='The "factories" property'>factories</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert--initial-identity" title='The "initial-identity" property'>initial-identity</a>"         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert--factories" title='The "factories" property'>factories</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-autoconvert.html#GstAutoConvert--initial-identity" title='The "initial-identity" property'>initial-identity</a>"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.description"></a><h2>Description</h2>
 <p>
 The <span class="type">autoconvert</span> element has one sink and one source pad. It will look for
@@ -83,27 +83,100 @@ The list of element it will look into can be specified in the
 <span class="type">"factories"</span> property, otherwise it will look at all available
 elements.
 </p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp5464480"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-autoconvert.html#plugin-autoconvert">autoconvert</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Olivier Crete &lt;olivier.crete@collabora.co.uk&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Generic/Bin</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp8971872"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstAutoConvert">
-<a name="GstAutoConvert-struct"></a><h3>GstAutoConvert</h3>
-<pre class="programlisting">typedef struct _GstAutoConvert GstAutoConvert;</pre>
+<div class="refsect2">
+<a name="GstAutoConvert-struct"></a><h3>struct GstAutoConvert</h3>
+<pre class="programlisting">struct GstAutoConvert;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-autoconvert.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "factories" property'>
+<div class="refsect2">
 <a name="GstAutoConvert--factories"></a><h3>The <code class="literal">"factories"</code> property</h3>
-<pre class="programlisting">  "factories"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "factories"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write</pre>
 <p>GList of GstElementFactory objects to pick from (the element takes ownership of the list (NULL means it will go through all possible elements), can only be set once.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "initial-identity" property'>
+<div class="refsect2">
 <a name="GstAutoConvert--initial-identity"></a><h3>The <code class="literal">"initial-identity"</code> property</h3>
-<pre class="programlisting">  "initial-identity"         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "initial-identity"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>If true, then the identity element will be installed initially and used for event passing until the first data buffer arrives .</p>
 <p>Default value: FALSE</p>
 </div>
@@ -111,6 +184,6 @@ elements.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

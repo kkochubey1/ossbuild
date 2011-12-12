@@ -15,6 +15,14 @@
 
 @SET_MAKE@
 
+# these are the variables your Makefile.am should set
+# the example is based on the colorbalance interface
+
+#glib_enum_headers=$(colorbalance_headers)
+#glib_enum_define=GST_COLOR_BALANCE
+#glib_gen_prefix=gst_color_balance
+#glib_gen_basename=colorbalance
+
 
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -35,9 +43,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = gst/debugutils
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+	$(srcdir)/Makefile.in $(top_srcdir)/common/gst-glib-gen.mak
+subdir = gst/debugutils
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
@@ -56,22 +64,23 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
-	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gsettings.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/gst-sdl.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -103,11 +112,18 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgstdebugutilsbad_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgstdebugutilsbad_la_OBJECTS =  \
 	libgstdebugutilsbad_la-fpsdisplaysink.lo \
-	libgstdebugutilsbad_la-debugutilsbad.lo
-libgstdebugutilsbad_la_OBJECTS = $(am_libgstdebugutilsbad_la_OBJECTS)
+	libgstdebugutilsbad_la-debugutilsbad.lo \
+	libgstdebugutilsbad_la-gstchecksumsink.lo \
+	libgstdebugutilsbad_la-gstchopmydata.lo
+am__objects_1 = libgstdebugutilsbad_la-debugutils-marshal.lo
+am__objects_2 =
+am__objects_3 = $(am__objects_1) $(am__objects_2)
+nodist_libgstdebugutilsbad_la_OBJECTS = $(am__objects_3)
+libgstdebugutilsbad_la_OBJECTS = $(am_libgstdebugutilsbad_la_OBJECTS) \
+	$(nodist_libgstdebugutilsbad_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -141,7 +157,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libgstdebugutilsbad_la_SOURCES)
+SOURCES = $(libgstdebugutilsbad_la_SOURCES) \
+	$(nodist_libgstdebugutilsbad_la_SOURCES)
 DIST_SOURCES = $(libgstdebugutilsbad_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
@@ -151,8 +168,6 @@ ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ACMENC_CFLAGS = @ACMENC_CFLAGS@
 ACMMP3DEC_CFLAGS = @ACMMP3DEC_CFLAGS@
-ALSA_CFLAGS = @ALSA_CFLAGS@
-ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -173,10 +188,12 @@ CCDEPMODE = @CCDEPMODE@
 CDAUDIO_CFLAGS = @CDAUDIO_CFLAGS@
 CDAUDIO_CONFIG = @CDAUDIO_CONFIG@
 CDAUDIO_LIBS = @CDAUDIO_LIBS@
-CELT_0_5_CFLAGS = @CELT_0_5_CFLAGS@
-CELT_0_5_LIBS = @CELT_0_5_LIBS@
+CELT_0_11_CFLAGS = @CELT_0_11_CFLAGS@
+CELT_0_11_LIBS = @CELT_0_11_LIBS@
 CELT_0_7_CFLAGS = @CELT_0_7_CFLAGS@
 CELT_0_7_LIBS = @CELT_0_7_LIBS@
+CELT_0_8_CFLAGS = @CELT_0_8_CFLAGS@
+CELT_0_8_LIBS = @CELT_0_8_LIBS@
 CELT_CFLAGS = @CELT_CFLAGS@
 CELT_LIBS = @CELT_LIBS@
 CFLAGS = @CFLAGS@
@@ -184,12 +201,16 @@ COG_CFLAGS = @COG_CFLAGS@
 COG_LIBS = @COG_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DCCP_LIBS = @DCCP_LIBS@
+DECKLINK_CXXFLAGS = @DECKLINK_CXXFLAGS@
+DECKLINK_LIBS = @DECKLINK_LIBS@
 DEFAULT_AUDIOSINK = @DEFAULT_AUDIOSINK@
 DEFAULT_AUDIOSRC = @DEFAULT_AUDIOSRC@
 DEFAULT_VIDEOSINK = @DEFAULT_VIDEOSINK@
@@ -238,6 +259,7 @@ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GIO_CFLAGS = @GIO_CFLAGS@
 GIO_LIBS = @GIO_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_LIBS = @GLIB_LIBS@
 GLIB_PREFIX = @GLIB_PREFIX@
 GLIB_REQ = @GLIB_REQ@
@@ -249,6 +271,9 @@ GMSGFMT_015 = @GMSGFMT_015@
 GMYTH_CFLAGS = @GMYTH_CFLAGS@
 GMYTH_LIBS = @GMYTH_LIBS@
 GREP = @GREP@
+GSETTINGS_CFLAGS = @GSETTINGS_CFLAGS@
+GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
+GSETTINGS_LIBS = @GSETTINGS_LIBS@
 GSM_LIBS = @GSM_LIBS@
 GSTPB_PLUGINS_DIR = @GSTPB_PLUGINS_DIR@
 GSTPB_PREFIX = @GSTPB_PREFIX@
@@ -265,6 +290,7 @@ GST_GDP_CFLAGS = @GST_GDP_CFLAGS@
 GST_GDP_LIBS = @GST_GDP_LIBS@
 GST_LEVEL_DEFAULT = @GST_LEVEL_DEFAULT@
 GST_LIBS = @GST_LIBS@
+GST_LIB_LDFLAGS = @GST_LIB_LDFLAGS@
 GST_LICENSE = @GST_LICENSE@
 GST_MAJORMINOR = @GST_MAJORMINOR@
 GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
@@ -275,9 +301,19 @@ GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
 GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
+GST_PLUGINS_FFMPEG_CFLAGS = @GST_PLUGINS_FFMPEG_CFLAGS@
+GST_PLUGINS_FFMPEG_DIR = @GST_PLUGINS_FFMPEG_DIR@
+GST_PLUGINS_FFMPEG_LIBS = @GST_PLUGINS_FFMPEG_LIBS@
+GST_PLUGINS_GOOD_CFLAGS = @GST_PLUGINS_GOOD_CFLAGS@
+GST_PLUGINS_GOOD_DIR = @GST_PLUGINS_GOOD_DIR@
+GST_PLUGINS_GOOD_LIBS = @GST_PLUGINS_GOOD_LIBS@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
+GST_PLUGINS_UGLY_CFLAGS = @GST_PLUGINS_UGLY_CFLAGS@
+GST_PLUGINS_UGLY_DIR = @GST_PLUGINS_UGLY_DIR@
+GST_PLUGINS_UGLY_LIBS = @GST_PLUGINS_UGLY_LIBS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PREFIX = @GST_PREFIX@
 GST_TOOLS_DIR = @GST_TOOLS_DIR@
@@ -297,6 +333,7 @@ HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
 HAVE_VPX = @HAVE_VPX@
+HAVE_WILDMIDI = @HAVE_WILDMIDI@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -307,10 +344,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
-IPTC_CFLAGS = @IPTC_CFLAGS@
-IPTC_LIBS = @IPTC_LIBS@
-JACK_CFLAGS = @JACK_CFLAGS@
-JACK_LIBS = @JACK_LIBS@
 JP2K_LIBS = @JP2K_LIBS@
 KATE_CFLAGS = @KATE_CFLAGS@
 KATE_LIBS = @KATE_LIBS@
@@ -325,8 +358,6 @@ LIBM = @LIBM@
 LIBMMS_CFLAGS = @LIBMMS_CFLAGS@
 LIBMMS_LIBS = @LIBMMS_LIBS@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -339,8 +370,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-METADATA_CFLAGS = @METADATA_CFLAGS@
-METADATA_LIBS = @METADATA_LIBS@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MIMIC_CFLAGS = @MIMIC_CFLAGS@
 MIMIC_LIBS = @MIMIC_LIBS@
 MJPEG_CFLAGS = @MJPEG_CFLAGS@
@@ -372,7 +402,12 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OFA_CFLAGS = @OFA_CFLAGS@
 OFA_LIBS = @OFA_LIBS@
+OPENCV_CFLAGS = @OPENCV_CFLAGS@
+OPENCV_LIBS = @OPENCV_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -400,6 +435,8 @@ PYTHON_VERSION = @PYTHON_VERSION@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
+RTMP_CFLAGS = @RTMP_CFLAGS@
+RTMP_LIBS = @RTMP_LIBS@
 SCHRO_CFLAGS = @SCHRO_CFLAGS@
 SCHRO_LIBS = @SCHRO_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -418,8 +455,6 @@ SPC_LIBS = @SPC_LIBS@
 STRIP = @STRIP@
 SWFDEC_CFLAGS = @SWFDEC_CFLAGS@
 SWFDEC_LIBS = @SWFDEC_LIBS@
-THEORADEC_CFLAGS = @THEORADEC_CFLAGS@
-THEORADEC_LIBS = @THEORADEC_LIBS@
 TIGER_CFLAGS = @TIGER_CFLAGS@
 TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
@@ -444,10 +479,6 @@ XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XMKMF = @XMKMF@
-XMP_1_99_5_CFLAGS = @XMP_1_99_5_CFLAGS@
-XMP_1_99_5_LIBS = @XMP_1_99_5_LIBS@
-XMP_CFLAGS = @XMP_CFLAGS@
-XMP_LIBS = @XMP_LIBS@
 XVID_LIBS = @XVID_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -459,6 +490,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -480,6 +512,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gsettingsschemadir = @gsettingsschemadir@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -493,7 +526,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -514,18 +546,37 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+glib_gen_prefix = __gst_debugutils
+glib_gen_basename = debugutils
+enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
+built_sources = debugutils-marshal.c
+built_headers = debugutils-marshal.h
+BUILT_SOURCES = $(built_sources) $(built_headers)
+CLEANFILES = $(BUILT_SOURCES)
+EXTRA_DIST = debugutils-marshal.list
 plugin_LTLIBRARIES = libgstdebugutilsbad.la
-libgstdebugutilsbad_la_SOURCES = fpsdisplaysink.c debugutilsbad.c
+libgstdebugutilsbad_la_SOURCES = \
+	fpsdisplaysink.c \
+	debugutilsbad.c \
+	gstchecksumsink.c \
+	gstchecksumsink.h \
+	gstchopmydata.c \
+	gstchopmydata.h
+
+nodist_libgstdebugutilsbad_la_SOURCES = $(BUILT_SOURCES)
 libgstdebugutilsbad_la_CFLAGS = $(GST_CFLAGS) $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS)
-libgstdebugutilsbad_la_LIBADD = $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-$(GST_MAJORMINOR)
+libgstdebugutilsbad_la_LIBADD = $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) \
+	-lgstinterfaces-$(GST_MAJORMINOR) $(GST_LIBS)
+
 libgstdebugutilsbad_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstdebugutilsbad_la_LIBTOOLFLAGS = --tag=disable-static
 noinst_HEADERS = fpsdisplaysink.h
-all: all-am
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/gst-glib-gen.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -595,8 +646,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdebugutilsbad_la-debugutils-marshal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdebugutilsbad_la-debugutilsbad.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdebugutilsbad_la-fpsdisplaysink.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdebugutilsbad_la-gstchecksumsink.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdebugutilsbad_la-gstchopmydata.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -637,6 +691,30 @@ libgstdebugutilsbad_la-debugutilsbad.lo: debugutilsbad.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='debugutilsbad.c' object='libgstdebugutilsbad_la-debugutilsbad.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -c -o libgstdebugutilsbad_la-debugutilsbad.lo `test -f 'debugutilsbad.c' || echo '$(srcdir)/'`debugutilsbad.c
+
+libgstdebugutilsbad_la-gstchecksumsink.lo: gstchecksumsink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -MT libgstdebugutilsbad_la-gstchecksumsink.lo -MD -MP -MF $(DEPDIR)/libgstdebugutilsbad_la-gstchecksumsink.Tpo -c -o libgstdebugutilsbad_la-gstchecksumsink.lo `test -f 'gstchecksumsink.c' || echo '$(srcdir)/'`gstchecksumsink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebugutilsbad_la-gstchecksumsink.Tpo $(DEPDIR)/libgstdebugutilsbad_la-gstchecksumsink.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstchecksumsink.c' object='libgstdebugutilsbad_la-gstchecksumsink.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -c -o libgstdebugutilsbad_la-gstchecksumsink.lo `test -f 'gstchecksumsink.c' || echo '$(srcdir)/'`gstchecksumsink.c
+
+libgstdebugutilsbad_la-gstchopmydata.lo: gstchopmydata.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -MT libgstdebugutilsbad_la-gstchopmydata.lo -MD -MP -MF $(DEPDIR)/libgstdebugutilsbad_la-gstchopmydata.Tpo -c -o libgstdebugutilsbad_la-gstchopmydata.lo `test -f 'gstchopmydata.c' || echo '$(srcdir)/'`gstchopmydata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebugutilsbad_la-gstchopmydata.Tpo $(DEPDIR)/libgstdebugutilsbad_la-gstchopmydata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstchopmydata.c' object='libgstdebugutilsbad_la-gstchopmydata.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -c -o libgstdebugutilsbad_la-gstchopmydata.lo `test -f 'gstchopmydata.c' || echo '$(srcdir)/'`gstchopmydata.c
+
+libgstdebugutilsbad_la-debugutils-marshal.lo: debugutils-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -MT libgstdebugutilsbad_la-debugutils-marshal.lo -MD -MP -MF $(DEPDIR)/libgstdebugutilsbad_la-debugutils-marshal.Tpo -c -o libgstdebugutilsbad_la-debugutils-marshal.lo `test -f 'debugutils-marshal.c' || echo '$(srcdir)/'`debugutils-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebugutilsbad_la-debugutils-marshal.Tpo $(DEPDIR)/libgstdebugutilsbad_la-debugutils-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='debugutils-marshal.c' object='libgstdebugutilsbad_la-debugutils-marshal.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebugutilsbad_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebugutilsbad_la_CFLAGS) $(CFLAGS) -c -o libgstdebugutilsbad_la-debugutils-marshal.lo `test -f 'debugutils-marshal.c' || echo '$(srcdir)/'`debugutils-marshal.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -727,13 +805,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -750,6 +830,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -758,6 +839,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-pluginLTLIBRARIES \
@@ -829,7 +911,7 @@ ps-am:
 
 uninstall-am: uninstall-pluginLTLIBRARIES
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libtool clean-pluginLTLIBRARIES ctags distclean \
@@ -845,6 +927,56 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
+
+# these are all the rules generating the relevant files
+$(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
+	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
+	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
+
+$(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
+	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
+	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
+
+$(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
+	$(AM_V_GEN)glib-mkenums \
+	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
+	--fprod "\n/* enumerations from \"@filename@\" */\n" \
+	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
+	--ftail "G_END_DECLS\n\n#endif /* __$(glib_enum_define)_ENUM_TYPES_H__ */" \
+	$^ > $@
+
+$(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
+	@if test "x$(glib_enum_headers)" = "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
+	$(AM_V_GEN)glib-mkenums \
+	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
+	--fprod "\n/* enumerations from \"@filename@\" */" \
+	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
+	--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+	--vtail "      { 0, NULL, NULL }\n    };\n    GType g_define_type_id = g_@type@_register_static (\"@EnumName@\", values);\n    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);\n  }\n  return g_define_type_id__volatile;\n}\n" \
+	$^ > $@
+
+# a hack rule to make sure .Plo files exist because they get include'd
+# from Makefile's
+.deps/%-marshal.Plo:
+	@touch $@
+
+.deps/%-enumtypes.Plo:
+	@touch $@
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer \
+	-:PROJECT libgstdebugutils -:SHARED libgstdebugutils \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstdebugutils_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstdebugutils_la_CFLAGS) \
+	 -:LDFLAGS $(libgstdebugutils_la_LDFLAGS) \
+	           $(libgstdebugutils_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

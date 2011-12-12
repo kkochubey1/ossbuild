@@ -148,9 +148,89 @@
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff2000}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\audioparsersbad.vcproj">
-      <Name>gstaudioparsersbad</Name>
-      <Project>{13d62e2c-8b14-4d36-a8fb-ce2dd9d5e466}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\adpcmdec.vcproj">
+      <Name>gstadpcmdec</Name>
+      <Project>{2e2090dd-bfc4-42d8-9e49-a53666814ae3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\adpcmenc.vcproj">
+      <Name>gstadpcmenc</Name>
+      <Project>{97dacaef-0d4b-474b-8b4b-8c8e8a6eb42b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\camerabin2.vcproj">
+      <Name>gstcamerabin2</Name>
+      <Project>{88a7c3e6-c13a-4bda-9381-c010ea8359f4}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\coloreffects.vcproj">
+      <Name>gstcoloreffects</Name>
+      <Project>{5ace86d6-ce3f-40ab-aa5c-774fead70ac2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\colorspace.vcproj">
+      <Name>gstcolorspace</Name>
+      <Project>{173e8936-b683-4aea-9b89-20a9e46a6662}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\dataurisrc.vcproj">
+      <Name>gstdataurisrc</Name>
+      <Project>{f536839a-2255-4863-8783-2f59802391ed}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\debugutilsbad.vcproj">
+      <Name>gstdebugutilsbad</Name>
+      <Project>{3e7d94bd-4011-441d-9748-efc08439986d}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\dvbsuboverlay.vcproj">
+      <Name>gstdvbsuboverlay</Name>
+      <Project>{cfa8d5b8-d337-4000-b280-548dbe052a5c}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\fieldanalysis.vcproj">
+      <Name>gstfieldanalysis</Name>
+      <Project>{9eeed234-8adf-455a-a3d5-46ebcec35178}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\fragmented.vcproj">
+      <Name>gstfragmented</Name>
+      <Project>{6656fbe8-6cc3-4ae7-987c-b03de9b3c382}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\gaudieffects.vcproj">
+      <Name>gstgaudieffects</Name>
+      <Project>{81397130-7749-4c59-8d54-83b833032337}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
@@ -167,6 +247,46 @@
       <Name>gsthdvparse</Name>
       <Project>{57a86dcf-b7c9-419b-af1c-96f08d34de85}</Project>
       <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\id3tag.vcproj">
+      <Name>gstid3tag</Name>
+      <Project>{90c00fca-7b8f-41aa-b251-345cb7c92ae5}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\interlace.vcproj">
+      <Name>gstinterlace</Name>
+      <Project>{8931e55b-e145-4223-941a-2427015f6a7b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\invtelecine.vcproj">
+      <Name>gstinvtelecine</Name>
+      <Project>{c3c11de6-0e6c-4676-ba19-1dc91fa51147}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\ivfparse.vcproj">
+      <Name>gstivfparse</Name>
+      <Project>{093403e6-406b-4029-9eb2-732463a2fe08}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\jp2kdecimator.vcproj">
+      <Name>gstjp2kdecimator</Name>
+      <Project>{00071896-186e-4d41-b415-f00d34b31c4a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
@@ -300,11 +420,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstqtmux.vcproj">
-      <Name>gstqtmux</Name>
-      <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0045}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstrawparse.vcproj">
       <Name>gstrawparse</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0046}</Project>
@@ -333,11 +448,6 @@
       <Private>True</Private>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstselector.vcproj">
-      <Name>gstselector</Name>
-      <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0051}</Project>
-      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstshapewipe.vcproj">
       <Name>gstshapewipe</Name>
@@ -371,11 +481,6 @@
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0055}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstvalve.vcproj">
-      <Name>gstvalve</Name>
-      <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0063}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstvideomeasure.vcproj">
       <Name>gstvideomeasure</Name>
       <Project>{1c20f11d-a43e-4b4b-a7cc-ac61b95cf4a7}</Project>
@@ -392,6 +497,62 @@
       <Name>gstvmnc</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0057}</Project>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\mpegtsdemux.vcproj">
+      <Name>gstmpegtsdemux</Name>
+      <Project>{fb781345-8784-4d89-8bd9-162543d8e048}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\patchdetect.vcproj">
+      <Name>gstpatchdetect</Name>
+      <Project>{7492a8a2-8bf3-4db9-ac12-ee95b772e643}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\rtpvp8.vcproj">
+      <Name>gstrtpvp8</Name>
+      <Project>{5a905260-2b6f-4464-bdc2-10d52545b0bd}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\sdi.vcproj">
+      <Name>gstsdi</Name>
+      <Project>{e1982ad0-1f0c-40fa-b700-b00de4b91a86}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\segmentclip.vcproj">
+      <Name>gstsegmentclip</Name>
+      <Project>{2a15cc6a-c7ec-425d-b030-58e6c0f985f2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\videoparsersbad.vcproj">
+      <Name>gstvideoparsersbad</Name>
+      <Project>{43c5adde-1f3c-4279-ab75-cdf0e3004613}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\y4mdec.vcproj">
+      <Name>gsty4mdec</Name>
+      <Project>{1aa7e9b6-0b89-4599-8ba0-5af2aa5bca3a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\sys\d3dvideosink.vcproj">
       <Name>gstd3dvideosink</Name>

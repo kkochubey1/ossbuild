@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstsignalprocessor"
 	ProjectGUID="{F3A7C701-0ACC-0BB0-CE27-AA0AFFFF2000}"
 	RootNamespace="libgstsignalprocessor"
@@ -392,6 +392,20 @@
 				<File
 					RelativePath="..\..\..\Source\gst-plugins-bad\gst-libs\gst\signalprocessor\gstsignalprocessor.h"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

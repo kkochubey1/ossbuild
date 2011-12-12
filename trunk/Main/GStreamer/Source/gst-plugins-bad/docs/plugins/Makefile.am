@@ -69,7 +69,7 @@ SCANOBJ_DEPS = \
 	$(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la
 
 # Header files to ignore when scanning.
-IGNORE_HFILES = 
+IGNORE_HFILES =
 IGNORE_CFILES =
 
 # we add all .h files of elements that have signals/args we want
@@ -83,7 +83,7 @@ IGNORE_CFILES =
 # -> it just works (TM) (ensonic)
 
 # FIXME: not ported yet
-#	$(top_srcdir)/ext/gnomevfs/gstgnomevfssink.c 
+#	$(top_srcdir)/ext/gnomevfs/gstgnomevfssink.c
 
 # example code that needs to be converted to xml and placed in xml/
 EXAMPLE_CFILES = \
@@ -94,13 +94,12 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/amrwbenc/gstamrwbenc.h \
 	$(top_srcdir)/ext/celt/gstceltdec.h \
 	$(top_srcdir)/ext/celt/gstceltenc.h \
+	$(top_srcdir)/ext/curl/gstcurlsink.h \
 	$(top_srcdir)/ext/dc1394/gstdc1394.h \
 	$(top_srcdir)/ext/directfb/dfbvideosink.h \
 	$(top_srcdir)/ext/dts/gstdtsdec.h \
 	$(top_srcdir)/ext/faac/gstfaac.h \
 	$(top_srcdir)/ext/faad/gstfaad.h \
-	$(top_srcdir)/ext/jack/gstjackaudiosrc.h \
-	$(top_srcdir)/ext/jack/gstjackaudiosink.h \
 	$(top_srcdir)/ext/kate/gstkateenc.h \
 	$(top_srcdir)/ext/kate/gstkatedec.h \
 	$(top_srcdir)/ext/kate/gstkateparse.h \
@@ -125,10 +124,11 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/opencv/gstfacedetect.h \
 	$(top_srcdir)/ext/opencv/gstpyramidsegment.h \
 	$(top_srcdir)/ext/opencv/gsttemplatematch.h \
-	$(top_srcdir)/ext/opencv/gsttextwrite.h \
+	$(top_srcdir)/ext/opencv/gsttextoverlay.h \
+	$(top_srcdir)/ext/rsvg/gstrsvgdec.h \
+	$(top_srcdir)/ext/rsvg/gstrsvgoverlay.h \
 	$(top_srcdir)/ext/sdl/sdlaudiosink.h \
 	$(top_srcdir)/ext/sdl/sdlvideosink.h \
-	$(top_srcdir)/ext/theora/theoradec.h \
 	$(top_srcdir)/ext/timidity/gsttimidity.h \
 	$(top_srcdir)/ext/timidity/gstwildmidi.h \
 	$(top_srcdir)/ext/vp8/gstvp8enc.h \
@@ -136,10 +136,6 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/zbar/gstzbar.h \
 	$(top_srcdir)/gst/aiff/aiffparse.h \
 	$(top_srcdir)/gst/aiff/aiffmux.h \
-	$(top_srcdir)/gst/audioparsers/gstaacparse.h \
-	$(top_srcdir)/gst/audioparsers/gstac3parse.h \
-	$(top_srcdir)/gst/audioparsers/gstamrparse.h \
-	$(top_srcdir)/gst/audioparsers/gstflacparse.h \
 	$(top_srcdir)/gst/autoconvert/gstautoconvert.h \
 	$(top_srcdir)/gst/camerabin/gstcamerabin.h \
 	$(top_srcdir)/gst/coloreffects/gstcoloreffects.h \
@@ -192,15 +188,12 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/rtpmux/gstrtpdtmfmux.h \
 	$(top_srcdir)/gst/scaletempo/gstscaletempo.h \
 	$(top_srcdir)/gst/sdp/gstsdpdemux.h \
-	$(top_srcdir)/gst/selector/gstinputselector.h \
-	$(top_srcdir)/gst/selector/gstoutputselector.h \
 	$(top_srcdir)/gst/speed/gstspeed.h \
 	$(top_srcdir)/gst/stereo/gststereo.h \
 	$(top_srcdir)/gst/videomaxrate/videomaxrate.h \
 	$(top_srcdir)/gst/videosignal/gstvideoanalyse.h \
 	$(top_srcdir)/gst/videosignal/gstvideodetect.h \
 	$(top_srcdir)/gst/videosignal/gstvideomark.h \
-	$(top_srcdir)/gst/valve/gstvalve.h \
 	$(top_srcdir)/sys/directdraw/gstdirectdrawsink.h \
 	$(top_srcdir)/sys/dvb/gstdvbsrc.h \
 	$(top_srcdir)/sys/shm/gstshmsink.h \
@@ -230,25 +223,6 @@ GTKDOC_LD=$(LIBTOOL) --tag=CC --mode=link $(CC)
 DOC_OVERRIDES =
 
 include $(top_srcdir)/common/gtk-doc-plugins.mak
-
-# some additional clean rules from gtk-doc.mak
-distclean-local:
-	rm -f $(REPORT_FILES) \
-                $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
-	rm -rf tmpl/*.sgml.bak
-	rm -f $(DOC_MODULE).hierarchy
-	rm -f *.stamp || true
-	if test x"$(srcdir)" != x. ; then \
-	    rm -f $(DOC_MODULE)-docs.sgml ; \
-	    rm -f $(DOC_MODULE).types ; \
-	    rm -f $(DOC_MODULE).interfaces ; \
-            rm -f $(DOC_MODULE)-overrides.txt ; \
-	    rm -f $(DOC_MODULE).prerequisites ; \
-	    rm -f $(DOC_MODULE)-sections.txt ; \
-	    rm -rf tmpl/*.sgml ; \
-	fi
-	rm -rf *.o
-
 
 SUBDIRS =
 

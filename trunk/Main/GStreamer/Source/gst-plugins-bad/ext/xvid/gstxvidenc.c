@@ -79,6 +79,7 @@ static void gst_xvidenc_init (GstXvidEnc * xvidenc);
 static void gst_xvidenc_finalize (GObject * object);
 static GstFlowReturn gst_xvidenc_chain (GstPad * pad, GstBuffer * data);
 static gboolean gst_xvidenc_setcaps (GstPad * pad, GstCaps * vscapslist);
+static GstCaps *gst_xvidenc_getcaps (GstPad * pad);
 static void gst_xvidenc_flush_buffers (GstXvidEnc * xvidenc, gboolean send);
 static gboolean gst_xvidenc_handle_sink_event (GstPad * pad, GstEvent * event);
 
@@ -497,6 +498,8 @@ gst_xvidenc_init (GstXvidEnc * xvidenc)
       GST_DEBUG_FUNCPTR (gst_xvidenc_chain));
   gst_pad_set_setcaps_function (xvidenc->sinkpad,
       GST_DEBUG_FUNCPTR (gst_xvidenc_setcaps));
+  gst_pad_set_getcaps_function (xvidenc->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_xvidenc_getcaps));
   gst_pad_set_event_function (xvidenc->sinkpad,
       GST_DEBUG_FUNCPTR (gst_xvidenc_handle_sink_event));
 
@@ -714,11 +717,17 @@ gst_xvidenc_setcaps (GstPad * pad, GstCaps * vscaps)
 
   structure = gst_caps_get_structure (vscaps, 0);
 
-  g_return_val_if_fail (gst_structure_get_int (structure, "width", &w), FALSE);
-  g_return_val_if_fail (gst_structure_get_int (structure, "height", &h), FALSE);
+  if (!gst_structure_get_int (structure, "width", &w) ||
+      !gst_structure_get_int (structure, "height", &h)) {
+    return FALSE;
+  }
+
   fps = gst_structure_get_value (structure, "framerate");
-  g_return_val_if_fail (w > 0 && h > 0
-      && fps != NULL && GST_VALUE_HOLDS_FRACTION (fps), FALSE);
+  if (fps == NULL || !GST_VALUE_HOLDS_FRACTION (fps)) {
+    GST_WARNING_OBJECT (pad, "no framerate specified, or not a GstFraction");
+    return FALSE;
+  }
+
   /* optional par info */
   par = gst_structure_get_value (structure, "pixel-aspect-ratio");
 
@@ -786,6 +795,55 @@ gst_xvidenc_setcaps (GstPad * pad, GstCaps * vscaps)
 
   } else                        /* setup did not work out */
     return FALSE;
+}
+
+static GstCaps *
+gst_xvidenc_getcaps (GstPad * pad)
+{
+  GstXvidEnc *xvidenc;
+  GstPad *peer;
+  GstCaps *caps;
+
+  /* If we already have caps return them */
+  if (GST_PAD_CAPS (pad))
+    return gst_caps_ref (GST_PAD_CAPS (pad));
+
+  xvidenc = GST_XVIDENC (gst_pad_get_parent (pad));
+  if (!xvidenc)
+    return gst_caps_new_empty ();
+
+  peer = gst_pad_get_peer (xvidenc->srcpad);
+  if (peer) {
+    const GstCaps *templcaps;
+    GstCaps *peercaps;
+    guint i, n;
+
+    peercaps = gst_pad_get_caps (peer);
+
+    /* Translate peercaps to YUV */
+    peercaps = gst_caps_make_writable (peercaps);
+    n = gst_caps_get_size (peercaps);
+    for (i = 0; i < n; i++) {
+      GstStructure *s = gst_caps_get_structure (peercaps, i);
+
+      gst_structure_set_name (s, "video/x-raw-yuv");
+      gst_structure_remove_field (s, "mpegversion");
+      gst_structure_remove_field (s, "systemstream");
+    }
+
+    templcaps = gst_pad_get_pad_template_caps (pad);
+
+    caps = gst_caps_intersect (peercaps, templcaps);
+    gst_caps_unref (peercaps);
+    gst_object_unref (peer);
+    peer = NULL;
+  } else {
+    caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
+  }
+
+  gst_object_unref (xvidenc);
+
+  return caps;
 }
 
 /* encodes frame according to info in xframe;
@@ -1039,7 +1097,6 @@ gst_xvidenc_set_property (GObject * object,
   GstXvidEnc *xvidenc;
   guint offset;
 
-  g_return_if_fail (GST_IS_XVIDENC (object));
   xvidenc = GST_XVIDENC (object);
 
   if (prop_id > xvidenc_prop_count) {
@@ -1050,7 +1107,9 @@ gst_xvidenc_set_property (GObject * object,
   /* our param specs should have such qdata */
   offset =
       GPOINTER_TO_UINT (g_param_spec_get_qdata (pspec, xvidenc_pspec_quark));
-  g_return_if_fail (offset != 0);
+
+  if (offset == 0)
+    return;
 
   switch (G_PARAM_SPEC_VALUE_TYPE (pspec)) {
     case G_TYPE_BOOLEAN:
@@ -1080,7 +1139,6 @@ gst_xvidenc_get_property (GObject * object,
   GstXvidEnc *xvidenc;
   guint offset;
 
-  g_return_if_fail (GST_IS_XVIDENC (object));
   xvidenc = GST_XVIDENC (object);
 
   if (prop_id > xvidenc_prop_count) {
@@ -1091,7 +1149,9 @@ gst_xvidenc_get_property (GObject * object,
   /* our param specs should have such qdata */
   offset =
       GPOINTER_TO_UINT (g_param_spec_get_qdata (pspec, xvidenc_pspec_quark));
-  g_return_if_fail (offset != 0);
+
+  if (offset == 0)
+    return;
 
   switch (G_PARAM_SPEC_VALUE_TYPE (pspec)) {
     case G_TYPE_BOOLEAN:

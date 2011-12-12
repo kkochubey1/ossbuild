@@ -110,7 +110,8 @@ enum
     "video/mpeg, " \
       "mpegversion = (int) { 1, 2, 4 }, " \
       "systemstream = (boolean) FALSE; " \
-    "video/x-h264;" \
+    "video/x-h264,stream-format=(string)byte-stream," \
+      "alignment=(string)nal;" \
     "video/x-dirac;" \
     "video/x-wmv," \
       "wmvversion = (int) 3, " \
@@ -365,16 +366,9 @@ gst_mpegts_demux_reset (GstMpegTSDemux * demux)
       if (stream->PAT.entries)
         g_array_free (stream->PAT.entries, TRUE);
 
-      switch (stream->PID_type) {
-        case PID_TYPE_ELEMENTARY:
-          gst_pes_filter_uninit (&stream->filter);
-          break;
-        case PID_TYPE_PROGRAM_ASSOCIATION:
-        case PID_TYPE_CONDITIONAL_ACCESS:
-        case PID_TYPE_PROGRAM_MAP:
-          gst_section_filter_uninit (&stream->section_filter);
-          break;
-      }
+      gst_pes_filter_uninit (&stream->filter);
+      gst_section_filter_uninit (&stream->section_filter);
+
       if (stream->pes_buffer) {
         gst_buffer_unref (stream->pes_buffer);
         stream->pes_buffer = NULL;
@@ -671,7 +665,7 @@ gst_mpegts_demux_fill_stream (GstMpegTSStream * stream, guint8 id,
               DESC_DVB_SUBTITLING)) {
         template = klass->private_template;
         name = g_strdup_printf ("private_%04x", stream->PID);
-        caps = gst_caps_new_simple ("private/x-dvbsub", NULL);
+        caps = gst_caps_new_simple ("subpicture/x-dvb", NULL);
       }
       break;
     case ST_HDV_AUX_V:
@@ -704,7 +698,9 @@ gst_mpegts_demux_fill_stream (GstMpegTSStream * stream, guint8 id,
     case ST_VIDEO_H264:
       template = klass->video_template;
       name = g_strdup_printf ("video_%04x", stream->PID);
-      caps = gst_caps_new_simple ("video/x-h264", NULL);
+      caps = gst_caps_new_simple ("video/x-h264",
+          "stream-format", G_TYPE_STRING, "byte-stream",
+          "alignment", G_TYPE_STRING, "nal", NULL);
       break;
     case ST_VIDEO_DIRAC:
       if (gst_mpegts_is_dirac_stream (stream)) {
@@ -946,31 +942,36 @@ gst_mpegts_demux_send_tags_for_stream (GstMpegTSDemux * demux,
     GstMpegTSStream * stream)
 {
   GstTagList *list = NULL;
+  gint i;
 
   if (stream->ES_info) {
-    guint8 *iso639_languages =
-        gst_mpeg_descriptor_find (stream->ES_info, DESC_ISO_639_LANGUAGE);
-    if (iso639_languages) {
-      if (DESC_ISO_639_LANGUAGE_codes_n (iso639_languages)) {
-        const gchar *lc;
-        gchar lang_code[4];
-        gchar *language_n;
+    static const guint8 lang_descs[] =
+        { DESC_ISO_639_LANGUAGE, DESC_DVB_SUBTITLING };
+    for (i = 0; i < G_N_ELEMENTS (lang_descs); i++) {
+      guint8 *iso639_languages =
+          gst_mpeg_descriptor_find (stream->ES_info, lang_descs[i]);
+      if (iso639_languages) {
+        if (DESC_ISO_639_LANGUAGE_codes_n (iso639_languages)) {
+          const gchar *lc;
+          gchar lang_code[4];
+          gchar *language_n;
 
-        language_n = (gchar *)
-            DESC_ISO_639_LANGUAGE_language_code_nth (iso639_languages, 0);
+          language_n = (gchar *)
+              DESC_ISO_639_LANGUAGE_language_code_nth (iso639_languages, 0);
 
-        lang_code[0] = language_n[0];
-        lang_code[1] = language_n[1];
-        lang_code[2] = language_n[2];
-        lang_code[3] = 0;
+          lang_code[0] = language_n[0];
+          lang_code[1] = language_n[1];
+          lang_code[2] = language_n[2];
+          lang_code[3] = 0;
 
-        if (!list)
-          list = gst_tag_list_new ();
+          if (!list)
+            list = gst_tag_list_new ();
 
-        /* descriptor contains ISO 639-2 code, we want the ISO 639-1 code */
-        lc = gst_tag_get_language_code (lang_code);
-        gst_tag_list_add (list, GST_TAG_MERGE_REPLACE,
-            GST_TAG_LANGUAGE_CODE, (lc) ? lc : lang_code, NULL);
+          /* descriptor contains ISO 639-2 code, we want the ISO 639-1 code */
+          lc = gst_tag_get_language_code (lang_code);
+          gst_tag_list_add (list, GST_TAG_MERGE_REPLACE,
+              GST_TAG_LANGUAGE_CODE, (lc) ? lc : lang_code, NULL);
+        }
       }
     }
   }
@@ -1046,8 +1047,8 @@ gst_mpegts_demux_data_cb (GstPESFilter * filter, gboolean first,
        * to drop. */
       if (stream->PMT_pid <= MPEGTS_MAX_PID && demux->streams[stream->PMT_pid]
           && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]
-          && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]->
-          discont_PCR) {
+          && demux->streams[demux->streams[stream->PMT_pid]->PMT.
+              PCR_PID]->discont_PCR) {
         GST_WARNING_OBJECT (demux, "middle of discont, dropping");
         goto bad_timestamp;
       }
@@ -1069,8 +1070,8 @@ gst_mpegts_demux_data_cb (GstPESFilter * filter, gboolean first,
          */
         if (stream->PMT_pid <= MPEGTS_MAX_PID && demux->streams[stream->PMT_pid]
             && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]
-            && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]->
-            last_PCR > 0) {
+            && demux->streams[demux->streams[stream->PMT_pid]->PMT.
+                PCR_PID]->last_PCR > 0) {
           GST_DEBUG_OBJECT (demux, "timestamps wrapped before noticed in PCR");
           time = MPEGTIME_TO_GSTTIME (pts) + stream->base_time +
               MPEGTIME_TO_GSTTIME ((guint64) (1) << 33);
@@ -1451,10 +1452,13 @@ gst_mpegts_stream_parse_pmt (GstMpegTSStream * stream,
         /* not really an ES, so use section filter not pes filter */
         /* initialise section filter */
         GstCaps *caps;
+        gchar name[13];
+
+        g_snprintf (name, sizeof (name), "private_%04x", entry.PID);
         gst_section_filter_init (&ES_stream->section_filter);
         ES_stream->PID_type = PID_TYPE_PRIVATE_SECTION;
         ES_stream->pad = gst_pad_new_from_static_template (&private_template,
-            g_strdup_printf ("private_%04x", entry.PID));
+            name);
         gst_pad_set_active (ES_stream->pad, TRUE);
         caps = gst_caps_new_simple ("application/x-mpegts-private-section",
             NULL);
@@ -1469,7 +1473,21 @@ gst_mpegts_stream_parse_pmt (GstMpegTSStream * stream,
           ES_stream->flags |= MPEGTS_STREAM_FLAG_IS_VIDEO;
 
         /* set adaptor */
+        GST_LOG ("Initializing PES filter for PID %u", ES_stream->PID);
         gst_pes_filter_init (&ES_stream->filter, NULL, NULL);
+
+        if (ES_stream->stream_type == ST_PRIVATE_DATA) {
+          guint8 *dvb_sub_desc = gst_mpeg_descriptor_find (ES_stream->ES_info,
+              DESC_DVB_SUBTITLING);
+
+          /* enable gather PES for DVB subtitles since the dvbsuboverlay
+           * expects complete PES packets */
+          if (dvb_sub_desc) {
+            /* FIXME: There's another place where pes filters could get
+             * initialized. Might need similar temporary hack there as well */
+            ES_stream->filter.gather_pes = TRUE;
+          }
+        }
         gst_pes_filter_set_callbacks (&ES_stream->filter,
             (GstPESFilterData) gst_mpegts_demux_data_cb,
             (GstPESFilterResync) gst_mpegts_demux_resync_cb, ES_stream);
@@ -1598,11 +1616,9 @@ gst_mpegts_stream_parse_private_section (GstMpegTSStream * stream,
       goto wrong_crc;
 
   /* just dump this down the pad */
-  if (gst_pad_alloc_buffer (stream->pad, 0, datalen, NULL, &buffer) ==
-      GST_FLOW_OK) {
-    memcpy (buffer->data, data, datalen);
-    gst_pad_push (stream->pad, buffer);
-  }
+  buffer = gst_buffer_new_and_alloc (datalen);
+  memcpy (buffer->data, data, datalen);
+  gst_pad_push (stream->pad, buffer);
 
   GST_DEBUG_OBJECT (demux, "parsing private section");
   return TRUE;
@@ -2298,6 +2314,7 @@ gst_mpegts_demux_parse_stream (GstMpegTSDemux * demux, GstMpegTSStream * stream,
         }
 
         /* Initialise our PES filter */
+        GST_LOG ("Initializing PES filter for PID %u", stream->PID);
         gst_pes_filter_init (&stream->filter, NULL, NULL);
         gst_pes_filter_set_callbacks (&stream->filter,
             (GstPESFilterData) gst_mpegts_demux_data_cb,
@@ -3119,6 +3136,7 @@ mpegts_demux_build_pat_info (GstMpegTSDemux * demux)
     g_value_init (&v, G_TYPE_OBJECT);
     g_value_take_object (&v, info_obj);
     g_value_array_append (vals, &v);
+    g_value_unset (&v);
   }
   return vals;
 }

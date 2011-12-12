@@ -141,6 +141,7 @@ gst_photo_caps_get_type (void)
       {GST_PHOTOGRAPHY_CAPS_APERTURE, "GST_PHOTOGRAPHY_CAPS_APERTURE", "aperture"},
       {GST_PHOTOGRAPHY_CAPS_EXPOSURE, "GST_PHOTOGRAPHY_CAPS_EXPOSURE", "exposure"},
       {GST_PHOTOGRAPHY_CAPS_SHAKE, "GST_PHOTOGRAPHY_CAPS_SHAKE", "shake"},
+      {GST_PHOTOGRAPHY_CAPS_NOISE_REDUCTION, "GST_PHOTOGRAPHY_CAPS_NOISE_REDUCTION", "noise-reduction"},
       {0, NULL, NULL}
     };
     GType g_define_type_id = g_flags_register_static ("GstPhotoCaps", values);

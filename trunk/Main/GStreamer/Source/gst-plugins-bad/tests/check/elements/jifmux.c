@@ -619,6 +619,8 @@ static const GstExifTagMatch tag_map[] = {
       EXIF_TYPE_SRATIONAL, compare_shutter_speed},
   {GST_TAG_CAPTURING_FOCAL_RATIO, EXIF_TAG_APERTURE_VALUE, EXIF_TYPE_RATIONAL,
       compare_aperture_value},
+  {GST_TAG_CAPTURING_EXPOSURE_COMPENSATION, EXIF_TAG_EXPOSURE_BIAS_VALUE,
+      EXIF_TYPE_SRATIONAL},
   {GST_TAG_CAPTURING_FLASH_FIRED, EXIF_TAG_FLASH, EXIF_TYPE_SHORT,
       compare_flash},
   {GST_TAG_CAPTURING_FLASH_MODE, EXIF_TAG_FLASH, EXIF_TYPE_SHORT,
@@ -807,16 +809,27 @@ check_content (ExifContent * content, void *user_data)
 
       fail_unless (strcmp (str, taglist_str) == 0);
       test_data->result = TRUE;
+      g_free (taglist_str);
     }
       break;
+    case EXIF_TYPE_SRATIONAL:
     case EXIF_TYPE_RATIONAL:{
-      ExifRational exif_rational = exif_get_rational (entry->data,
-          exif_data_get_byte_order (entry->parent->parent));
       GValue exif_value = { 0 };
 
       g_value_init (&exif_value, GST_TYPE_FRACTION);
-      gst_value_set_fraction (&exif_value, exif_rational.numerator,
-          exif_rational.denominator);
+      if (entry->format == EXIF_TYPE_RATIONAL) {
+        ExifRational exif_rational = exif_get_rational (entry->data,
+            exif_data_get_byte_order (entry->parent->parent));
+
+        gst_value_set_fraction (&exif_value, exif_rational.numerator,
+            exif_rational.denominator);
+      } else {
+        ExifSRational exif_rational = exif_get_srational (entry->data,
+            exif_data_get_byte_order (entry->parent->parent));
+
+        gst_value_set_fraction (&exif_value, exif_rational.numerator,
+            exif_rational.denominator);
+      }
 
       if (gst_tag_type == GST_TYPE_FRACTION) {
         const GValue *value = gst_tag_list_get_value_index (test_data->taglist,
@@ -886,6 +899,7 @@ check_content (ExifContent * content, void *user_data)
       }
 
       test_data->result = TRUE;
+      gst_buffer_unref (buf);
     }
       break;
     default:
@@ -927,6 +941,7 @@ generate_jif_file_with_tags_from_taglist (GstTagList * taglist,
 
   pipeline = gst_parse_launch (launchline, NULL);
   fail_unless (pipeline != NULL);
+  g_free (launchline);
 
   jifmux = gst_bin_get_by_name (GST_BIN (pipeline), "jifmux0");
   fail_unless (jifmux != NULL);
@@ -939,9 +954,10 @@ generate_jif_file_with_tags_from_taglist (GstTagList * taglist,
   fail_if (gst_element_set_state (pipeline, GST_STATE_PLAYING) ==
       GST_STATE_CHANGE_FAILURE);
 
-  msg = gst_bus_timed_pop_filtered (bus, GST_SECOND * 5, GST_MESSAGE_EOS |
+  msg = gst_bus_timed_pop_filtered (bus, GST_SECOND * 10, GST_MESSAGE_EOS |
       GST_MESSAGE_ERROR);
-  fail_if (!msg || GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ERROR);
+  fail_if (!msg);
+  fail_if (GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ERROR);
 
   gst_message_unref (msg);
   gst_object_unref (bus);
@@ -1025,6 +1041,7 @@ GST_START_TEST (test_jifmux_tags)
       GST_TAG_CAPTURING_ISO_SPEED, 800, GST_TAG_DATE_TIME, datetime,
       GST_TAG_CAPTURING_FOCAL_LENGTH, 22.5,
       GST_TAG_CAPTURING_DIGITAL_ZOOM_RATIO, 5.25,
+      GST_TAG_CAPTURING_EXPOSURE_COMPENSATION, -2.5,
       GST_TAG_APPLICATION_DATA, buffer,
       GST_TAG_CAPTURING_FLASH_FIRED, TRUE,
       GST_TAG_CAPTURING_FLASH_MODE, "auto",

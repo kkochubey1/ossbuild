@@ -6,15 +6,15 @@
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
-<link rel="prev" href="gst-plugins-bad-plugins-celtenc.html" title="celtenc">
+<link rel="prev" href="gst-plugins-bad-plugins-cvsobel.html" title="cvsobel">
 <link rel="next" href="gst-plugins-bad-plugins-dccpclientsink.html" title="dccpclientsink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
 <tr valign="middle">
-<td><a accesskey="p" href="gst-plugins-bad-plugins-celtenc.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="p" href="gst-plugins-bad-plugins-cvsobel.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Bad Plugins 0.10 Plugins Reference Manual</th>
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-bad-plugins-dataurisrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="dataurisrc">
+<div class="refentry">
 <a name="gst-plugins-bad-plugins-dataurisrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,67 +41,123 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-bad-plugins-dataurisrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstDataURISrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-dataurisrc.html#GstDataURISrc-struct" title="GstDataURISrc">GstDataURISrc</a>;
+<a name="GstDataURISrc"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-bad-plugins-dataurisrc.html#GstDataURISrc-struct" title="struct GstDataURISrc">GstDataURISrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
                      +----GstDataURISrc
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstDataURISrc implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-dataurisrc.html#GstDataURISrc--uri" title='The "uri" property'>uri</a>"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-dataurisrc.html#GstDataURISrc--uri" title='The "uri" property'>uri</a>"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.description"></a><h2>Description</h2>
 <p>
 dataurisrc handles data: URIs, see <a class="ulink" href="http://tools.ietf.org/html/rfc2397" target="_top">RFC 2397</a> for more information.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id348781"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp7058704"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch<span class="symbol">-</span><span class="number">0.10</span> <span class="symbol">-</span>v dataurisrc uri<span class="symbol">=</span><span class="string">&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfElEQVQ4je2MwQnAIAxFgziA4EnczIsO4MEROo/gzZWc4xdTbe1R6LGRR74heYS7iKElzfcMiRnt4hf8gk8EayB6luefue/HzlJfCA50XsNjYRxprZmenXNIKSGEsC+QUqK1hhgj521BzhnWWiilUGvdF5RS4L2HMQZCCJy8sHMm2TYdJAAAAABJRU5ErkJggg==&quot;</span> <span class="symbol">!</span> pngdec <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> freeze <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> autovideosink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch<span class="gtkdoc opt">-</span><span class="number">0.10</span> <span class="gtkdoc opt">-</span>v dataurisrc uri<span class="gtkdoc opt">=</span><span class="string">&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfElEQVQ4je2MwQnAIAxFgziA4EnczIsO4MEROo/gzZWc4xdTbe1R6LGRR74heYS7iKElzfcMiRnt4hf8gk8EayB6luefue/HzlJfCA50XsNjYRxprZmenXNIKSGEsC+QUqK1hhgj521BzhnWWiilUGvdF5RS4L2HMQZCCJy8sHMm2TYdJAAAAABJRU5ErkJggg==&quot;</span> <span class="gtkdoc opt">!</span> pngdec <span class="gtkdoc opt">!</span> ffmpegcolorspace <span class="gtkdoc opt">!</span> freeze <span class="gtkdoc opt">!</span> ffmpegcolorspace <span class="gtkdoc opt">!</span> autovideosink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  This pipeline displays a small 16x16 PNG image from the data URI.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp7061712"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-bad-plugins-plugin-dataurisrc.html#plugin-dataurisrc">dataurisrc</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Philippe Normand &lt;pnormand@igalia.com&gt;, Sebastian Dröge &lt;sebastian.droege@collabora.co.uk&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp11232288"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstDataURISrc">
-<a name="GstDataURISrc-struct"></a><h3>GstDataURISrc</h3>
-<pre class="programlisting">typedef struct _GstDataURISrc GstDataURISrc;</pre>
+<div class="refsect2">
+<a name="GstDataURISrc-struct"></a><h3>struct GstDataURISrc</h3>
+<pre class="programlisting">struct GstDataURISrc;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-bad-plugins-dataurisrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "uri" property'>
+<div class="refsect2">
 <a name="GstDataURISrc--uri"></a><h3>The <code class="literal">"uri"</code> property</h3>
-<pre class="programlisting">  "uri"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "uri"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>URI that should be used.</p>
 <p>Default value: NULL</p>
 </div>
@@ -109,6 +165,6 @@ dataurisrc handles data: URIs, see <a class="ulink" href="http://tools.ietf.org/
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

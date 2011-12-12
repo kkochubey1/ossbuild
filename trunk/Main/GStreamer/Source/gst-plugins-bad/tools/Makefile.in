@@ -53,22 +53,23 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
-	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gsettings.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/gst-sdl.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -88,8 +89,6 @@ ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ACMENC_CFLAGS = @ACMENC_CFLAGS@
 ACMMP3DEC_CFLAGS = @ACMMP3DEC_CFLAGS@
-ALSA_CFLAGS = @ALSA_CFLAGS@
-ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -110,10 +109,12 @@ CCDEPMODE = @CCDEPMODE@
 CDAUDIO_CFLAGS = @CDAUDIO_CFLAGS@
 CDAUDIO_CONFIG = @CDAUDIO_CONFIG@
 CDAUDIO_LIBS = @CDAUDIO_LIBS@
-CELT_0_5_CFLAGS = @CELT_0_5_CFLAGS@
-CELT_0_5_LIBS = @CELT_0_5_LIBS@
+CELT_0_11_CFLAGS = @CELT_0_11_CFLAGS@
+CELT_0_11_LIBS = @CELT_0_11_LIBS@
 CELT_0_7_CFLAGS = @CELT_0_7_CFLAGS@
 CELT_0_7_LIBS = @CELT_0_7_LIBS@
+CELT_0_8_CFLAGS = @CELT_0_8_CFLAGS@
+CELT_0_8_LIBS = @CELT_0_8_LIBS@
 CELT_CFLAGS = @CELT_CFLAGS@
 CELT_LIBS = @CELT_LIBS@
 CFLAGS = @CFLAGS@
@@ -121,12 +122,16 @@ COG_CFLAGS = @COG_CFLAGS@
 COG_LIBS = @COG_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DCCP_LIBS = @DCCP_LIBS@
+DECKLINK_CXXFLAGS = @DECKLINK_CXXFLAGS@
+DECKLINK_LIBS = @DECKLINK_LIBS@
 DEFAULT_AUDIOSINK = @DEFAULT_AUDIOSINK@
 DEFAULT_AUDIOSRC = @DEFAULT_AUDIOSRC@
 DEFAULT_VIDEOSINK = @DEFAULT_VIDEOSINK@
@@ -175,6 +180,7 @@ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GIO_CFLAGS = @GIO_CFLAGS@
 GIO_LIBS = @GIO_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_LIBS = @GLIB_LIBS@
 GLIB_PREFIX = @GLIB_PREFIX@
 GLIB_REQ = @GLIB_REQ@
@@ -186,6 +192,9 @@ GMSGFMT_015 = @GMSGFMT_015@
 GMYTH_CFLAGS = @GMYTH_CFLAGS@
 GMYTH_LIBS = @GMYTH_LIBS@
 GREP = @GREP@
+GSETTINGS_CFLAGS = @GSETTINGS_CFLAGS@
+GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
+GSETTINGS_LIBS = @GSETTINGS_LIBS@
 GSM_LIBS = @GSM_LIBS@
 GSTPB_PLUGINS_DIR = @GSTPB_PLUGINS_DIR@
 GSTPB_PREFIX = @GSTPB_PREFIX@
@@ -202,6 +211,7 @@ GST_GDP_CFLAGS = @GST_GDP_CFLAGS@
 GST_GDP_LIBS = @GST_GDP_LIBS@
 GST_LEVEL_DEFAULT = @GST_LEVEL_DEFAULT@
 GST_LIBS = @GST_LIBS@
+GST_LIB_LDFLAGS = @GST_LIB_LDFLAGS@
 GST_LICENSE = @GST_LICENSE@
 GST_MAJORMINOR = @GST_MAJORMINOR@
 GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
@@ -212,9 +222,19 @@ GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
 GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
+GST_PLUGINS_FFMPEG_CFLAGS = @GST_PLUGINS_FFMPEG_CFLAGS@
+GST_PLUGINS_FFMPEG_DIR = @GST_PLUGINS_FFMPEG_DIR@
+GST_PLUGINS_FFMPEG_LIBS = @GST_PLUGINS_FFMPEG_LIBS@
+GST_PLUGINS_GOOD_CFLAGS = @GST_PLUGINS_GOOD_CFLAGS@
+GST_PLUGINS_GOOD_DIR = @GST_PLUGINS_GOOD_DIR@
+GST_PLUGINS_GOOD_LIBS = @GST_PLUGINS_GOOD_LIBS@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
+GST_PLUGINS_UGLY_CFLAGS = @GST_PLUGINS_UGLY_CFLAGS@
+GST_PLUGINS_UGLY_DIR = @GST_PLUGINS_UGLY_DIR@
+GST_PLUGINS_UGLY_LIBS = @GST_PLUGINS_UGLY_LIBS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PREFIX = @GST_PREFIX@
 GST_TOOLS_DIR = @GST_TOOLS_DIR@
@@ -234,6 +254,7 @@ HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
 HAVE_VPX = @HAVE_VPX@
+HAVE_WILDMIDI = @HAVE_WILDMIDI@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -244,10 +265,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
-IPTC_CFLAGS = @IPTC_CFLAGS@
-IPTC_LIBS = @IPTC_LIBS@
-JACK_CFLAGS = @JACK_CFLAGS@
-JACK_LIBS = @JACK_LIBS@
 JP2K_LIBS = @JP2K_LIBS@
 KATE_CFLAGS = @KATE_CFLAGS@
 KATE_LIBS = @KATE_LIBS@
@@ -262,8 +279,6 @@ LIBM = @LIBM@
 LIBMMS_CFLAGS = @LIBMMS_CFLAGS@
 LIBMMS_LIBS = @LIBMMS_LIBS@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -276,8 +291,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-METADATA_CFLAGS = @METADATA_CFLAGS@
-METADATA_LIBS = @METADATA_LIBS@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MIMIC_CFLAGS = @MIMIC_CFLAGS@
 MIMIC_LIBS = @MIMIC_LIBS@
 MJPEG_CFLAGS = @MJPEG_CFLAGS@
@@ -309,7 +323,12 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OFA_CFLAGS = @OFA_CFLAGS@
 OFA_LIBS = @OFA_LIBS@
+OPENCV_CFLAGS = @OPENCV_CFLAGS@
+OPENCV_LIBS = @OPENCV_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -337,6 +356,8 @@ PYTHON_VERSION = @PYTHON_VERSION@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
+RTMP_CFLAGS = @RTMP_CFLAGS@
+RTMP_LIBS = @RTMP_LIBS@
 SCHRO_CFLAGS = @SCHRO_CFLAGS@
 SCHRO_LIBS = @SCHRO_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -355,8 +376,6 @@ SPC_LIBS = @SPC_LIBS@
 STRIP = @STRIP@
 SWFDEC_CFLAGS = @SWFDEC_CFLAGS@
 SWFDEC_LIBS = @SWFDEC_LIBS@
-THEORADEC_CFLAGS = @THEORADEC_CFLAGS@
-THEORADEC_LIBS = @THEORADEC_LIBS@
 TIGER_CFLAGS = @TIGER_CFLAGS@
 TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
@@ -381,10 +400,6 @@ XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XMKMF = @XMKMF@
-XMP_1_99_5_CFLAGS = @XMP_1_99_5_CFLAGS@
-XMP_1_99_5_LIBS = @XMP_1_99_5_LIBS@
-XMP_CFLAGS = @XMP_CFLAGS@
-XMP_LIBS = @XMP_LIBS@
 XVID_LIBS = @XVID_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -396,6 +411,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -417,6 +433,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gsettingsschemadir = @gsettingsschemadir@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -430,7 +447,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -451,25 +467,38 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+templatefiles = \
+	element-templates/audiofilter \
+	element-templates/audiosink \
+	element-templates/audiosrc \
+	element-templates/baseaudiosink \
+	element-templates/baseaudiosrc \
+	element-templates/basertpdepayload \
+	element-templates/basertppayload \
+	element-templates/basesink \
+	element-templates/basesrc \
+	element-templates/basetransform \
+	element-templates/cddabasesrc \
+	element-templates/element \
+	element-templates/pushsrc \
+	element-templates/tagdemux \
+	element-templates/videofilter2 \
+	element-templates/videosink
+
+templatedeps = \
+	element-templates/base \
+	element-templates/gobject \
+	element-templates/sinkpad \
+	element-templates/sinkpad-simple \
+	element-templates/srcpad \
+	element-templates/srcpad-simple
+
 EXTRA_DIST = \
-	element-maker \
-	base.c \
-	gobject.c \
-	gstaudiofilter.c \
-	gstaudiosink.c \
-	gstaudiosrc.c \
-	gstbaseaudiosink.c \
-	gstbaseaudiosrc.c \
-	gstbasertpdepayload.c \
-	gstbasertppayload.c \
-	gstbasesink.c \
-	gstbasesrc.c \
-	gstbasetransform.c \
-	gstcddabasesrc.c \
-	gstelement.c \
-	gstpushsrc.c \
-	gsttagdemux.c \
-	gstvideosink.c
+	gst-element-maker \
+	gst-app-maker \
+	$(templatefiles) \
+	$(templatedeps) \
+	gst-element-maker-test.sh
 
 all: all-am
 
@@ -655,6 +684,15 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am uninstall uninstall-am
 
+
+# Disabled since it doesn't work in an uninstalled setup:
+#
+#TESTS_ENVIRONMENT = \
+#	SRC_DIR=$(abs_srcdir) \
+#	TEMPLATE_FILES="$(templatefiles)" \
+#	CPPFLAGS="-I$(abs_srcdir)"
+#
+#TESTS = gst-element-maker-test.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

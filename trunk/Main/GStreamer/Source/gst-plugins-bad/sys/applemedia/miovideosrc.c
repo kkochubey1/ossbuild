@@ -83,8 +83,6 @@ static void gst_mio_video_src_probe_interface_init (gpointer g_iface,
 
 static void gst_mio_video_src_init_interfaces (GType type);
 
-static GstPushSrcClass *parent_class;
-
 GST_BOILERPLATE_FULL (GstMIOVideoSrc, gst_mio_video_src, GstPushSrc,
     GST_TYPE_PUSH_SRC, gst_mio_video_src_init_interfaces);
 
@@ -481,10 +479,10 @@ gst_mio_video_src_open_device (GstMIOVideoSrc * self)
     gboolean match;
 
     if (self->device_uid != NULL) {
-      match = g_strcasecmp (gst_mio_video_device_get_uid (device),
+      match = g_ascii_strcasecmp (gst_mio_video_device_get_uid (device),
           self->device_uid) == 0;
     } else if (self->device_name != NULL) {
-      match = g_strcasecmp (gst_mio_video_device_get_name (device),
+      match = g_ascii_strcasecmp (gst_mio_video_device_get_name (device),
           self->device_name) == 0;
     } else if (self->device_index >= 0) {
       match = device_idx == self->device_index;

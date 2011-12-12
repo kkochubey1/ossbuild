@@ -293,7 +293,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>
@@ -303,6 +303,18 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\autoconvert\gstautoconvert.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\autoconvert\gstautovideoconvert.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\autoconvert\gstautovideoconvert.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\autoconvert\plugin.c"
 			>
 		</File>
 	</Files>

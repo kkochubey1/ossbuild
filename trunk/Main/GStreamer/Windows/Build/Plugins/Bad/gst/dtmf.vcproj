@@ -293,16 +293,20 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F10}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstrtp.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstrtp.vcproj"
 		/>
 	</References>
 	<Files>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\dtmf\gstdtmf.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\dtmf\gstdtmfcommon.h"
 			>
 		</File>
 		<File
