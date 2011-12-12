@@ -506,13 +506,8 @@ gst_real_audio_demux_parse_data (GstRealAudioDemux * demux)
     const guint8 *data;
     GstBuffer *buf = NULL;
 
-    ret = gst_pad_alloc_buffer_and_set_caps (demux->srcpad,
-        GST_BUFFER_OFFSET_NONE, unit_size, GST_PAD_CAPS (demux->srcpad), &buf);
-
-    if (ret != GST_FLOW_OK) {
-      GST_DEBUG_OBJECT (demux, "pad_alloc flow: %s", gst_flow_get_name (ret));
-      break;
-    }
+    buf = gst_buffer_new_and_alloc (unit_size);
+    gst_buffer_set_caps (buf, GST_PAD_CAPS (demux->srcpad));
 
     data = gst_adapter_peek (demux->adapter, unit_size);
     memcpy (GST_BUFFER_DATA (buf), data, unit_size);
@@ -574,7 +569,7 @@ gst_real_audio_demux_handle_buffer (GstRealAudioDemux * demux, GstBuffer * buf)
       break;
     }
     default:
-      g_assert_not_reached ();
+      g_return_val_if_reached (GST_FLOW_ERROR);
   }
 
   return ret;
@@ -616,7 +611,7 @@ gst_real_audio_demux_loop (GstRealAudioDemux * demux)
       }
       break;
     default:
-      g_assert_not_reached ();
+      g_return_if_reached ();
   }
 
   /* now get the data */

@@ -19,6 +19,12 @@
 
 # include this snippet to add a common release: target by using
 # include $(top_srcdir)/common/release.mak
+
+# checks for left-over files in the (usually uninstalled) tree, ie. for
+# stuff that best be deleted to avoid problems like having old plugin binaries
+# lying around.
+#
+# set CRUFT_FILES and/or CRUFT_DIRS in your Makefile.am when you include this
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -42,7 +48,8 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/gst-plugins-ugly.spec.in \
 	$(top_srcdir)/common/coverage/lcov.mak \
-	$(top_srcdir)/common/po.mak $(top_srcdir)/common/release.mak \
+	$(top_srcdir)/common/cruft.mak $(top_srcdir)/common/po.mak \
+	$(top_srcdir)/common/release.mak \
 	$(top_srcdir)/common/win32.mak $(top_srcdir)/configure \
 	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS compile \
 	config.guess config.rpath config.sub depcomp install-sh \
@@ -66,20 +73,21 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/a52.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-sid.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/a52.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-sid.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -88,6 +96,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = gst-plugins-ugly.spec
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -150,7 +164,7 @@ AMRNB_LIBS = @AMRNB_LIBS@
 AMRWB_CFLAGS = @AMRWB_CFLAGS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -189,8 +203,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 GCOV = @GCOV@
@@ -224,6 +236,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -236,7 +249,6 @@ HAVE_AMRWB = @HAVE_AMRWB@
 HAVE_CXX = @HAVE_CXX@
 HAVE_DVDREAD = @HAVE_DVDREAD@
 HAVE_LAME = @HAVE_LAME@
-HAVE_X264 = @HAVE_X264@
 HTML_DIR = @HTML_DIR@
 ID3TAG_CFLAGS = @ID3TAG_CFLAGS@
 ID3TAG_LIBS = @ID3TAG_LIBS@
@@ -255,8 +267,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -268,8 +278,8 @@ LTLIBOBJS = @LTLIBOBJS@
 MAD_CFLAGS = @MAD_CFLAGS@
 MAD_LIBS = @MAD_LIBS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MPEG2DEC_CFLAGS = @MPEG2DEC_CFLAGS@
 MPEG2DEC_LIBS = @MPEG2DEC_LIBS@
@@ -278,9 +288,12 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -305,7 +318,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -316,11 +328,12 @@ STRIP = @STRIP@
 TWOLAME_CFLAGS = @TWOLAME_CFLAGS@
 TWOLAME_LIBS = @TWOLAME_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 X264_CFLAGS = @X264_CFLAGS@
 X264_LIBS = @X264_LIBS@
@@ -331,6 +344,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -364,7 +378,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -379,7 +392,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -388,7 +400,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 SUBDIRS = \
-	gst-libs gst ext docs m4 tests common po
+	gst-libs gst ext docs m4 tests common pkgconfig po
 
 
 # the MANIFEST contains all win32 related files that should be disted
@@ -413,13 +425,19 @@ DISTCLEANFILES = _stdint.h
 
 # make bz2 as well
 AUTOMAKE_OPTIONS = dist-bzip2
+
+# cruft: plugins that have been merged or moved or renamed
+CRUFT_FILES = \
+	$(top_builddir)/common/shave \
+	$(top_builddir)/common/shave-libtool
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(top_srcdir)/common/cruft.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -796,7 +814,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile config.h
+all-am: Makefile config.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -899,20 +917,21 @@ uninstall-am:
 	ctags-recursive install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-generic \
-	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
-	dist-gzip dist-hook dist-lzma dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am
+	all all-am all-local am--refresh check check-am clean \
+	clean-generic clean-libtool ctags ctags-recursive dist \
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-generic distclean-hdr distclean-libtool \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am
 
 
 win32-debug:
@@ -940,7 +959,7 @@ win32-check-crlf:
 # (don't care about other unixes for now, it's enough if it works on one of
 # the linux build bots; we assume .so )
 check-exports:
-	fail=0 ; \
+	@fail=0 ; \
 	for l in $(win32defs); do \
 	  libbase=`basename "$$l" ".def"`; \
 	  libso=`find "$(top_builddir)" -name "$$libbase-@GST_MAJORMINOR@.so" | grep -v /_build/ | head -n1`; \
@@ -960,13 +979,13 @@ check-exports:
 	fi; \
 	exit $$fail
 
-# complain about nonportable 64-bit printf format strings (%lld, %llu etc.)
-check-nonportable-int64-print-format:
-	fail=0 ; \
-	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'`; \
+# complain about nonportable printf format strings (%lld, %llu, %zu etc.)
+check-nonportable-print-format:
+	@fail=0 ; \
+	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'`; \
 	if test "x$$loc" != "x"; then \
 	  echo "Please fix the following print format strings:" ; \
-	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'; \
+	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'; \
 	  fail=1; \
 	fi; \
 	exit $$fail
@@ -988,10 +1007,10 @@ distcheck-hook:
 	@test "x" = "x`find $(distdir) -name \*-enumtypes.[ch] | grep -v win32`" && \
 	test "x" = "x`find $(distdir) -name \*-marshal.[ch]`" || \
 	( $(ECHO) "*** Leftover enumtypes or marshal files in the tarball." && \
-          $(ECHO) "*** Make sure the following files are not disted:" && \
-          find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
-          find $(distdir) -name \*-marshal.[ch] && \
-          false )
+	  $(ECHO) "*** Make sure the following files are not disted:" && \
+	  find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
+	  find $(distdir) -name \*-marshal.[ch] && \
+	  false )
 
 # rule to download the latest .po files
 download-po: $(top_srcdir)/common/download-translations
@@ -1030,8 +1049,9 @@ lcov:
 @GST_GCOV_ENABLED_TRUE@lcov-report:
 @GST_GCOV_ENABLED_TRUE@	mkdir lcov
 @GST_GCOV_ENABLED_TRUE@	lcov --compat-libtool --directory . --capture --output-file lcov/lcov.info
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d: -f1 > lcov/remove
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep "tests/check/" | cut -d: -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d\| -f1 > lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "tests/check/" | cut -d\| -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "docs/plugins/" | cut -d\| -f1 >> lcov/remove
 @GST_GCOV_ENABLED_TRUE@	lcov -r lcov/lcov.info `cat lcov/remove` > lcov/lcov.cleaned.info
 @GST_GCOV_ENABLED_TRUE@	rm lcov/remove
 @GST_GCOV_ENABLED_TRUE@	mv lcov/lcov.cleaned.info lcov/lcov.info
@@ -1045,6 +1065,58 @@ lcov:
 
 @GST_GCOV_ENABLED_FALSE@lcov-report:
 @GST_GCOV_ENABLED_FALSE@	echo "Need to reconfigure with --enable-gcov"
+
+check-cruft:
+	@cruft_files=""; cruft_dirs=""; \
+	for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    cruft_files="$$cruft_files $$f"; \
+	  fi \
+	done; \
+	for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    cruft_dirs="$$cruft_dirs $$d"; \
+	  fi \
+	done; \
+	if test "x$$cruft_files$$cruft_dirs" != x; then \
+	  echo; \
+	  echo "**** CRUFT ALERT *****"; \
+	  echo; \
+	  echo "The following files and directories may not be needed any "; \
+	  echo "longer (usually because a plugin has been merged into     "; \
+	  echo "another plugin, moved to a different module, or been      "; \
+	  echo "renamed), and you probably want to clean them up if you   "; \
+	  echo "don't have local changes:                                 "; \
+	  echo; \
+	  for f in $$cruft_files; do echo "file $$f"; done; \
+	  echo; \
+	  for d in $$cruft_dirs; do echo "directory $$d"; done; \
+	  echo; \
+	  echo "'make clean-cruft' will remove these for you."; \
+	  echo; \
+	fi
+
+clean-cruft-dirs:
+	@for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    rm -r "$$d" && echo "Removed directory $$d"; \
+	  fi \
+	done
+
+clean-cruft-files:
+	@for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    rm "$$f" && echo "Removed file $$f"; \
+	  fi \
+	done
+
+clean-cruft: clean-cruft-dirs clean-cruft-files
+
+# also might want to add this to your Makefile.am:
+#
+# all-local: check-cruft
+
+all-local: check-cruft
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

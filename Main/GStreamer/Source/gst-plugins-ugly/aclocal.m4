@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.65],,
-[m4_warning([this file was generated for autoconf 2.65.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68],,
+[m4_warning([this file was generated for autoconf 2.68.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -893,6 +893,33 @@ Check your system clock])
 fi
 AC_MSG_RESULT(yes)])
 
+# Copyright (C) 2009  Free Software Foundation, Inc.
+#
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# serial 1
+
+# AM_SILENT_RULES([DEFAULT])
+# --------------------------
+# Enable less verbose build rules; with the default set to DEFAULT
+# (`yes' being less verbose, `no' or empty being verbose).
+AC_DEFUN([AM_SILENT_RULES],
+[AC_ARG_ENABLE([silent-rules],
+[  --enable-silent-rules          less verbose build output (undo: `make V=1')
+  --disable-silent-rules         verbose build output (undo: `make V=0')])
+case $enable_silent_rules in
+yes) AM_DEFAULT_VERBOSITY=0;;
+no)  AM_DEFAULT_VERBOSITY=1;;
+*)   AM_DEFAULT_VERBOSITY=m4_if([$1], [yes], [0], [1]);;
+esac
+AC_SUBST([AM_DEFAULT_VERBOSITY])dnl
+AM_BACKSLASH='\'
+AC_SUBST([AM_BACKSLASH])dnl
+_AM_SUBST_NOTMAKE([AM_BACKSLASH])dnl
+])
+
 # Copyright (C) 2001, 2003, 2005  Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
@@ -1053,12 +1080,13 @@ m4_include([common/m4/gst-feature.m4])
 m4_include([common/m4/gst-function.m4])
 m4_include([common/m4/gst-gettext.m4])
 m4_include([common/m4/gst-glib2.m4])
+m4_include([common/m4/gst-package-release-datetime.m4])
 m4_include([common/m4/gst-plugin-docs.m4])
 m4_include([common/m4/gst-plugindir.m4])
 m4_include([common/m4/gst.m4])
 m4_include([common/m4/gtk-doc.m4])
+m4_include([common/m4/orc.m4])
 m4_include([common/m4/pkg.m4])
-m4_include([common/m4/shave.m4])
 m4_include([m4/a52.m4])
 m4_include([m4/gettext.m4])
 m4_include([m4/gst-sid.m4])

@@ -56,20 +56,21 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/a52.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-sid.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/a52.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-sid.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -108,22 +109,39 @@ am_libgstasf_la_OBJECTS = libgstasf_la-gstasfdemux.lo \
 	libgstasf_la-asfpacket.lo libgstasf_la-gstrtpasfdepay.lo \
 	libgstasf_la-gstrtspwms.lo
 libgstasf_la_OBJECTS = $(am_libgstasf_la_OBJECTS)
-libgstasf_la_LINK = $(LIBTOOL) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstasf_la_CFLAGS) \
-	$(CFLAGS) $(libgstasf_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstasf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstasf_la_CFLAGS) $(CFLAGS) \
+	$(libgstasf_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstasf_la_SOURCES)
 DIST_SOURCES = $(libgstasf_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -139,7 +157,7 @@ AMRNB_LIBS = @AMRNB_LIBS@
 AMRWB_CFLAGS = @AMRWB_CFLAGS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -178,8 +196,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 GCOV = @GCOV@
@@ -213,6 +229,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -225,7 +242,6 @@ HAVE_AMRWB = @HAVE_AMRWB@
 HAVE_CXX = @HAVE_CXX@
 HAVE_DVDREAD = @HAVE_DVDREAD@
 HAVE_LAME = @HAVE_LAME@
-HAVE_X264 = @HAVE_X264@
 HTML_DIR = @HTML_DIR@
 ID3TAG_CFLAGS = @ID3TAG_CFLAGS@
 ID3TAG_LIBS = @ID3TAG_LIBS@
@@ -244,8 +260,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
@@ -257,8 +271,8 @@ LTLIBOBJS = @LTLIBOBJS@
 MAD_CFLAGS = @MAD_CFLAGS@
 MAD_LIBS = @MAD_LIBS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MPEG2DEC_CFLAGS = @MPEG2DEC_CFLAGS@
 MPEG2DEC_LIBS = @MPEG2DEC_LIBS@
@@ -267,9 +281,12 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -294,7 +311,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -305,11 +321,12 @@ STRIP = @STRIP@
 TWOLAME_CFLAGS = @TWOLAME_CFLAGS@
 TWOLAME_LIBS = @TWOLAME_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 X264_CFLAGS = @X264_CFLAGS@
 X264_LIBS = @X264_LIBS@
@@ -320,6 +337,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -353,7 +371,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -368,7 +385,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -377,10 +393,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstasf.la
 libgstasf_la_SOURCES = gstasfdemux.c gstasf.c asfheaders.c asfpacket.c gstrtpasfdepay.c gstrtspwms.c
-libgstasf_la_CFLAGS = $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-libgstasf_la_LIBADD = $(GST_PLUGINS_BASE_LIBS) $(GST_BASE_LIBS) $(GST_LIBS)\
+libgstasf_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+libgstasf_la_LIBADD = $(GST_PLUGINS_BASE_LIBS) \
 		-lgstriff-@GST_MAJORMINOR@ -lgstrtsp-@GST_MAJORMINOR@ -lgstsdp-@GST_MAJORMINOR@ \
 		-lgstrtp-@GST_MAJORMINOR@ -lgstaudio-@GST_MAJORMINOR@ -lgsttag-@GST_MAJORMINOR@ \
+		$(GST_BASE_LIBS) $(GST_LIBS) \
 		$(WIN32_LIBS)
 
 libgstasf_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
@@ -452,7 +469,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstasf.la: $(libgstasf_la_OBJECTS) $(libgstasf_la_DEPENDENCIES) 
-	$(libgstasf_la_LINK) -rpath $(plugindir) $(libgstasf_la_OBJECTS) $(libgstasf_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstasf_la_LINK) -rpath $(plugindir) $(libgstasf_la_OBJECTS) $(libgstasf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -468,67 +485,76 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstasf_la-gstrtspwms.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstasf_la-gstasfdemux.lo: gstasfdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstasfdemux.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstasfdemux.Tpo -c -o libgstasf_la-gstasfdemux.lo `test -f 'gstasfdemux.c' || echo '$(srcdir)/'`gstasfdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-gstasfdemux.Tpo $(DEPDIR)/libgstasf_la-gstasfdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstasfdemux.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstasfdemux.Tpo -c -o libgstasf_la-gstasfdemux.lo `test -f 'gstasfdemux.c' || echo '$(srcdir)/'`gstasfdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-gstasfdemux.Tpo $(DEPDIR)/libgstasf_la-gstasfdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstasfdemux.c' object='libgstasf_la-gstasfdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstasfdemux.lo `test -f 'gstasfdemux.c' || echo '$(srcdir)/'`gstasfdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstasfdemux.lo `test -f 'gstasfdemux.c' || echo '$(srcdir)/'`gstasfdemux.c
 
 libgstasf_la-gstasf.lo: gstasf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstasf.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstasf.Tpo -c -o libgstasf_la-gstasf.lo `test -f 'gstasf.c' || echo '$(srcdir)/'`gstasf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-gstasf.Tpo $(DEPDIR)/libgstasf_la-gstasf.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstasf.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstasf.Tpo -c -o libgstasf_la-gstasf.lo `test -f 'gstasf.c' || echo '$(srcdir)/'`gstasf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-gstasf.Tpo $(DEPDIR)/libgstasf_la-gstasf.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstasf.c' object='libgstasf_la-gstasf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstasf.lo `test -f 'gstasf.c' || echo '$(srcdir)/'`gstasf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstasf.lo `test -f 'gstasf.c' || echo '$(srcdir)/'`gstasf.c
 
 libgstasf_la-asfheaders.lo: asfheaders.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-asfheaders.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-asfheaders.Tpo -c -o libgstasf_la-asfheaders.lo `test -f 'asfheaders.c' || echo '$(srcdir)/'`asfheaders.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-asfheaders.Tpo $(DEPDIR)/libgstasf_la-asfheaders.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-asfheaders.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-asfheaders.Tpo -c -o libgstasf_la-asfheaders.lo `test -f 'asfheaders.c' || echo '$(srcdir)/'`asfheaders.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-asfheaders.Tpo $(DEPDIR)/libgstasf_la-asfheaders.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='asfheaders.c' object='libgstasf_la-asfheaders.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-asfheaders.lo `test -f 'asfheaders.c' || echo '$(srcdir)/'`asfheaders.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-asfheaders.lo `test -f 'asfheaders.c' || echo '$(srcdir)/'`asfheaders.c
 
 libgstasf_la-asfpacket.lo: asfpacket.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-asfpacket.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-asfpacket.Tpo -c -o libgstasf_la-asfpacket.lo `test -f 'asfpacket.c' || echo '$(srcdir)/'`asfpacket.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-asfpacket.Tpo $(DEPDIR)/libgstasf_la-asfpacket.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-asfpacket.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-asfpacket.Tpo -c -o libgstasf_la-asfpacket.lo `test -f 'asfpacket.c' || echo '$(srcdir)/'`asfpacket.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-asfpacket.Tpo $(DEPDIR)/libgstasf_la-asfpacket.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='asfpacket.c' object='libgstasf_la-asfpacket.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-asfpacket.lo `test -f 'asfpacket.c' || echo '$(srcdir)/'`asfpacket.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-asfpacket.lo `test -f 'asfpacket.c' || echo '$(srcdir)/'`asfpacket.c
 
 libgstasf_la-gstrtpasfdepay.lo: gstrtpasfdepay.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstrtpasfdepay.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Tpo -c -o libgstasf_la-gstrtpasfdepay.lo `test -f 'gstrtpasfdepay.c' || echo '$(srcdir)/'`gstrtpasfdepay.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Tpo $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstrtpasfdepay.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Tpo -c -o libgstasf_la-gstrtpasfdepay.lo `test -f 'gstrtpasfdepay.c' || echo '$(srcdir)/'`gstrtpasfdepay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Tpo $(DEPDIR)/libgstasf_la-gstrtpasfdepay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpasfdepay.c' object='libgstasf_la-gstrtpasfdepay.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstrtpasfdepay.lo `test -f 'gstrtpasfdepay.c' || echo '$(srcdir)/'`gstrtpasfdepay.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstrtpasfdepay.lo `test -f 'gstrtpasfdepay.c' || echo '$(srcdir)/'`gstrtpasfdepay.c
 
 libgstasf_la-gstrtspwms.lo: gstrtspwms.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstrtspwms.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstrtspwms.Tpo -c -o libgstasf_la-gstrtspwms.lo `test -f 'gstrtspwms.c' || echo '$(srcdir)/'`gstrtspwms.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstasf_la-gstrtspwms.Tpo $(DEPDIR)/libgstasf_la-gstrtspwms.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -MT libgstasf_la-gstrtspwms.lo -MD -MP -MF $(DEPDIR)/libgstasf_la-gstrtspwms.Tpo -c -o libgstasf_la-gstrtspwms.lo `test -f 'gstrtspwms.c' || echo '$(srcdir)/'`gstrtspwms.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstasf_la-gstrtspwms.Tpo $(DEPDIR)/libgstasf_la-gstrtspwms.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspwms.c' object='libgstasf_la-gstrtspwms.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstrtspwms.lo `test -f 'gstrtspwms.c' || echo '$(srcdir)/'`gstrtspwms.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstasf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstasf_la_CFLAGS) $(CFLAGS) -c -o libgstasf_la-gstrtspwms.lo `test -f 'gstrtspwms.c' || echo '$(srcdir)/'`gstrtspwms.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -737,6 +763,20 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer \
+	-:PROJECT libgstasfdemux -:SHARED libgstasfdemux \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstasfdemux_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstasfdemux_la_CFLAGS) \
+	 -:LDFLAGS $(libgstasfdemux_la_LDFLAGS) \
+	           $(libgstasfdemux_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, cvs and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for cvs/prerelease
-AC_INIT(GStreamer Ugly Plug-ins, 0.10.17,
+AC_INIT(GStreamer Ugly Plug-ins, 0.10.18,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-ugly)
 
@@ -250,7 +250,7 @@ translit(dnm, m, l) AM_CONDITIONAL(USE_AMRNB, true)
 AG_GST_CHECK_FEATURE(AMRNB, [amrnb library], amrnb, [
   PKG_CHECK_MODULES(AMRNB, opencore-amrnb, HAVE_AMRNB="yes",
       [ AG_GST_CHECK_LIBHEADER(AMRNB, opencore-amrnb,
-		           Decoder_Interface_init, -lm,
+		           Decoder_Interface_init, $LIBM,
 		           opencore-amrnb/interf_dec.h,
 			   AMRNB_LIBS="-lopencore-amrnb")
       ])
@@ -287,10 +287,10 @@ AG_GST_CHECK_FEATURE(DVDREAD, [dvdread library], dvdreadsrc, [
 dnl *** lame ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_LAME, true)
 AG_GST_CHECK_FEATURE(LAME, [lame mp3 encoder library], lame, [
-  AG_GST_CHECK_LIBHEADER(LAME, mp3lame, lame_init, -lm, lame/lame.h,
+  AG_GST_CHECK_LIBHEADER(LAME, mp3lame, lame_init, $LIBM, lame/lame.h,
   [
     HAVE_LAME="yes"
-    LAME_LIBS="-lmp3lame -lm"
+    LAME_LIBS="-lmp3lame $LIBM"
     dnl is lame presets available
     LAME_CFLAGS=""
     AC_TRY_COMPILE([#include <lame/lame.h>], [ int preset = MEDIUM ],
@@ -326,20 +326,23 @@ AG_GST_CHECK_FEATURE(MAD, [mad mp3 decoder], mad, [
     ])
   fi
 
+  dnl check with pkg-config first
+  AG_GST_PKG_CHECK_MODULES(MAD, mad >= 0.15)
+  MAD_LIBS="$MAD_LIBS $ID3TAG_LIBS"
+  if test "x$HAVE_MAD" = "xno"; then
+    dnl fall back to oldskool detection
+    AC_CHECK_HEADER(mad.h, [
+      AC_CHECK_LIB(mad, mad_decoder_finish,
+        HAVE_MAD="yes" MAD_LIBS="-lmad $ID3TAG_LIBS")
+    ])
+  fi
+
   if test "x$HAVE_ID3TAG" = "xyes"; then
-    dnl check with pkg-config first
-    AG_GST_PKG_CHECK_MODULES(MAD, mad >= 0.15)
-    MAD_LIBS="$MAD_LIBS $ID3TAG_LIBS"
-    if test "x$HAVE_MAD" = "xno"; then
-      dnl fall back to oldskool detection
-      AC_CHECK_HEADER(mad.h, [
-        AC_CHECK_LIB(mad, mad_decoder_finish,
-          HAVE_MAD="yes" MAD_LIBS="-lmad $ID3TAG_LIBS")
-      ])
-    fi
+    AC_DEFINE(HAVE_ID3TAG, 1, [defined if libid3tag is available])
   else
-    HAVE_MAD="no"
-    AC_MSG_WARN([libid3tag not available, cannot build MAD MP3 decoder plugin])
+    AC_MSG_WARN([libid3tag not available, MAD MP3 decoder will be built without
+                 ID3 tag reading support (which is not a problem, since ID3
+                 tags are usually handled by id3demux)])
   fi
 ])
 AC_SUBST(MAD_LIBS)
@@ -362,7 +365,6 @@ AG_GST_CHECK_FEATURE(TWOLAME, [twolame], twolame, [
   PKG_CHECK_MODULES(TWOLAME, twolame >= 0.3.10, [
       HAVE_TWOLAME="yes"], [
       HAVE_TWOLAME="no"
-      AC_MSG_RESULT(no)
   ])
   AC_SUBST(TWOLAME_CFLAGS)
   AC_SUBST(TWOLAME_LIBS)
@@ -371,24 +373,7 @@ AG_GST_CHECK_FEATURE(TWOLAME, [twolame], twolame, [
 dnl *** x264 (MPEG-4 part 10/h.264/AVC encoder) ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_X264, true)
 AG_GST_CHECK_FEATURE(X264, [x264 plug-in], x264, [
-  AG_GST_CHECK_LIBHEADER(X264, x264, x264_encoder_encode, -lm, x264.h,
-      AC_MSG_CHECKING([for uptodate x264 API version])
-      dnl _stdint not yet generated, so no compiling
-      AC_TRY_CPP([
-        #include <x264.h>
-        #if X264_BUILD < 55
-        #error "x264 build too old"
-        #endif
-      ], [
-        AC_MSG_RESULT(yes)
-        X264_LIBS="$LDFLAGS -lx264 -lm"
-        X264_CFLAGS="$CFLAGS"
-        AC_SUBST(X264_LIBS)
-        AC_SUBST(X264_CFLAGS)
-      ], [
-        AC_MSG_RESULT(no)
-        HAVE_X264=no
-      ]))
+  AG_GST_PKG_CHECK_MODULES(X264, x264 >= 0.55.0)
 ])
 
 else
@@ -458,7 +443,7 @@ AC_SUBST(GST_ALL_LDFLAGS)
 
 dnl this really should only contain flags, not libs - they get added before
 dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
-GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
+GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc.*' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
 dnl *** output files ***
@@ -536,7 +521,7 @@ sed \
     -e 's/.* PLUGINDIR$/#ifdef _DEBUG\n#  define PLUGINDIR PREFIX "\\\\debug\\\\lib\\\\gstreamer-0.10"\n#else\n#  define PLUGINDIR PREFIX "\\\\lib\\\\gstreamer-0.10"\n#endif/' \
     -e 's/.* USE_BINARY_REGISTRY$/#define USE_BINARY_REGISTRY/' \
     -e 's/.* VERSION$/#define VERSION "'$VERSION'"/' \
-    -e "s/.* DEFAULT_AUDIOSINK$/#define DEFAULT_AUDIOSINK \"directaudiosink\"/" \
+    -e "s/.* DEFAULT_AUDIOSINK$/#define DEFAULT_AUDIOSINK \"directsoundsink\"/" \
     -e "s/.* DEFAULT_AUDIOSRC$/#define DEFAULT_AUDIOSRC \"audiotestsrc\"/" \
     -e "s/.* DEFAULT_VIDEOSRC$/#define DEFAULT_VIDEOSRC \"videotestsrc\"/" \
     -e "s/.* DEFAULT_VISUALIZER$/#define DEFAULT_VISUALIZER \"goom\"/" \
